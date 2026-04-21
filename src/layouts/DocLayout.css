@@ -1,0 +1,26 @@
+.doc-layout {
+  display: flex;
+  max-width: 1320px;
+  margin: 0 auto;
+  min-height: calc(100vh - var(--au-navbar-h));
+}
+
+.doc-layout__main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px 80px;
+}
+
+.doc-layout__article {
+  max-width: var(--au-content-max);
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .doc-layout {
+    flex-direction: column;
+  }
+  .doc-layout__main {
+    padding: 20px;
+  }
+}

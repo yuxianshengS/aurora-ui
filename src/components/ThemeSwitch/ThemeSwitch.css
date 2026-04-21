@@ -1,0 +1,165 @@
+/* Inspired by Uiverse.io by RiccardoRapelli — refactored for Aurora UI */
+.au-theme-switch {
+  --ts-w: 60px;
+  --ts-h: 34px;
+  --ts-knob: 26px;
+  --ts-gap: 4px;
+  --ts-day: #2196f3;
+  --ts-night: #0b0f1a;
+
+  position: relative;
+  display: inline-block;
+  width: var(--ts-w);
+  height: var(--ts-h);
+  cursor: pointer;
+  vertical-align: middle;
+}
+.au-theme-switch--small {
+  --ts-w: 48px;
+  --ts-h: 28px;
+  --ts-knob: 20px;
+}
+.au-theme-switch--large {
+  --ts-w: 76px;
+  --ts-h: 44px;
+  --ts-knob: 34px;
+}
+.au-theme-switch.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.au-theme-switch__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.au-theme-switch__slider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--ts-day);
+  border-radius: 999px;
+  overflow: hidden;
+  transition: background-color 0.4s ease;
+  z-index: 0;
+}
+.au-theme-switch__input:focus-visible + .au-theme-switch__slider {
+  box-shadow: 0 0 0 2px var(--au-primary-soft, rgba(33, 150, 243, 0.35));
+}
+.au-theme-switch__input:checked + .au-theme-switch__slider {
+  background-color: var(--ts-night);
+}
+
+/* Sun / moon knob ------------------------------------------------------- */
+.au-theme-switch__sun-moon {
+  position: absolute;
+  top: var(--ts-gap);
+  left: var(--ts-gap);
+  width: var(--ts-knob);
+  height: var(--ts-knob);
+  border-radius: 50%;
+  background-color: #ffd93d;
+  transition: transform 0.4s ease, background-color 0.4s ease;
+}
+.au-theme-switch__input:checked + .au-theme-switch__slider .au-theme-switch__sun-moon {
+  transform: translateX(calc(var(--ts-w) - var(--ts-knob) - var(--ts-gap) * 2));
+  background-color: #ffffff;
+}
+
+/* SVG wrappers inside the knob — positions are percentage-based to scale */
+.au-theme-switch__moon-dot,
+.au-theme-switch__ray,
+.au-theme-switch__cloud {
+  position: absolute;
+  display: block;
+  line-height: 0;
+}
+.au-theme-switch__moon-dot svg,
+.au-theme-switch__ray svg,
+.au-theme-switch__cloud svg,
+.au-theme-switch__star svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.au-theme-switch__moon-dot {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 4;
+}
+.au-theme-switch__moon-dot circle {
+  fill: #9ca3af;
+}
+.au-theme-switch__input:checked + .au-theme-switch__slider .au-theme-switch__moon-dot {
+  opacity: 1;
+}
+.au-theme-switch__moon-dot--1 { left: 38%; top: 11%; width: 23%; height: 23%; }
+.au-theme-switch__moon-dot--2 { left: 8%;  top: 38%; width: 38%; height: 38%; }
+.au-theme-switch__moon-dot--3 { left: 62%; top: 69%; width: 11%; height: 11%; }
+
+/* Light rays (visible when in day mode) */
+.au-theme-switch__ray {
+  z-index: -1;
+  opacity: 0.1;
+}
+.au-theme-switch__ray circle { fill: #ffffff; }
+.au-theme-switch__ray--1 { left: -30%; top: -30%; width: 165%; height: 165%; }
+.au-theme-switch__ray--2 { left: -50%; top: -50%; width: 210%; height: 210%; }
+.au-theme-switch__ray--3 { left: -70%; top: -70%; width: 230%; height: 230%; }
+
+/* Clouds around the knob */
+.au-theme-switch__cloud {
+  animation: au-ts-cloud-move 6s infinite ease-in-out;
+}
+.au-theme-switch__cloud--light circle { fill: #eee; }
+.au-theme-switch__cloud--dark circle { fill: #ccc; animation-delay: 1s; }
+.au-theme-switch__cloud--1 { left: 55%; top: 44%; width: 60%; height: 60%; }
+.au-theme-switch__cloud--2 { left: 80%; top: 29%; width: 33%; height: 33%; }
+.au-theme-switch__cloud--3 { left: 32%; top: 70%; width: 50%; height: 50%; }
+.au-theme-switch__cloud--4 { left: 65%; top: 52%; width: 60%; height: 60%; }
+.au-theme-switch__cloud--5 { left: 88%; top: 41%; width: 33%; height: 33%; }
+.au-theme-switch__cloud--6 { left: 40%; top: 76%; width: 50%; height: 50%; }
+
+@keyframes au-ts-cloud-move {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(4px); }
+  80%  { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* Stars (visible only in dark mode) ------------------------------------ */
+.au-theme-switch__stars {
+  position: absolute;
+  inset: 0;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+}
+.au-theme-switch__input:checked + .au-theme-switch__slider .au-theme-switch__stars {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.au-theme-switch__star {
+  position: absolute;
+  display: block;
+  line-height: 0;
+  animation: au-ts-twinkle 2s infinite ease-in-out;
+}
+.au-theme-switch__star path { fill: #ffffff; }
+.au-theme-switch__star--1 { width: 33%; top: 6%;  left: 5%;  animation-delay: 0.3s; }
+.au-theme-switch__star--2 { width: 10%; top: 47%; left: 5%; }
+.au-theme-switch__star--3 { width: 20%; top: 59%; left: 17%; animation-delay: 0.6s; }
+.au-theme-switch__star--4 { width: 30%; top: 0;   left: 30%; animation-delay: 1.3s; }
+
+@keyframes au-ts-twinkle {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.2); }
+  80%  { transform: scale(0.8); }
+  100% { transform: scale(1); }
+}

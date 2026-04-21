@@ -1,0 +1,60 @@
+.demo-block {
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius);
+  margin: 20px 0 28px;
+  overflow: hidden;
+  background: var(--au-bg);
+}
+
+.demo-block__head {
+  padding: 14px 20px 4px;
+}
+.demo-block__head h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--au-text-1);
+}
+.demo-block__head p {
+  margin: 0;
+  color: var(--au-text-3);
+  font-size: 13px;
+}
+
+.demo-block__preview {
+  padding: 32px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background: var(--au-bg-soft);
+  border-top: 1px solid var(--au-border);
+}
+
+.demo-block__toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 8px 16px;
+  border-top: 1px dashed var(--au-border);
+  background: var(--au-bg);
+}
+.demo-block__toolbar button {
+  background: transparent;
+  border: 0;
+  color: var(--au-text-3);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s var(--au-ease);
+}
+.demo-block__toolbar button:hover {
+  color: var(--au-primary);
+  background: var(--au-primary-soft);
+}
+
+.demo-block__code {
+  margin: 0;
+  border-top: 1px solid var(--au-border);
+  border-radius: 0;
+}

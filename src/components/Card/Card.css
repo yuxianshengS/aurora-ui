@@ -1,0 +1,36 @@
+.au-card {
+  background: var(--au-bg);
+  border-radius: var(--au-radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s var(--au-ease),
+    transform 0.2s var(--au-ease);
+}
+.au-card--bordered {
+  border: 1px solid var(--au-border);
+}
+.au-card--hoverable:hover {
+  box-shadow: var(--au-shadow);
+  transform: translateY(-2px);
+}
+
+.au-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--au-border);
+  min-height: 48px;
+}
+.au-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--au-text-1);
+}
+.au-card__extra {
+  color: var(--au-text-3);
+  font-size: 13px;
+}
+.au-card__body {
+  padding: 20px;
+  color: var(--au-text-2);
+}

@@ -1,0 +1,168 @@
+.au-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+}
+
+.au-timeline__item {
+  position: relative;
+}
+
+/* ---- axis (dot + tail) shared ------------------------------------- */
+.au-timeline__axis {
+  flex: 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.au-timeline__dot {
+  --au-timeline-dot: var(--au-primary);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--au-timeline-dot);
+  box-shadow: 0 0 0 2px var(--au-bg);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--au-timeline-dot);
+}
+.au-timeline__dot--primary  { --au-timeline-dot: var(--au-primary); }
+.au-timeline__dot--success  { --au-timeline-dot: var(--au-success); }
+.au-timeline__dot--warning  { --au-timeline-dot: var(--au-warning); }
+.au-timeline__dot--danger   { --au-timeline-dot: var(--au-danger); }
+.au-timeline__dot--gray     { --au-timeline-dot: var(--au-text-3); }
+.au-timeline__dot--default  { --au-timeline-dot: var(--au-border-strong); }
+
+/* custom dot (icon / element) — let the content define visuals */
+.au-timeline__dot--custom {
+  width: auto;
+  height: auto;
+  min-width: 16px;
+  min-height: 16px;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.au-timeline__tail {
+  flex: 1;
+  width: 2px;
+  background: var(--au-border);
+  margin-top: 4px;
+  min-height: 20px;
+  border-radius: 1px;
+}
+
+/* pulse ring for in-progress nodes */
+.au-timeline__item.is-loading .au-timeline__dot::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--au-timeline-dot);
+  opacity: 0.4;
+  animation: au-timeline-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  z-index: -1;
+}
+@keyframes au-timeline-ping {
+  0%   { transform: scale(0.8); opacity: 0.5; }
+  80%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* ---- labels / content shared -------------------------------------- */
+.au-timeline__label {
+  color: var(--au-text-3);
+  font-size: 13px;
+  padding-top: 1px;
+  line-height: 1.5;
+}
+.au-timeline__content {
+  color: var(--au-text-1);
+  font-size: 14px;
+  line-height: 1.6;
+  padding-bottom: 18px;
+  min-height: 18px;
+}
+.au-timeline__item.is-last .au-timeline__content {
+  padding-bottom: 0;
+}
+
+/* hide label column when no items carry a label */
+.au-timeline:not(.au-timeline--has-label) .au-timeline__label {
+  display: none;
+}
+
+/* ---- left mode ---------------------------------------------------- */
+.au-timeline--left .au-timeline__item {
+  display: flex;
+  gap: 12px;
+  min-height: 30px;
+}
+.au-timeline--left.au-timeline--has-label .au-timeline__label {
+  flex: 0 0 120px;
+  text-align: right;
+  padding-right: 0;
+}
+.au-timeline--left .au-timeline__content {
+  flex: 1;
+  min-width: 0;
+  padding-left: 4px;
+}
+
+/* ---- right mode --------------------------------------------------- */
+.au-timeline--right .au-timeline__item {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 12px;
+  min-height: 30px;
+}
+.au-timeline--right.au-timeline--has-label .au-timeline__label {
+  flex: 0 0 120px;
+  text-align: left;
+  padding-left: 0;
+}
+.au-timeline--right .au-timeline__content {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* ---- alternate mode ---------------------------------------------- */
+.au-timeline--alternate .au-timeline__item {
+  display: grid;
+  grid-template-columns: 1fr 12px 1fr;
+  column-gap: 12px;
+  min-height: 30px;
+}
+.au-timeline--alternate .au-timeline__axis {
+  grid-column: 2;
+}
+.au-timeline--alternate .au-timeline__item--left .au-timeline__content {
+  grid-column: 3;
+  text-align: left;
+  padding-left: 4px;
+}
+.au-timeline--alternate .au-timeline__item--left .au-timeline__label {
+  grid-column: 1;
+  text-align: right;
+  padding-right: 4px;
+}
+.au-timeline--alternate .au-timeline__item--right .au-timeline__content {
+  grid-column: 1;
+  text-align: right;
+  padding-right: 4px;
+}
+.au-timeline--alternate .au-timeline__item--right .au-timeline__label {
+  grid-column: 3;
+  text-align: left;
+  padding-left: 4px;
+}

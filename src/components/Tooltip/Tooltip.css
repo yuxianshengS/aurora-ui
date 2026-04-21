@@ -1,0 +1,115 @@
+.au-tooltip {
+  --au-tooltip-bg: #333333;
+  --au-tooltip-color: #e8e8e8;
+  --au-tooltip-max-w: 240px;
+  --au-tooltip-gap: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+.au-tooltip__trigger {
+  display: inline-flex;
+}
+
+.au-tooltip__bubble {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  padding: 0.4em 0.75em;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  border-radius: 6px;
+  background: var(--au-tooltip-bg);
+  color: var(--au-tooltip-color);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+  max-width: var(--au-tooltip-max-w);
+  width: max-content;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.2s var(--au-ease), transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.au-tooltip__arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--au-tooltip-bg);
+  transform: rotate(45deg);
+}
+
+/* --- placements --- */
+.au-tooltip--top .au-tooltip__bubble {
+  bottom: calc(100% + var(--au-tooltip-gap));
+  left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) scale(0);
+}
+.au-tooltip--top .au-tooltip__arrow {
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.au-tooltip--bottom .au-tooltip__bubble {
+  top: calc(100% + var(--au-tooltip-gap));
+  left: 50%;
+  transform-origin: top center;
+  transform: translateX(-50%) scale(0);
+}
+.au-tooltip--bottom .au-tooltip__arrow {
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.au-tooltip--left .au-tooltip__bubble {
+  right: calc(100% + var(--au-tooltip-gap));
+  top: 50%;
+  transform-origin: center right;
+  transform: translateY(-50%) scale(0);
+}
+.au-tooltip--left .au-tooltip__arrow {
+  right: -4px;
+  top: 50%;
+  margin-top: -4px;
+}
+
+.au-tooltip--right .au-tooltip__bubble {
+  left: calc(100% + var(--au-tooltip-gap));
+  top: 50%;
+  transform-origin: center left;
+  transform: translateY(-50%) scale(0);
+}
+.au-tooltip--right .au-tooltip__arrow {
+  left: -4px;
+  top: 50%;
+  margin-top: -4px;
+}
+
+/* --- open state --- */
+.au-tooltip.is-open .au-tooltip__bubble {
+  opacity: 1;
+  pointer-events: auto;
+}
+.au-tooltip--shake.is-open .au-tooltip__bubble {
+  animation: au-tooltip-shake 0.5s ease-in-out both;
+}
+.au-tooltip--top.is-open .au-tooltip__bubble {
+  transform: translateX(-50%) scale(1);
+}
+.au-tooltip--bottom.is-open .au-tooltip__bubble {
+  transform: translateX(-50%) scale(1);
+}
+.au-tooltip--left.is-open .au-tooltip__bubble,
+.au-tooltip--right.is-open .au-tooltip__bubble {
+  transform: translateY(-50%) scale(1);
+}
+
+@keyframes au-tooltip-shake {
+  0%   { rotate: 0; }
+  25%  { rotate: 4deg; }
+  50%  { rotate: -4deg; }
+  75%  { rotate: 1deg; }
+  100% { rotate: 0; }
+}

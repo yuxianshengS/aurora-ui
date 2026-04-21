@@ -1,0 +1,77 @@
+:root {
+  /* Brand */
+  --au-primary: #5b8def;
+  --au-primary-hover: #3f72e0;
+  --au-primary-active: #2c5dcc;
+  --au-primary-soft: rgba(91, 141, 239, 0.1);
+
+  --au-success: #22c55e;
+  --au-warning: #f59e0b;
+  --au-danger: #ef4444;
+
+  /* Neutrals */
+  --au-text-1: #1f2937;
+  --au-text-2: #4b5563;
+  --au-text-3: #9ca3af;
+  --au-border: #e5e7eb;
+  --au-border-strong: #d1d5db;
+  --au-bg: #ffffff;
+  --au-bg-soft: #f9fafb;
+  --au-bg-mute: #f3f4f6;
+
+  /* Radius & shadow */
+  --au-radius-sm: 6px;
+  --au-radius: 10px;
+  --au-radius-lg: 16px;
+  --au-shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --au-shadow: 0 6px 24px rgba(17, 24, 39, 0.08);
+  --au-shadow-lg: 0 20px 48px rgba(17, 24, 39, 0.14);
+
+  /* Motion */
+  --au-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layout */
+  --au-navbar-h: 60px;
+  --au-sidebar-w: 240px;
+  --au-content-max: 880px;
+
+  /* Font */
+  --au-font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+    "Segoe UI", Arial, sans-serif;
+  --au-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* Navbar surface (used for sticky translucent bar) */
+  --au-navbar-bg: rgba(255, 255, 255, 0.82);
+  --au-code-inline: #c026d3;
+  --au-pre-bg: #0f172a;
+  --au-pre-text: #e2e8f0;
+}
+
+[data-theme="dark"] {
+  --au-primary: #7aa2ff;
+  --au-primary-hover: #93b4ff;
+  --au-primary-active: #b0c6ff;
+  --au-primary-soft: rgba(122, 162, 255, 0.16);
+
+  --au-success: #34d399;
+  --au-warning: #fbbf24;
+  --au-danger: #f87171;
+
+  --au-text-1: #e5e7eb;
+  --au-text-2: #9ca3af;
+  --au-text-3: #6b7280;
+  --au-border: #2a2f3a;
+  --au-border-strong: #3a414f;
+  --au-bg: #0f141b;
+  --au-bg-soft: #151b24;
+  --au-bg-mute: #1c2330;
+
+  --au-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --au-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --au-shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6);
+
+  --au-navbar-bg: rgba(15, 20, 27, 0.78);
+  --au-code-inline: #f0abfc;
+  --au-pre-bg: #05080d;
+  --au-pre-text: #e2e8f0;
+}

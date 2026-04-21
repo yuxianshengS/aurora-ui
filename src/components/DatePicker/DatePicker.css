@@ -1,0 +1,387 @@
+.au-dp {
+  --au-dp-cell: 34px;
+  --au-dp-gap: 2px;
+  position: relative;
+  display: inline-block;
+  font-family: inherit;
+}
+
+/* input ------------------------------------------------------------- */
+.au-dp__input {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 34px;
+  width: 220px;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border-strong);
+  border-radius: var(--au-radius-sm);
+  color: var(--au-text-1);
+  cursor: pointer;
+  transition:
+    border-color 0.15s var(--au-ease),
+    box-shadow 0.15s var(--au-ease);
+}
+.au-dp--range .au-dp__input {
+  width: 320px;
+}
+.au-dp--small .au-dp__input {
+  height: 28px;
+  font-size: 12px;
+}
+.au-dp--large .au-dp__input {
+  height: 42px;
+  font-size: 16px;
+}
+.au-dp__input:hover {
+  border-color: var(--au-primary);
+}
+.au-dp.is-open .au-dp__input {
+  border-color: var(--au-primary);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-dp.is-disabled .au-dp__input {
+  background: var(--au-bg-mute);
+  cursor: not-allowed;
+  color: var(--au-text-3);
+}
+
+.au-dp__field {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: inherit;
+}
+.au-dp__field::placeholder {
+  color: var(--au-text-3);
+}
+.au-dp__field.is-active {
+  color: var(--au-primary);
+}
+.au-dp__sep {
+  color: var(--au-text-3);
+  font-size: 0.9em;
+}
+
+.au-dp__clear {
+  border: 0;
+  background: transparent;
+  color: var(--au-text-3);
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s var(--au-ease);
+}
+.au-dp__clear:hover {
+  color: var(--au-text-1);
+}
+
+/* popup ------------------------------------------------------------- */
+.au-dp__popup {
+  /* popup is portaled to body — must redeclare vars that the grid relies on */
+  --au-dp-cell: 34px;
+  --au-dp-gap: 2px;
+  z-index: 1000;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  animation: au-dp-pop 0.18s var(--au-ease);
+  padding: 4px;
+}
+
+@keyframes au-dp-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.au-dp__panels {
+  display: flex;
+}
+.au-dp__panel {
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  border-right: 1px solid var(--au-border);
+  min-width: 260px;
+}
+.au-dp__panel:last-child {
+  border-right: 0;
+}
+.au-dp__side-label {
+  font-size: 12px;
+  color: var(--au-text-3);
+  padding: 2px 2px 6px;
+}
+
+/* nav --------------------------------------------------------------- */
+.au-dp__body {
+  min-width: 240px;
+}
+.au-dp__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--au-border);
+  margin-bottom: 6px;
+}
+.au-dp__nav-btn {
+  border: 0;
+  background: transparent;
+  color: var(--au-text-2);
+  width: 24px;
+  height: 24px;
+  border-radius: var(--au-radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.12s var(--au-ease), color 0.12s var(--au-ease);
+}
+.au-dp__nav-btn:hover {
+  color: var(--au-primary);
+  background: var(--au-primary-soft);
+}
+.au-dp__nav-label {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--au-text-1);
+}
+.au-dp__nav-link {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--au-radius-sm);
+  transition: color 0.12s var(--au-ease);
+}
+.au-dp__nav-link:hover {
+  color: var(--au-primary);
+}
+
+.au-dp__footer {
+  border-top: 1px solid var(--au-border);
+  padding: 6px 0;
+  text-align: center;
+}
+.au-dp__today-link {
+  border: 0;
+  background: transparent;
+  color: var(--au-primary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: var(--au-radius-sm);
+  transition: background 0.12s var(--au-ease);
+}
+.au-dp__today-link:hover {
+  background: var(--au-primary-soft);
+}
+
+/* weekdays + grid --------------------------------------------------- */
+.au-dp__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, var(--au-dp-cell));
+  gap: var(--au-dp-gap);
+  padding: 4px 0;
+  font-size: 12px;
+  color: var(--au-text-3);
+  text-align: center;
+}
+
+.au-dp__grid--date {
+  display: flex;
+  flex-direction: column;
+  gap: var(--au-dp-gap);
+}
+.au-dp__row {
+  display: grid;
+  grid-template-columns: repeat(7, var(--au-dp-cell));
+  gap: var(--au-dp-gap);
+}
+.au-dp__grid--weeks {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+.au-dp__cell--week {
+  width: 100%;
+  height: 36px;
+  font-size: 13px;
+}
+
+.au-dp__grid--year,
+.au-dp__grid--month {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+.au-dp__grid--quarter {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.au-dp__cell {
+  border: 0;
+  background: transparent;
+  color: var(--au-text-1);
+  padding: 0;
+  width: var(--au-dp-cell);
+  height: var(--au-dp-cell);
+  border-radius: var(--au-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 13px;
+  transition: background 0.12s var(--au-ease), color 0.12s var(--au-ease);
+  position: relative;
+}
+.au-dp__cell.is-muted {
+  color: var(--au-text-3);
+  opacity: 0.55;
+}
+.au-dp__cell.is-today {
+  box-shadow: inset 0 0 0 1px var(--au-primary);
+}
+.au-dp__cell:hover:not(.is-selected) {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+}
+.au-dp__cell.is-selected {
+  background: var(--au-primary);
+  color: #fff;
+}
+.au-dp__cell.is-in-range {
+  background: var(--au-primary-soft);
+  border-radius: 0;
+}
+.au-dp__cell.is-range-start {
+  background: var(--au-primary);
+  color: #fff;
+  border-top-left-radius: var(--au-radius-sm);
+  border-bottom-left-radius: var(--au-radius-sm);
+}
+.au-dp__cell.is-range-end {
+  background: var(--au-primary);
+  color: #fff;
+  border-top-right-radius: var(--au-radius-sm);
+  border-bottom-right-radius: var(--au-radius-sm);
+}
+.au-dp__cell.is-range-start.is-range-end {
+  border-radius: var(--au-radius-sm);
+}
+
+.au-dp__cell--yqm {
+  width: 100%;
+  height: 56px;
+  font-size: 14px;
+}
+
+/* time -------------------------------------------------------------- */
+.au-dp__time {
+  display: flex;
+  gap: 4px;
+}
+/* only draw a divider when the time columns follow a date/month/etc body */
+.au-dp__body + .au-dp__time {
+  border-left: 1px solid var(--au-border);
+  padding-left: 8px;
+  margin-left: 2px;
+}
+.au-dp__time-col {
+  width: 56px;
+  height: 224px;
+  overflow: hidden;
+  border-left: 1px solid var(--au-border);
+  position: relative;
+}
+/* when time sits beside a date body, match the date body height
+   (nav + weekdays + 6 rows of 34px cells ≈ 280px) */
+.au-dp__body + .au-dp__time .au-dp__time-col {
+  height: 280px;
+}
+.au-dp__time-col:first-child {
+  border-left: 0;
+}
+.au-dp__time-col-inner {
+  overflow-y: auto;
+  height: 100%;
+  padding: 0 4px;
+  scrollbar-width: thin;
+}
+.au-dp__time-col-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.au-dp__time-col-inner::-webkit-scrollbar-thumb {
+  background: var(--au-border);
+  border-radius: 2px;
+}
+.au-dp__time-cell {
+  display: block;
+  width: 100%;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--au-text-1);
+  font: inherit;
+  font-size: 13px;
+  border-radius: var(--au-radius-sm);
+  cursor: pointer;
+  text-align: center;
+  margin: 2px 0;
+  transition: background 0.12s var(--au-ease);
+}
+.au-dp__time-cell:hover {
+  background: var(--au-primary-soft);
+}
+.au-dp__time-cell.is-selected {
+  background: var(--au-primary);
+  color: #fff;
+}
+
+.au-dp__time-footer {
+  display: flex;
+  padding: 8px 10px;
+  border-top: 1px solid var(--au-border);
+  justify-content: flex-end;
+}
+.au-dp__footer-actions {
+  display: flex;
+  gap: 6px;
+}
+.au-dp__ok {
+  height: 28px;
+  padding: 0 14px;
+  border-radius: var(--au-radius-sm);
+  border: 0;
+  background: var(--au-primary);
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s var(--au-ease);
+}
+.au-dp__ok:hover {
+  background: var(--au-primary-hover);
+}
