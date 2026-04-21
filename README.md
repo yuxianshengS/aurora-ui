@@ -2,96 +2,50 @@
 
 # AuroraUI
 
-轻盈如极光的 React 组件库 & 官网文档站
+**轻盈如极光的 React 组件库**
 
-[![Deploy](https://github.com/yuxianshengS/aurora-ui/actions/workflows/deploy.yml/badge.svg)](https://github.com/yuxianshengS/aurora-ui/actions/workflows/deploy.yml)
-![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-5-646cff?logo=vite&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
-
-**[🌐 在线预览](https://yuxianshengs.github.io/aurora-ui/)**
+[🌐 在线预览](https://yuxianshengs.github.io/aurora-ui/)
 
 </div>
 
 ---
 
-## ✨ 特色
+## 关于 AuroraUI
 
-- 🎨 **极光主题** — 渐变色系 + 柔和毛玻璃质感，告别千篇一律的方块按钮
-- 🌓 **暗色模式** — 内置 `ThemeSwitch` 一键切换，CSS 变量驱动
-- 📦 **零样式污染** — 每个组件独立 CSS，不依赖 CSS-in-JS 运行时
-- 📊 **开箱可视化** — 基于 ECharts + ECharts-GL 的 3D 图表组件
-- 🧩 **完整 TS 类型** — 所有 props 都有导出的类型定义
-- ⚡️ **Vite 驱动** — 冷启动毫秒级，HMR 飞快
+AuroraUI 是一套追求"**视觉质感**"与"**克制留白**"的 React 组件库。
+灵感源自极光（Aurora）——渐变的色带、柔和的过渡、轻盈的动势，
+希望每一个组件不只是"能用"，而是让界面本身成为一种**氛围**。
 
-## 📦 组件一览
+我们相信：好的 UI 不需要复杂的装饰，只需要恰到好处的**光**、**色**、**距**。
 
-| 分类 | 组件 |
-|------|------|
-| 通用 | `Button` |
-| 数据录入 | `Input` · `TextArea` · `Switch` · `ThemeSwitch` · `DatePicker` |
-| 数据展示 | `Card` · `Wallet` · `Timeline` |
-| 反馈 | `Tooltip` |
-| 可视化 | `Bar3D` |
+## 设计理念
 
-## 🚀 快速开始
+- **极光配色** — 以蓝紫渐变为主色，辅以柔和的毛玻璃与微光反射，避免纯色块的平面感
+- **呼吸感留白** — 组件内外的间距遵循统一的节奏，拒绝堆砌与拥挤
+- **双主题** — 暗色为主，亮色为辅，CSS 变量驱动，一键切换
+- **低心智负担** — 属性命名直觉，默认效果即最佳实践，上手即用
 
-```bash
-pnpm install        # 或 npm install
-pnpm dev            # 启动开发服务器
-pnpm build          # 构建生产版本
-pnpm preview        # 本地预览构建产物
-```
+## 组件概览
 
-默认运行在 http://localhost:5173
+| 分类 | 组件 | 说明 |
+|------|------|------|
+| 通用 | **Button** | 多层次按钮，支持主次、危险、幽灵等形态 |
+| 数据录入 | **Input / TextArea** | 轻量输入框，支持自适应高度 |
+|  | **Switch** | 丝滑的开关切换 |
+|  | **ThemeSwitch** | 暗亮主题一键切换 |
+|  | **DatePicker** | 极简日期选择器，支持年/月/日模式 |
+| 数据展示 | **Card** | 基础容器，带渐变描边 |
+|  | **Wallet** | 卡包式视觉，错落堆叠展示 |
+|  | **Timeline** | 垂直时间轴，支持多色节点 |
+| 反馈 | **Tooltip** | 悬浮提示，四向定位 |
+| 可视化 | **Bar3D** | 基于 ECharts-GL 的 3D 柱状图 |
 
-## 📂 项目结构
+## 适合谁用
 
-```
-aurora-ui/
-├── .github/workflows/    # GitHub Actions（自动部署到 Pages）
-├── public/               # 静态资源
-├── src/
-│   ├── components/       # 组件库本体 (Button / Input / Card / ...)
-│   ├── site-components/  # 官网专用 (Navbar / Sidebar / DemoBlock / Playground)
-│   ├── layouts/          # 文档页布局
-│   ├── pages/            # 各文档页 (Home / ButtonDoc / ...)
-│   ├── hooks/            # 自定义 hooks (useTheme)
-│   ├── data/nav.ts       # 左侧导航数据
-│   └── styles/           # 全局样式 & CSS 变量
-├── index.html
-├── vite.config.ts
-└── package.json
-```
+- 想让作品集/个人站点看起来不那么"Bootstrap"的独立开发者
+- 偏爱暗色主题、渐变质感、微光动效的设计师
+- 想要组件 + 数据可视化一套搞定的小型 Dashboard 项目
 
-## 🧩 新增组件的 5 步流程
-
-1. 在 `src/components/` 下新建 `YourComp/` 目录，包含：
-   - `YourComp.tsx` — 组件实现
-   - `YourComp.css` — 样式
-   - `index.ts` — 导出
-2. 在 `src/components/index.ts` 中统一导出组件与类型
-3. 在 `src/pages/` 下新建 `YourCompDoc.tsx` 文档页（参考已有文档页的结构：Demo + API 表格）
-4. 在 `src/App.tsx` 中注册路由
-5. 在 `src/data/nav.ts` 中加入侧边栏导航项
-
-## 🛠 技术栈
-
-- **React 18** + **TypeScript 5**
-- **Vite 5** — 构建工具
-- **React Router 6** — 文档页路由
-- **ECharts 5 + ECharts-GL** — 3D 可视化
-- **原生 CSS** — 基于 CSS 变量的主题系统，无运行时开销
-
-## 🌐 部署
-
-推送到 `main` 分支会触发 GitHub Actions 自动构建并部署到 GitHub Pages。
-
-- 线上地址：https://yuxianshengs.github.io/aurora-ui/
-- Workflow 配置：`.github/workflows/deploy.yml`
-
-> ⚠️ 如果 fork 本仓库，记得修改 `vite.config.ts` 里的 `base` 字段为你自己的仓库名。
-
-## 📄 License
+## License
 
 MIT
