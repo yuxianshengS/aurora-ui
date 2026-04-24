@@ -4,7 +4,7 @@
 
 **轻盈如极光的 React 组件库**
 
-[🌐 在线预览](https://yuxianshengs.github.io/aurora-ui/)
+[🌐 在线预览](https://yuxianshengs.github.io/aurora-ux/) · [📦 npm](https://www.npmjs.com/package/aurora-ux)
 
 </div>
 
