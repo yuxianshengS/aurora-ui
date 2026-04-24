@@ -28,7 +28,10 @@
       "Bash(node *)",
       "Bash(grep *)",
       "Skill(claude-api)",
-      "Bash(pnpm remove *)"
+      "Bash(pnpm remove *)",
+      "Bash(npm pack *)",
+      "Bash(pnpm build:lib)",
+      "Bash(git *)"
     ]
   }
 }

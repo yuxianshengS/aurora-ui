@@ -2694,7 +2694,7 @@ export const wrapAsComponent = (
     ? `import React, { useState } from 'react';`
     : `import React from 'react';`;
   const auroraImport = importNames.length
-    ? `import { ${importNames.join(', ')} } from 'aurora-ui';`
+    ? `import { ${importNames.join(', ')} } from 'aurora-ux';`
     : '';
   const imports = [reactImport, auroraImport].filter(Boolean).join('\n');
   const body = bodyLines.join('\n') || `${pad(3)}{/* 空页面 */}`;

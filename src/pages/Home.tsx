@@ -65,7 +65,7 @@ const Home: React.FC = () => {
       <section className="home-cta">
         <h2 className="home-section__title">现在就试一试</h2>
         <pre>
-          <code>npm install aurora-ui</code>
+          <code>npm install aurora-ux</code>
         </pre>
         <Link to="/docs/getting-started">
           <Button type="primary">阅读快速开始 →</Button>

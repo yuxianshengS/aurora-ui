@@ -603,7 +603,7 @@ const DashboardExample: React.FC = () => {
           </div>
 
           <footer className="dash__footer">
-            Aurora Admin · 由 aurora-ui 驱动 ·{' '}
+            Aurora Admin · 由 aurora-ux 驱动 ·{' '}
             <Link to="/docs/getting-started">组件文档</Link>
           </footer>
         </main>

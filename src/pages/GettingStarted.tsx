@@ -13,13 +13,13 @@ const GettingStarted: React.FC = () => (
     <pre>
       <code>
         {`# npm
-npm install aurora-ui
+npm install aurora-ux
 
 # pnpm
-pnpm add aurora-ui
+pnpm add aurora-ux
 
 # yarn
-yarn add aurora-ui`}
+yarn add aurora-ux`}
       </code>
     </pre>
 
@@ -28,13 +28,13 @@ yarn add aurora-ui`}
       在应用入口（如 <code>main.tsx</code>）中引入基础样式：
     </p>
     <pre>
-      <code>{`import 'aurora-ui/dist/style.css';`}</code>
+      <code>{`import 'aurora-ux/dist/style.css';`}</code>
     </pre>
 
     <h2>使用组件</h2>
     <pre>
       <code>
-        {`import { Button, Card } from 'aurora-ui';
+        {`import { Button, Card } from 'aurora-ux';
 
 export default function App() {
   return (
