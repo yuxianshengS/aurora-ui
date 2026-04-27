@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Menu,
@@ -22,6 +22,10 @@ import {
   Tabs,
   DayTimeline,
   Timeline,
+  AuroraBg,
+  GradientText,
+  NumberRoll,
+  GlowCard,
 } from '../components';
 import type {
   MenuItem,
@@ -208,6 +212,26 @@ const DashboardExample: React.FC = () => {
   const heatmapData = useMemo(genHeatmap, []);
   const [feed, setFeed] = useState<ActivityItem[]>(activities);
 
+  // 实时跳动: GMV / 订单数 / 转化率, 给看板"活着"的感觉
+  const [gmv, setGmv] = useState(328450);
+  const [orderCnt, setOrderCnt] = useState(342);
+  const [conversion, setConversion] = useState(4.8);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setGmv((v) => v + Math.floor(Math.random() * 1200));
+      setOrderCnt((v) => v + (Math.random() < 0.4 ? 1 : 0));
+      setConversion((v) => Math.max(3.5, Math.min(6, v + (Math.random() - 0.5) * 0.05)));
+    }, 2200);
+    return () => clearInterval(id);
+  }, []);
+
+  const [now, setNow] = useState<Date>(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const clockStr = now.toLocaleTimeString('zh-CN', { hour12: false });
+
   const orderColumns: TableColumn<Order>[] = [
     { title: '订单号', dataIndex: 'id', width: 170 },
     {
@@ -291,8 +315,20 @@ const DashboardExample: React.FC = () => {
       {/* ---- Sidebar ---- */}
       <aside className="dash__sider">
         <div className="dash__brand">
-          <span className="dash__brand-mark" aria-hidden />
-          {!collapsed && <span className="dash__brand-name">Aurora · Admin</span>}
+          <span className="dash__brand-mark" aria-hidden>
+            <AuroraBg preset="cosmic" intensity={0.95} blur={14} grain={false} />
+          </span>
+          {!collapsed && (
+            <GradientText
+              preset="aurora"
+              size={15}
+              weight={700}
+              as="span"
+              className="dash__brand-name"
+            >
+              Aurora · Admin
+            </GradientText>
+          )}
         </div>
         <Menu
           mode="inline"
@@ -356,32 +392,80 @@ const DashboardExample: React.FC = () => {
 
         {/* content */}
         <main className="dash__content">
-          <div className="dash__page-head">
-            <h1 className="dash__h1">今日概览</h1>
-            <span className="dash__page-sub">实时数据 · 2026-04-22</span>
-          </div>
+          {/* === Aurora Hero: 实时大数字 GMV + 时间 + 状态 === */}
+          <AuroraBg preset="aurora" intensity={0.7} blur={90} className="dash__hero">
+            <div className="dash__hero-inner">
+              <div className="dash__hero-left">
+                <div className="dash__hero-row">
+                  <span className="dash__hero-pulse" />
+                  <span className="dash__hero-status">实时同步中</span>
+                  <span className="dash__hero-clock">{clockStr}</span>
+                </div>
+                <h1 className="dash__hero-title">
+                  <GradientText preset="aurora" size={28} weight={800} as="span">
+                    今日概览
+                  </GradientText>
+                </h1>
+                <p className="dash__hero-sub">
+                  本日 GMV · 截至 {clockStr.slice(0, 5)} · 数据每 2 秒同步
+                </p>
+              </div>
+              <div className="dash__hero-right">
+                <div className="dash__hero-bignum">
+                  <NumberRoll
+                    value={gmv}
+                    prefix="¥ "
+                    size={56}
+                    weight={800}
+                    color="white"
+                  />
+                </div>
+                <div className="dash__hero-deltas">
+                  <span className="dash__hero-delta">
+                    <NumberRoll value={orderCnt} size={18} weight={700} color="white" />
+                    <span>订单</span>
+                  </span>
+                  <span className="dash__hero-delta">
+                    <NumberRoll
+                      value={conversion}
+                      precision={2}
+                      size={18}
+                      weight={700}
+                      suffix="%"
+                      color="white"
+                    />
+                    <span>转化</span>
+                  </span>
+                  <span className="dash__hero-delta">
+                    <NumberRoll value={feed.length} size={18} weight={700} color="white" />
+                    <span>事件</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </AuroraBg>
 
           {/* KPI Row */}
           <div className="dash__kpi-row">
             <KpiCard
               title="今日 GMV"
               prefix="¥"
-              value={328450}
+              value={gmv}
               status="primary"
               delta={{ value: 12.5, label: '较昨日' }}
               trend={{ data: [6, 8, 7, 9, 11, 10, 13, 12, 15, 16, 14, 18], type: 'area' }}
             />
             <KpiCard
               title="新增订单"
-              value={342}
+              value={orderCnt}
               status="success"
               delta={{ value: 8.2, label: '较昨日' }}
               trend={{ data: [3, 4, 3, 5, 6, 5, 7, 8, 7, 9, 10, 11], type: 'area' }}
             />
             <KpiCard
               title="支付转化率"
-              value={4.8}
-              precision={1}
+              value={Number(conversion.toFixed(2))}
+              precision={2}
               suffix="%"
               status="warning"
               delta={{ value: -0.7, label: '较昨日' }}
@@ -537,10 +621,19 @@ const DashboardExample: React.FC = () => {
 
           {/* Row: 3 panels */}
           <div className="dash__grid-3">
-            <div className="dash__panel dash__panel--centered">
+            <GlowCard
+              glowColor="#10b981"
+              intensity={0.5}
+              radius={12}
+              padding={20}
+              className="dash__panel dash__panel--centered dash__panel--glow"
+            >
               <div className="dash__panel-head">
                 <h3>服务健康度</h3>
-                <span className="dash__panel-meta">实时</span>
+                <span className="dash__panel-meta">
+                  <span className="dash__legend-dot" style={{ background: '#10b981' }} />
+                  健康
+                </span>
               </div>
               <Gauge
                 value={92}
@@ -558,18 +651,24 @@ const DashboardExample: React.FC = () => {
               <div className="dash__meters">
                 <div className="dash__meter">
                   <span>响应</span>
-                  <span className="dash__meter-val">182ms</span>
+                  <span className="dash__meter-val">
+                    <NumberRoll value={182} size={15} weight={700} suffix="ms" />
+                  </span>
                 </div>
                 <div className="dash__meter">
                   <span>可用性</span>
-                  <span className="dash__meter-val">99.98%</span>
+                  <span className="dash__meter-val">
+                    <NumberRoll value={99.98} precision={2} size={15} weight={700} suffix="%" />
+                  </span>
                 </div>
                 <div className="dash__meter">
                   <span>错误率</span>
-                  <span className="dash__meter-val">0.02%</span>
+                  <span className="dash__meter-val">
+                    <NumberRoll value={0.02} precision={2} size={15} weight={700} suffix="%" />
+                  </span>
                 </div>
               </div>
-            </div>
+            </GlowCard>
 
             <div className="dash__panel">
               <div className="dash__panel-head">
@@ -603,8 +702,13 @@ const DashboardExample: React.FC = () => {
           </div>
 
           <footer className="dash__footer">
-            Aurora Admin · 由 aurora-ux 驱动 ·{' '}
+            <GradientText preset="aurora" size={13} weight={600} as="span">
+              Aurora Admin
+            </GradientText>
+            <span> · 由 aurora-ux 驱动 · </span>
             <Link to="/docs/getting-started">组件文档</Link>
+            <span> · </span>
+            <Link to="/builder">搭建器</Link>
           </footer>
         </main>
       </div>
