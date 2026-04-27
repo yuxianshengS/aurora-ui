@@ -342,14 +342,39 @@
 }
 
 .home-code__window {
+  position: relative;
   background: #14161e;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   box-shadow:
     0 30px 60px -20px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(91, 141, 239, 0.08),
-    0 0 80px -20px rgba(91, 141, 239, 0.4);
+    -40px 30px 80px -20px rgba(99, 102, 241, 0.35),  /* 靛 (左下) */
+    20px -10px 80px -20px rgba(168, 85, 247, 0.3),   /* 紫 (右上) */
+    -10px -40px 70px -20px rgba(34, 211, 238, 0.28), /* 青 (上方) */
+    40px 40px 90px -20px rgba(244, 114, 182, 0.25);  /* 粉 (右下) */
+}
+.home-code__window::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.5),
+    rgba(168, 85, 247, 0.5),
+    rgba(34, 211, 238, 0.5),
+    rgba(16, 185, 129, 0.5),
+    rgba(244, 114, 182, 0.5)
+  );
+  -webkit-mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
 }
 .home-code__window-bar {
   display: flex;
@@ -388,16 +413,17 @@
   background: transparent;
 }
 
-/* JSX 高亮 token 配色 (Aurora 调色板) */
+/* JSX 高亮: 严格使用 AuroraBg 'aurora' 预设的 5 个原色 + 暖金做 string */
+/* preset = ['#6366f1', '#a855f7', '#22d3ee', '#10b981', '#f472b6'] */
 .tk-root        { display: block; white-space: pre; }
 .tk-root > div  { white-space: pre; min-height: 1.7em; }
-.tk-k   { color: #c084fc; }                         /* keyword 紫 */
-.tk-t   { color: #5eead4; font-weight: 600; }       /* 组件名 青绿 */
-.tk-a   { color: #f472b6; font-style: italic; }     /* attr 粉 */
-.tk-s   { color: #fde68a; }                         /* string 暖金 */
-.tk-n   { color: #93c5fd; }                         /* number 冷蓝 */
+.tk-k   { color: #a855f7; }                         /* keyword → 极光紫 */
+.tk-t   { color: #22d3ee; font-weight: 600; }       /* 组件名 → 极光青 (与 hero $ 同色) */
+.tk-a   { color: #f472b6; }                         /* attr → 极光粉 */
+.tk-s   { color: #fde68a; }                         /* string → 暖金 (中性, 跳出冷色系给字符串呼吸) */
+.tk-n   { color: #10b981; }                         /* number → 极光绿 */
+.tk-f   { color: #6366f1; font-weight: 600; }       /* function → 极光靛 */
 .tk-p   { color: rgba(255, 255, 255, 0.42); }       /* 标点 dim */
-.tk-f   { color: #fbbf24; font-weight: 600; }       /* function name 金 */
 .tk-text{ color: rgba(255, 255, 255, 0.92); }       /* JSX 文本节点 */
 
 /* ===== 响应式 ===== */
