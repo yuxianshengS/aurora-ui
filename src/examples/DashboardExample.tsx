@@ -26,7 +26,11 @@ import {
   GradientText,
   NumberRoll,
   GlowCard,
+  Icon,
 } from '../components';
+
+/** 短手: 菜单/下拉用的图标包装 */
+const I = (name: string, size = 16) => <Icon name={name} size={size} />;
 import type {
   MenuItem,
   TableColumn,
@@ -184,23 +188,23 @@ const genHeatmap = () => {
 };
 
 const sidebarItems: MenuItem[] = [
-  { key: 'overview', label: '概览', icon: <span>📊</span> },
+  { key: 'overview', label: '概览', icon: I('home') },
   {
     key: 'orders',
     label: '订单',
-    icon: <span>🧾</span>,
+    icon: I('order'),
     children: [
-      { key: 'orders-all', label: '全部订单' },
-      { key: 'orders-refund', label: '退款处理' },
-      { key: 'orders-audit', label: '审计日志' },
+      { key: 'orders-all', label: '全部订单', icon: I('order-manage') },
+      { key: 'orders-refund', label: '退款处理', icon: I('order-rejected') },
+      { key: 'orders-audit', label: '审计日志', icon: I('order-inspection') },
     ],
   },
-  { key: 'customers', label: '客户', icon: <span>👥</span> },
-  { key: 'products', label: '商品', icon: <span>📦</span> },
-  { key: 'reports', label: '报表', icon: <span>📈</span> },
+  { key: 'customers', label: '客户', icon: I('customer') },
+  { key: 'products', label: '商品', icon: I('product') },
+  { key: 'reports', label: '报表', icon: I('charts-curve') },
   { type: 'divider' },
-  { key: 'settings', label: '设置', icon: <span>⚙️</span> },
-  { key: 'help', label: '帮助', icon: <span>❓</span> },
+  { key: 'settings', label: '设置', icon: I('settings') },
+  { key: 'help', label: '帮助', icon: I('help') },
 ];
 
 /* ---------- main ---------- */
@@ -274,10 +278,10 @@ const DashboardExample: React.FC = () => {
           placement="bottomRight"
           menu={{
             items: [
-              { key: 'view', label: '查看详情', icon: <span>👁</span> },
-              { key: 'invoice', label: '开具发票', icon: <span>🧾</span> },
+              { key: 'view', label: '查看详情', icon: I('view') },
+              { key: 'invoice', label: '开具发票', icon: I('invoice') },
               { type: 'divider' },
-              { key: 'cancel', label: '取消订单', icon: <span>🗑</span>, danger: true },
+              { key: 'cancel', label: '取消订单', icon: I('delete'), danger: true },
             ],
             onClick: ({ key }) => {
               if (key === 'cancel') {
@@ -291,7 +295,9 @@ const DashboardExample: React.FC = () => {
             },
           }}
         >
-          <button className="dash-icon-btn" aria-label="更多">⋯</button>
+          <button className="dash-icon-btn" aria-label="更多">
+            <Icon name="more" size={16} />
+          </button>
         </Dropdown>
       ),
     },
@@ -362,22 +368,22 @@ const DashboardExample: React.FC = () => {
             <Input
               placeholder="搜索订单、客户…"
               style={{ width: 220 }}
-              prefix={<span style={{ fontSize: 13 }}>🔍</span>}
+              prefix={<Icon name="search" size={14} />}
             />
             <Badge dot>
               <button className="dash-icon-btn" aria-label="通知" onClick={triggerDemoEvent} title="点击模拟新事件">
-                🔔
+                <Icon name="trade-alert" size={18} />
               </button>
             </Badge>
             <Dropdown
               placement="bottomRight"
               menu={{
                 items: [
-                  { key: 'profile', label: '个人资料', icon: <span>👤</span> },
-                  { key: 'billing', label: '订阅与账单', icon: <span>💳</span> },
-                  { key: 'settings', label: '设置', icon: <span>⚙️</span> },
+                  { key: 'profile', label: '个人资料', icon: I('customer') },
+                  { key: 'billing', label: '订阅与账单', icon: I('money-credit-card') },
+                  { key: 'settings', label: '设置', icon: I('settings') },
                   { type: 'divider' },
-                  { key: 'logout', label: '退出登录', icon: <span>🚪</span>, danger: true },
+                  { key: 'logout', label: '退出登录', icon: I('return'), danger: true },
                 ],
                 onClick: ({ key }) => message.info(`点击: ${key}`),
               }}
