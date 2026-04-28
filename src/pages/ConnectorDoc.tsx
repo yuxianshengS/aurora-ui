@@ -544,8 +544,6 @@ const NetworkTopologyDemo: React.FC = () => {
         container={stageRef}
         defaultArrow="end"
         defaultType="step"
-        autoAvoid
-        style={{ zIndex: 2 }}
       >
         {/* Tier 标签 (装饰用) */}
         <div className="net-tier-label" style={{ top: 50 }}>EDGE</div>
@@ -768,7 +766,7 @@ const app1 = useRef(null), app2 = useRef(null);
 const dbm = useRef(null), dbr = useRef(null);
 
 <div ref={stageRef} style={{ position: 'relative', height: 880 }}>
-  <ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step" autoAvoid>
+  <ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
     <NetNode ref={inet} tier="edge"    icon="earth"       title="Internet"      pos={{ left: 370, top: 40 }} />
     <NetNode ref={fw}   tier="edge"    icon="lock"        title="Firewall"      pulse="warning" pos={{ left: 360, top: 160 }} />
     <NetNode ref={lb}   tier="gateway" icon="connections" title="Load Balancer" pulse="live"    pos={{ left: 358, top: 300 }} />
