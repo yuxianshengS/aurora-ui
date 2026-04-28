@@ -476,6 +476,7 @@ const AvoidDemo: React.FC = () => {
           defaultType="step"
           autoAvoid={avoid}
           obstacles={[obstacle]}
+          style={{ zIndex: 2 }}
         >
           <Box ref={a} style={{ left: 30, top: 30 }}>起点 A</Box>
           <Box ref={obstacle} variant="hub" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -539,7 +540,13 @@ const NetworkTopologyDemo: React.FC = () => {
 
   return (
     <div ref={stageRef} className="cd-net-stage">
-      <ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step" autoAvoid>
+      <ConnectorGroup
+        container={stageRef}
+        defaultArrow="end"
+        defaultType="step"
+        autoAvoid
+        style={{ zIndex: 2 }}
+      >
         {/* Tier 标签 (装饰用) */}
         <div className="net-tier-label" style={{ top: 50 }}>EDGE</div>
         <div className="net-tier-label" style={{ top: 310 }}>GATEWAY</div>
