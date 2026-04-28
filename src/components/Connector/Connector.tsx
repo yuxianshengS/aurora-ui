@@ -247,7 +247,7 @@ const ConnectorGroup: React.FC<ConnectorGroupProps> = ({
   // 直接写入 DOM 的 refs (绕过 React, 避免滚动时 1-2 帧渲染延迟造成抖动)
   const pathRefs = useRef<Map<string, SVGPathElement>>(new Map());
   const gradRefs = useRef<Map<string, SVGLinearGradientElement>>(new Map());
-  const labelRefs = useRef<Map<string, SVGForeignObjectElement>>(new Map());
+  const labelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const recompute = useCallback(() => {
     const lines: ResolvedLine[] = [];
@@ -481,8 +481,8 @@ const ConnectorGroup: React.FC<ConnectorGroupProps> = ({
       }
       const lbl = labelRefs.current.get(line.id);
       if (lbl) {
-        lbl.setAttribute('x', String(line.mid.x - 60));
-        lbl.setAttribute('y', String(line.mid.y - 12));
+        lbl.style.left = `${line.mid.x}px`;
+        lbl.style.top = `${line.mid.y}px`;
       }
     });
 
@@ -723,35 +723,59 @@ const ConnectorGroup: React.FC<ConnectorGroupProps> = ({
           </React.Fragment>
         );
       })}
+    </svg>
+  );
+
+  // 标签层 — 抽出到 SVG 外, 单独的 HTML div, 这样 SVG 可以沉到节点下 (z-index:-1)
+  // 而 label 仍然浮在节点上方 (z-index:1) 不被遮挡
+  const labelsLayerStyle: React.CSSProperties = containerEl
+    ? { position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }
+    : { position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 2 };
+  const labelsLayer = (
+    <div className="au-connector-labels" style={labelsLayerStyle}>
       {drawn.map((line) => {
         if (line.spec.label == null) return null;
         return (
-          <foreignObject
+          <div
             key={`lbl-${line.id}`}
             ref={(el) => {
               if (el) labelRefs.current.set(line.id, el);
               else labelRefs.current.delete(line.id);
             }}
-            x={line.mid.x - 60}
-            y={line.mid.y - 12}
-            width={120}
-            height={24}
-            style={{ overflow: 'visible', pointerEvents: 'none' }}
+            className="au-connector__label"
+            style={{
+              position: 'absolute',
+              left: line.mid.x,
+              top: line.mid.y,
+              transform: 'translate(-50%, -50%)',
+            }}
           >
-            <div className="au-connector__label">{line.spec.label}</div>
-          </foreignObject>
+            {line.spec.label}
+          </div>
         );
       })}
-    </svg>
+    </div>
   );
 
   return (
     <ConnectorContext.Provider value={ctxValue}>
       {children}
       {containerEl
-        ? createPortal(svg, containerEl)
+        ? createPortal(
+            <>
+              {svg}
+              {labelsLayer}
+            </>,
+            containerEl,
+          )
         : typeof document !== 'undefined'
-        ? createPortal(svg, document.body)
+        ? createPortal(
+            <>
+              {svg}
+              {labelsLayer}
+            </>,
+            document.body,
+          )
         : null}
     </ConnectorContext.Provider>
   );
