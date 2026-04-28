@@ -167,30 +167,15 @@ const Leaf = React.forwardRef<HTMLDivElement, LeafProps>(({ color, title, pos },
 ));
 Leaf.displayName = 'Leaf';
 
-const CODE = `<ConnectorGroup container={stageRef} defaultArrow="none" defaultType="curve">
-  {/* 中心 (使用 GradientText 强调) */}
-  <div ref={center} style={{ position:'absolute', left:'50%', top:'50%', transform:'translate(-50%,-50%)' }}>
-    <GlowCard glowColor="#a855f7" padding="14px 24px" radius={999}>
-      <GradientText preset="aurora" size={20} weight={800}>Aurora UI</GradientText>
-    </GlowCard>
-  </div>
-
-  {/* 4 主分支 (上下左右) */}
-  <Branch ref={designB} color="#22d3ee" title="设计" pos={{ left: 60, top: 60 }} />
-  <Branch ref={compB}   color="#a855f7" title="组件" pos={{ right: 60, top: 60 }} />
-  <Branch ref={engB}    color="#10b981" title="工程" pos={{ left: 60, bottom: 60 }} />
-  <Branch ref={ecoB}    color="#f472b6" title="生态" pos={{ right: 60, bottom: 60 }} />
-
-  {/* leaves (每分支 3 个) — Leaf 用 pill 样式, 颜色派生主分支 */}
-  ...
-
-  {/* 中心 → 主分支: curve 曲线放射 */}
+const CODE = `// 关键: 中心放射 curve + 主分支 step 短直线; 4 个主分支配不同主色
+<ConnectorGroup container={stageRef} defaultArrow="none" defaultType="curve">
+  {/* 中心 → 4 主分支: curve 曲线放射 (动画) */}
   <Connector from={center} to={designB} color="#22d3ee" animated />
   <Connector from={center} to={compB}   color="#a855f7" animated />
   <Connector from={center} to={engB}    color="#10b981" animated />
   <Connector from={center} to={ecoB}    color="#f472b6" animated />
 
-  {/* 主分支 → leaves: step 短直线 */}
+  {/* 主分支 → leaves: 1-to-many step 短直线 */}
   <Connector from={designB} to={[d1, d2, d3]} type="step" color="#22d3ee" />
   <Connector from={compB}   to={[c1, c2, c3]} type="step" color="#a855f7" />
   <Connector from={engB}    to={[e1, e2, e3]} type="step" color="#10b981" />

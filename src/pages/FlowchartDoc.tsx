@@ -139,32 +139,23 @@ const FNode = React.forwardRef<HTMLDivElement, FNodeProps>(({ kind, title, icon,
 });
 FNode.displayName = 'FNode';
 
-const CODE = `<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
-  {/* 主流程节点 */}
-  <FNode ref={submit}     kind="start"    pos={{ left: 130, top: 30 }}  title="提交申请" />
-  <FNode ref={reviewLead} kind="decision" pos={{ left: 110, top: 140 }} title="直属审批" />
-  <FNode ref={reviewDept} kind="decision" pos={{ left: 110, top: 270 }} title="部门审批" />
-  <FNode ref={reviewFin}  kind="decision" pos={{ left: 110, top: 400 }} title="财务审批" />
-  <FNode ref={done}       kind="end-ok"   pos={{ left: 154, top: 530 }} title="完成" />
-  {/* 异常分支 */}
-  <FNode ref={fix}    kind="warn"     pos={{ left: 480, top: 140 }} title="修改重提" />
-  <FNode ref={reject} kind="end-fail" pos={{ left: 500, top: 270 }} title="驳回归档" />
-
-  {/* 主路径 */}
+const CODE = `// 关键: 主流程绿色 + 驳回橙红 + orthogonal U 型回流, 全 step 直角
+<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
+  {/* 主路径: 通过 → 通过 → 通过 → 完成 */}
   <Connector from={submit}     to={reviewLead} color="aurora"  animated />
   <Connector from={reviewLead} to={reviewDept} color="#10b981" label="通过" />
   <Connector from={reviewDept} to={reviewFin}  color="#10b981" label="通过" />
   <Connector from={reviewFin}  to={done}       color="#10b981" label="通过" />
 
-  {/* 驳回分支 */}
+  {/* 驳回分支: 修改重提 (橙) / 驳回归档 (红) */}
   <Connector from={reviewLead} to={fix}    color="#f59e0b" dashed label="驳回"
              startSide="right" endSide="left" />
   <Connector from={reviewDept} to={reject} color="#ef4444"        label="驳回"
              startSide="right" endSide="left" />
 
-  {/* 回流: orthogonal U 型 */}
-  <Connector from={fix} to={submit} type="orthogonal" color="#9ca3af"
-             dashed animated label="重新提交"
+  {/* 回流: orthogonal 圆角 U 型, 流动虚线 */}
+  <Connector from={fix} to={submit}
+             type="orthogonal" color="#9ca3af" dashed animated label="重新提交"
              startSide="top" endSide="right" />
 </ConnectorGroup>`;
 

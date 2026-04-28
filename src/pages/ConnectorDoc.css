@@ -82,3 +82,15 @@
   color: var(--au-text-3);
   font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
 }
+
+/* === 窄屏: 让 stage 横向可滚, 不强行压缩节点 === */
+@media (max-width: 768px) {
+  .cd-net-stage {
+    height: 720px; /* 竖屏稍降高度, 横向 overflow 滚动 */
+  }
+  .cd-stage,
+  .cd-stage--tall,
+  .cd-stage--mesh {
+    overflow: auto;
+  }
+}

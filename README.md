@@ -35,6 +35,14 @@ pnpm add aurora-ux
 import 'aurora-ux/style.css';
 ```
 
+**Icon 组件需要 iconfont CSS** (基于阿里 iconfont, 自托管或 fork 都行). 在 `index.html` head 加一行:
+
+```html
+<link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4644876_wf3phmr7dpl.css">
+```
+
+不用 Icon 组件可跳过. 想换自己的图标库, 改 CSS class 前缀即可.
+
 ```tsx
 // App.tsx
 import { AuroraBg, GradientText, NumberRoll, KpiCard } from 'aurora-ux';
@@ -62,7 +70,16 @@ export default function App() {
 > 60+ 组件, 覆盖中后台所有常见场景。完整 API + 在线预览见[文档站](https://yuxianshengs.github.io/aurora-ux/)。
 
 ### ✨ 极光特效 (独家)
-**AuroraBg** · **GradientText** · **NumberRoll** · **GlowCard**
+**AuroraBg** · **GradientText** · **NumberRoll** · **GlowCard** · **PulseDot** · **TickerTape** · **ScrambleText**
+
+### 🧬 图与拓扑 (独家)
+**Connector / ConnectorGroup** — 给两个 (或多个) DOM 之间画连线, 自动跟随尺寸 / 滚动 / 拖动:
+- 1-1 / 1-many / many-many (mesh / pairs)
+- 4 种线形 (curve / step / orthogonal / straight)
+- 极光渐变 stroke + 流动虚线 + 沿线移动小圆点
+- 单/双向箭头 + 中点 ReactNode label
+- `autoAvoid` 自动绕开节点 (单障碍 MVP)
+- 5 种实战场景: [网络拓扑](https://yuxianshengs.github.io/aurora-ux/#/docs/connector) · [流程图](https://yuxianshengs.github.io/aurora-ux/#/docs/flowchart) · [依赖关系](https://yuxianshengs.github.io/aurora-ux/#/docs/dependency-graph) · [数据血缘](https://yuxianshengs.github.io/aurora-ux/#/docs/data-lineage) · [思维导图](https://yuxianshengs.github.io/aurora-ux/#/docs/mindmap)
 
 ### 📋 表单
 **Form / FormItem / useForm** (含 required/type/min/max/pattern/whitespace/validator 完整校验)

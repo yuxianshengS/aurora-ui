@@ -139,34 +139,16 @@ const LNode = React.forwardRef<HTMLDivElement, LNodeProps>(
 );
 LNode.displayName = 'LNode';
 
-const CODE = `<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
-  {/* L1 源头 (蓝) */}
-  <LNode ref={dbOrders} color="#0ea5e9" icon="folder"        title="orders DB" />
-  <LNode ref={dbUsers}  color="#0ea5e9" icon="folder"        title="users DB" />
-  <LNode ref={evt}      color="#0ea5e9" icon="charts-curve"  title="埋点事件" />
-
-  {/* L2-3 采集与湖 (紫/靛) */}
-  <LNode ref={cdc}  color="#a855f7" icon="connections" title="CDC + Kafka" pulse="live" />
-  <LNode ref={lake} color="#6366f1" icon="catalog"     title="Data Lake" />
-
-  {/* L4 ETL (橙) */}
-  <LNode ref={etlOrder} color="#f59e0b" icon="settings" title="dwd_orders" pulse="warning" />
-  <LNode ref={etlUser}  color="#f59e0b" icon="settings" title="dwd_users" />
-
-  {/* L5 宽表 (绿) */}
-  <LNode ref={dwh} color="#10b981" icon="folder" title="dws_user_order" pulse="live" />
-
-  {/* L6 消费 (金 / 红) */}
-  <LNode ref={bi}   color="#fbbf24" icon="charts-bar"        title="BI 报表" />
-  <LNode ref={reco} color="#fbbf24" icon="application-record" title="推荐模型" />
-  <LNode ref={risk} color="#ef4444" icon="trade-alert"       title="风控" pulse="danger" />
-
-  {/* 流向 (左→右) */}
-  <Connector from={[dbOrders, dbUsers, evt]} to={cdc} color="#0ea5e9" animated />
+const CODE = `// 关键: 6 hop 流向, 每段一种颜色, ETL 段用 dashed+animated 表示数据正在跑
+<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
+  <Connector from={[dbOrders, dbUsers, evt]} to={cdc}
+             color="#0ea5e9" animated />
   <Connector from={cdc} to={lake} color="#a855f7" animated label="ingest" />
-  <Connector from={lake} to={[etlOrder, etlUser]} color="#6366f1" dashed animated label="ETL" />
+  <Connector from={lake} to={[etlOrder, etlUser]}
+             color="#6366f1" dashed animated label="ETL" />
   <Connector from={[etlOrder, etlUser]} to={dwh} color="#f59e0b" />
-  <Connector from={dwh} to={[bi, reco, risk]} color={['#10b981', '#fbbf24']} animated />
+  <Connector from={dwh} to={[bi, reco, risk]}
+             color={['#10b981', '#fbbf24']} animated />
 </ConnectorGroup>`;
 
 export default DataLineageDoc;

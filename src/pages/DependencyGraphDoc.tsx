@@ -142,43 +142,28 @@ const DNode = React.forwardRef<HTMLDivElement, DNodeProps>(
 );
 DNode.displayName = 'DNode';
 
-const CODE = `<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
-  {/* L1 入口 */}
-  <DNode ref={gw} color="#22d3ee" icon="connections" title="API Gateway" pulse="live" />
-
-  {/* L2 微服务 (5 个横排) */}
-  <DNode ref={userSvc}      color="#6366f1" icon="customer"   title="User" />
-  <DNode ref={orderSvc}     color="#a855f7" icon="order"      title="Order" pulse="live" />
-  <DNode ref={paySvc}       color="#f472b6" icon="checkstand" title="Payment" />
-  <DNode ref={inventorySvc} color="#10b981" icon="product"    title="Inventory" />
-  <DNode ref={notifySvc}    color="#fb923c" icon="message-comments" title="Notification" pulse="warning" />
-
-  {/* L3 基础设施 */}
-  <DNode ref={redis} color="#ef4444" icon="charts-bar"     title="Redis" />
-  <DNode ref={pg}    color="#10b981" icon="folder"         title="Postgres" pulse="live" />
-  <DNode ref={mq}    color="#a855f7" icon="message-comments" title="RabbitMQ" />
-
-  {/* HTTP 入口扇出 */}
+const CODE = `// 关键: 5 种调用类型, 每种用不同颜色 + dashed/animated 区分语义
+<ConnectorGroup container={stageRef} defaultArrow="end" defaultType="step">
+  {/* HTTP 入口扇出: gateway 1-to-many 到 5 个微服务 */}
   <Connector from={gw} to={[userSvc, orderSvc, paySvc, inventorySvc, notifySvc]}
              color={['#22d3ee', '#a855f7']} animated />
 
-  {/* RPC 服务调用 */}
-  <Connector from={orderSvc} to={[userSvc, paySvc, inventorySvc]}
-             color="#a855f7" />
+  {/* 服务间 RPC 调用 */}
+  <Connector from={orderSvc} to={[userSvc, paySvc, inventorySvc]} color="#a855f7" />
 
-  {/* 数据库读写 */}
+  {/* 数据库读写 (many-to-one) */}
   <Connector from={[orderSvc, paySvc, inventorySvc]} to={pg}
              color="#10b981" label="读写" />
 
   {/* 缓存 */}
   <Connector from={userSvc} to={redis} color="#ef4444" label="cache" />
 
-  {/* 异步消息 */}
-  <Connector from={[orderSvc, paySvc]} to={mq} color="#a855f7"
-             dashed animated label="async" />
-  <Connector from={mq} to={notifySvc} type="orthogonal"
-             startSide="top" endSide="bottom"
-             color="#fb923c" dashed animated />
+  {/* 异步消息 — dashed + animated 标识非阻塞 */}
+  <Connector from={[orderSvc, paySvc]} to={mq}
+             color="#a855f7" dashed animated label="async" />
+  <Connector from={mq} to={notifySvc}
+             type="orthogonal" color="#fb923c" dashed animated
+             startSide="top" endSide="bottom" />
 </ConnectorGroup>`;
 
 export default DependencyGraphDoc;

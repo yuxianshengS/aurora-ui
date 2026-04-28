@@ -4,7 +4,35 @@
 
 ## [Unreleased]
 
-待发布的改动会列在这里。
+待发布的改动会列在这里.
+
+## [0.7.0] — 2026-04-28 — Polish & Quality
+
+### 改进 — 工程
+- echarts 按需引入: Bar3D 改用 `echarts/core` + `echarts.use([...])`, **vendor-echarts chunk 1036 → 480 KB (砍 54%)**
+- 加 vitest 单测基建: geometry helpers (pickSide / anchorAt / pathStep / pathStepAvoiding) + FormStore (required/type/min/max/whitespace/validator/validateFields), **20 个测试通过**
+- vite lib 模式 external 改成正则匹配 echarts 子路径, 防止 `echarts/core` 被打进包
+- README 加 iconfont CDN 引入说明
+
+### 改进 — Connector
+- `flow` prop: 沿线移动的小圆点 (粒子). 用 SVG 原生 `<animateMotion>` + `<mpath>`, 路径变化自动跟随
+- 圆点裁剪 keyPoints 让出箭头, 不压在 marker 上
+- `autoAvoid` + `obstacles` props (MVP 单障碍 1-bend), 单条 `avoid` 也可单独开
+- 标签从 SVG 内部 `<foreignObject>` 抽到外部 HTML div + 单独 z-index 层, 不被节点遮挡
+- 滚动坐标 bug 修复: 加回 `scrollLeft/Top` 让 path 在容器 scroll 时不偏移
+- z-index: -1 沉到节点下避免覆盖
+- 拖动通过 mousemove 监听同步追踪
+- 全部 demo 的代码片段改为聚焦 Connector 关键代码, 不引 Box/NetNode/FNode 等本地 helper
+
+### 改进 — 路由
+- BrowserRouter → HashRouter 让 GH Pages 任意子路由刷新不 404
+
+### 改进 — 文档
+- 5 个图谱场景文档页 (网络拓扑 / 流程图 / 依赖关系 / 数据血缘 / 思维导图)
+- "图与拓扑" 单独 nav 类目
+- 首页加 Connector 主题专栏 (迷你 API Gateway 拓扑 + 5 用例缩略卡)
+- DemoBlock 代码块加 JSX/TS 语法高亮
+- README 加 "图与拓扑" 类目展示
 
 ## [0.6.0] — 2026-04-27 — Diagram Edition
 
@@ -91,7 +119,8 @@
 - **ThemeSwitch** 暗亮主题切换
 - 在线预览站 + iconfont 同步脚本
 
-[Unreleased]: https://github.com/yuxianshengS/aurora-ux/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/yuxianshengS/aurora-ux/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/yuxianshengS/aurora-ux/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/yuxianshengS/aurora-ux/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/yuxianshengS/aurora-ux/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/yuxianshengS/aurora-ux/compare/v0.3.0...v0.4.0

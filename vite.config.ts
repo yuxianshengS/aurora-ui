@@ -33,13 +33,14 @@ export default defineConfig(({ mode }) => {
         },
         rollupOptions: {
           // 这些依赖不打进包, 让用户项目里自己装 (peer)
+          // 用正则覆盖 'echarts/core' / 'echarts/components' 等子路径
           external: [
             'react',
             'react/jsx-runtime',
             'react-dom',
             'react-dom/client',
-            'echarts',
-            'echarts-gl',
+            /^echarts(\/.*)?$/,
+            /^echarts-gl(\/.*)?$/,
             'html2canvas',
             'jspdf',
           ],
