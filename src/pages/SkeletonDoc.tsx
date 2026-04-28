@@ -26,7 +26,7 @@ const SkeletonDoc: React.FC = () => {
           <Card>
             <Skeleton avatar loading={loading}>
               <div>
-                <h4 style={{ margin: 0 }}>余星辰</h4>
+                <h4 style={{ margin: 0 }}>赵子龙</h4>
                 <p style={{ margin: 0, color: 'var(--au-text-3)' }}>北京 · 资深前端</p>
               </div>
             </Skeleton>

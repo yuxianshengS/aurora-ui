@@ -182,7 +182,7 @@ const sampleTableColumns = [
   { title: '城市', dataIndex: 'city' },
 ];
 const sampleTableData = [
-  { key: 1, name: '余星辰', age: 28, city: '北京' },
+  { key: 1, name: '赵子龙', age: 28, city: '北京' },
   { key: 2, name: '林可', age: 34, city: '上海' },
   { key: 3, name: 'Mia', age: 22, city: '深圳' },
 ];
@@ -233,7 +233,7 @@ const sampleTimelineItems = [
 
 /** ActivityFeed: time 用 ISO 字符串 (JSON 可序列化), preview 通过 transformProps 转回 Date */
 const sampleActivityItems = [
-  { id: 1, time: new Date(Date.now() - 60_000).toISOString(), title: '创建了订单 #2026-0419', type: 'primary', user: { name: '余星辰' } },
+  { id: 1, time: new Date(Date.now() - 60_000).toISOString(), title: '创建了订单 #2026-0419', type: 'primary', user: { name: '赵子龙' } },
   { id: 2, time: new Date(Date.now() - 8 * 60_000).toISOString(), title: '审批通过', type: 'success', user: { name: 'Mia' } },
   { id: 3, time: new Date(Date.now() - 45 * 60_000).toISOString(), title: '异常登录', type: 'warning', user: { name: '系统' } },
 ];
@@ -2039,7 +2039,7 @@ export const REGISTRY: BlockSchema[] = [
       column: 3,
       bordered: false,
       items: [
-        { label: '用户名', value: '余星辰' },
+        { label: '用户名', value: '赵子龙' },
         { label: '账号', value: 'yuxianshengs' },
         { label: '邮箱', value: 'yu@example.com' },
         { label: '城市', value: '北京' },

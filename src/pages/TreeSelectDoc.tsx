@@ -20,7 +20,27 @@ const TreeSelectDoc: React.FC = () => {
 
       <h2>代码演示</h2>
 
-      <DemoBlock title="基础" code={`<TreeSelect treeData={...} treeDefaultExpandAll />`}>
+      <DemoBlock
+        title="基础"
+        code={`const treeData = [
+  { key: 'a', title: '华东', children: [
+    { key: 'a-1', title: '上海' },
+    { key: 'a-2', title: '杭州' },
+  ]},
+  { key: 'b', title: '华南', children: [
+    { key: 'b-1', title: '广州' },
+    { key: 'b-2', title: '深圳' },
+  ]},
+];
+
+<TreeSelect
+  treeData={treeData}
+  treeDefaultExpandAll
+  allowClear
+  value={v}
+  onChange={setV}
+/>`}
+      >
         <TreeSelect
           treeData={sampleTree}
           treeDefaultExpandAll
@@ -30,7 +50,10 @@ const TreeSelectDoc: React.FC = () => {
         />
       </DemoBlock>
 
-      <DemoBlock title="禁用" code={`<TreeSelect disabled treeData={...} />`}>
+      <DemoBlock
+        title="禁用"
+        code={`<TreeSelect treeData={treeData} disabled placeholder="已禁用" />`}
+      >
         <TreeSelect treeData={sampleTree} disabled placeholder="已禁用" />
       </DemoBlock>
 

@@ -40,9 +40,15 @@ const StepsDoc: React.FC = () => {
         title="交互流程"
         description="点击步骤 / 下一步按钮推进; 传 onChange 使步骤可点。"
         code={`const [cur, setCur] = useState(0);
+const items = [
+  { title: '选择商品' },
+  { title: '填写地址' },
+  { title: '支付' },
+  { title: '完成' },
+];
 
-<Steps current={cur} onChange={setCur} items={...} />
-<button onClick={() => setCur((c) => Math.min(c + 1, 3))}>下一步</button>`}
+<Steps current={cur} onChange={setCur} items={items} />
+<Button onClick={() => setCur((c) => Math.min(c + 1, 3))}>下一步</Button>`}
       >
         <InteractiveDemo />
       </DemoBlock>
@@ -50,7 +56,15 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="错误状态"
         description="整体 status='error' 表示当前步骤失败。"
-        code={`<Steps current={1} status="error" items={...} />`}
+        code={`<Steps
+  current={1}
+  status="error"
+  items={[
+    { title: '上传文件', description: '已完成' },
+    { title: '病毒扫描', description: '扫描失败' },
+    { title: '发布', description: '等待中' },
+  ]}
+/>`}
       >
         <Steps
           current={1}
@@ -66,7 +80,16 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="点状步骤条"
         description="type='dot' 节点简化为小圆点,适合横幅式指示。"
-        code={`<Steps type="dot" current={1} items={...} />`}
+        code={`<Steps
+  type="dot"
+  current={1}
+  items={[
+    { title: '下单' },
+    { title: '发货' },
+    { title: '配送中' },
+    { title: '已签收' },
+  ]}
+/>`}
       >
         <Steps
           type="dot"
@@ -83,7 +106,15 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="垂直方向"
         description="direction='vertical' 适合详细流程展示。"
-        code={`<Steps direction="vertical" current={1} items={...} />`}
+        code={`<Steps
+  direction="vertical"
+  current={1}
+  items={[
+    { title: '提交申请', description: '2026-04-20 10:12' },
+    { title: '审核中',   description: '风控部门正在处理' },
+    { title: '放款',     description: '待处理' },
+  ]}
+/>`}
       >
         <Steps
           direction="vertical"
@@ -99,7 +130,16 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="标签竖排 (horizontal + labelPlacement='vertical')"
         description="水平方向下让文字在节点下方,节省宽度。"
-        code={`<Steps labelPlacement="vertical" current={1} items={...} />`}
+        code={`<Steps
+  labelPlacement="vertical"
+  current={1}
+  items={[
+    { title: '选择商品' },
+    { title: '填写地址' },
+    { title: '支付' },
+    { title: '完成' },
+  ]}
+/>`}
       >
         <Steps
           labelPlacement="vertical"
@@ -116,7 +156,15 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="自定义图标"
         description="item.icon 替换默认序号。"
-        code={`{ title: '登录', icon: '🔑' }`}
+        code={`<Steps
+  current={2}
+  items={[
+    { title: '登录', icon: <span>🔑</span> },
+    { title: '验证', icon: <span>🛡</span> },
+    { title: '支付', icon: <span>💳</span> },
+    { title: '完成', icon: <span>🎉</span> },
+  ]}
+/>`}
       >
         <Steps
           current={2}
@@ -132,7 +180,11 @@ const StepsDoc: React.FC = () => {
       <DemoBlock
         title="小号"
         description="size='small'。"
-        code={`<Steps size="small" current={1} items={...} />`}
+        code={`<Steps
+  size="small"
+  current={1}
+  items={[{ title: '第一步' }, { title: '第二步' }, { title: '第三步' }]}
+/>`}
       >
         <Steps
           size="small"

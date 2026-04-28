@@ -11,7 +11,7 @@ const sampleItems: ActivityItem[] = [
   {
     id: 1,
     time: minAgo(1),
-    user: { name: '余星辰' },
+    user: { name: '赵子龙' },
     title: '创建了订单 #2026-0419',
     description: '订单金额 ¥4,280,客户: 腾讯',
     type: 'primary',
@@ -73,10 +73,22 @@ const ActivityFeedDoc: React.FC = () => {
       <DemoBlock
         title="基础用法"
         description="传入 items (含 time / title),默认按时间倒序。"
-        code={`<ActivityFeed items={[
-  { time: new Date(), user: { name: 'Y' }, title: '下单 #2026...', type: 'primary', tag: '订单' },
-  ...
-]} />`}
+        code={`const items: ActivityItem[] = [
+  {
+    id: 1,
+    time: new Date(),                       // 必填: Date 或 timestamp
+    user: { name: '赵子龙' },                // 可选: { name, avatar? }
+    title: '下单 #2026-04-19-08',           // 必填
+    description: '¥48,000 · 企业版',         // 可选副标题
+    type: 'primary',                         // primary/success/warning/danger/info/default
+    tag: '订单',                              // 可选标签
+  },
+  { id: 2, time: new Date(Date.now() - 5*60_000),
+    user: { name: 'Mia' }, title: '审核退款单 #R-2134', type: 'success', tag: '退款' },
+  // ...
+];
+
+<ActivityFeed items={items} />`}
       >
         <ActivityFeed items={sampleItems} />
       </DemoBlock>
@@ -175,7 +187,7 @@ const LiveDemo: React.FC = () => {
       { user: { name: '风控' }, title: '拦截可疑登录', description: 'IP: 45.x.x.x', type: 'warning', tag: '安全' },
       { user: { name: 'Mia' }, title: '提交了新的工单 #4182', type: 'primary', tag: '工单' },
       { user: { name: '系统' }, title: '部署完成', description: 'v2.4.1 已发布到生产', type: 'info', tag: '发布' },
-      { user: { name: 'Noah' }, title: '评论了任务', description: '@余星辰 需要你关注一下', type: 'default' },
+      { user: { name: 'Noah' }, title: '评论了任务', description: '@赵子龙 需要你关注一下', type: 'default' },
     ];
     const id = setInterval(() => {
       const pick = events[Math.floor(Math.random() * events.length)];

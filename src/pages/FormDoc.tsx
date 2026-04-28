@@ -121,7 +121,7 @@ const FormDoc: React.FC = () => {
         description="通过 form 实例直接读写字段、按需校验、重置回 initialValues。"
         code={`const [form] = Form.useForm();
 
-const fillSample = () => form.setFieldsValue({ name: '余星辰', age: 28, city: 'bj' });
+const fillSample = () => form.setFieldsValue({ name: '赵子龙', age: 28, city: 'bj' });
 const validate = async () => {
   try {
     const v = await form.validateFields();
@@ -368,7 +368,7 @@ const RulesDemo: React.FC = () => {
 
 const ProgrammaticDemo: React.FC = () => {
   const [form] = useForm();
-  const fillSample = () => form.setFieldsValue({ name: '余星辰', age: 28, city: 'bj' });
+  const fillSample = () => form.setFieldsValue({ name: '赵子龙', age: 28, city: 'bj' });
   const validate = async () => {
     try {
       const v = await form.validateFields();

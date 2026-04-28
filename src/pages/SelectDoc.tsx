@@ -41,9 +41,17 @@ const SelectDoc: React.FC = () => {
       <DemoBlock
         title="受控 + 事件"
         description="传入 value 进入受控; onChange 同时拿到 value 和完整 option。"
-        code={`const [v, setV] = useState('bj');
+        code={`// 之后的 demo 复用同一份 options
+const cityOptions = [
+  { label: '北京', value: 'bj' },
+  { label: '上海', value: 'sh' },
+  { label: '广州', value: 'gz' },
+  { label: '深圳', value: 'sz' },
+];
 
-<Select value={v} onChange={setV} options={...} />`}
+const [v, setV] = useState('bj');
+
+<Select value={v} onChange={setV} options={cityOptions} />`}
       >
         <ControlledDemo />
       </DemoBlock>
@@ -51,7 +59,7 @@ const SelectDoc: React.FC = () => {
       <DemoBlock
         title="可清除"
         description="allowClear 显示清除图标。"
-        code={`<Select allowClear defaultValue="sh" options={...} />`}
+        code={`<Select allowClear defaultValue="sh" options={cityOptions} />`}
       >
         <Select allowClear defaultValue="sh" options={cityOptions} />
       </DemoBlock>
@@ -63,7 +71,7 @@ const SelectDoc: React.FC = () => {
   multiple
   allowClear
   defaultValue={['bj', 'sh']}
-  options={...}
+  options={cityOptions}
 />`}
       >
         <Select
@@ -78,7 +86,7 @@ const SelectDoc: React.FC = () => {
       <DemoBlock
         title="可搜索过滤"
         description="filterable 启用内置过滤,按 label 匹配。"
-        code={`<Select filterable allowClear options={...} />`}
+        code={`<Select filterable allowClear options={cityOptions} />`}
       >
         <Select filterable allowClear options={cityOptions} />
       </DemoBlock>
@@ -107,9 +115,9 @@ const SelectDoc: React.FC = () => {
       <DemoBlock
         title="尺寸"
         description="small / medium / large。"
-        code={`<Select size="small" options={...} />
-<Select size="medium" options={...} />
-<Select size="large" options={...} />`}
+        code={`<Select size="small" options={cityOptions} />
+<Select size="medium" options={cityOptions} />
+<Select size="large" options={cityOptions} />`}
       >
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <Select size="small" options={cityOptions} placeholder="小" />
@@ -121,8 +129,8 @@ const SelectDoc: React.FC = () => {
       <DemoBlock
         title="状态"
         description="status='error' / 'warning' 快速切换外观。"
-        code={`<Select status="error" options={...} />
-<Select status="warning" options={...} />`}
+        code={`<Select status="error" options={cityOptions} />
+<Select status="warning" options={cityOptions} />`}
       >
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Select status="error" options={cityOptions} placeholder="错误" />

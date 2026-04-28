@@ -38,9 +38,17 @@ const FunnelDoc: React.FC = () => {
       <DemoBlock
         title="三种形态"
         description="trapezoid (梯形, 默认) / pyramid (倒梯形) / rect (等宽条形)。"
-        code={`<Funnel shape="trapezoid" data={...} />
-<Funnel shape="pyramid" data={...} />
-<Funnel shape="rect" data={...} />`}
+        code={`const steps = [
+  { label: '访问页面', value: 10000 },
+  { label: '点击商品', value: 4200 },
+  { label: '加入购物车', value: 1850 },
+  { label: '进入结算', value: 920 },
+  { label: '支付成功', value: 480 },
+];
+
+<Funnel shape="trapezoid" data={steps} />
+<Funnel shape="pyramid"   data={steps} />
+<Funnel shape="rect"      data={steps} />`}
       >
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
@@ -61,7 +69,8 @@ const FunnelDoc: React.FC = () => {
       <DemoBlock
         title="转化率基准"
         description={`percentBase='first' (默认, 相对首级) / 'previous' (相对上一级, 看步间衰减)。`}
-        code={`<Funnel data={...} percentBase="previous" />`}
+        code={`<Funnel data={steps} percentBase="first" />     {/* 默认 — 转化率相对首级 */}
+<Funnel data={steps} percentBase="previous" />  {/* 相对上一级, 看步间衰减 */}`}
       >
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           <div style={{ textAlign: 'center' }}>

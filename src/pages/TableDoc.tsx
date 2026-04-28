@@ -15,7 +15,7 @@ interface User {
 }
 
 const users: User[] = [
-  { id: 1, name: '余星辰', role: 'admin', age: 28, email: 'yu@example.com', status: 'online', balance: 12850 },
+  { id: 1, name: '赵子龙', role: 'admin', age: 28, email: 'yu@example.com', status: 'online', balance: 12850 },
   { id: 2, name: '林可', role: 'member', age: 34, email: 'lin@example.com', status: 'offline', balance: 4250 },
   { id: 3, name: 'Noah', role: 'member', age: 31, email: 'noah@example.com', status: 'online', balance: 8810 },
   { id: 4, name: 'Mia', role: 'guest', age: 22, email: 'mia@example.com', status: 'offline', balance: 650 },
@@ -42,10 +42,17 @@ const TableDoc: React.FC = () => {
       <DemoBlock
         title="基础用法"
         description="传 columns 与 dataSource 即可; rowKey 用于追踪每行。"
-        code={`const columns = [
-  { title: 'ID', dataIndex: 'id' },
-  { title: '姓名', dataIndex: 'name' },
-  { title: '邮箱', dataIndex: 'email' },
+        code={`const users = [
+  { id: 1, name: '赵子龙', role: 'admin',  age: 28, email: 'yu@example.com'  },
+  { id: 2, name: '林可',   role: 'member', age: 34, email: 'lin@example.com' },
+  { id: 3, name: 'Noah',   role: 'member', age: 31, email: 'noah@example.com'},
+];
+
+const columns = [
+  { title: 'ID',    dataIndex: 'id',    width: 60 },
+  { title: '姓名',   dataIndex: 'name'  },
+  { title: '角色',   dataIndex: 'role'  },
+  { title: '邮箱',   dataIndex: 'email' },
 ];
 
 <Table rowKey="id" columns={columns} dataSource={users} />`}

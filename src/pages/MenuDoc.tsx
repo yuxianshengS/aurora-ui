@@ -45,14 +45,25 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="内嵌模式 (侧边栏默认)"
         description="mode='inline' 子菜单展开在下方。"
-        code={`<Menu
+        code={`const items = [
+  { key: 'dashboard', label: '仪表盘', icon: <Icon name="home" /> },
+  { key: 'orders', label: '订单', icon: <Icon name="order" /> },
+  {
+    key: 'users', label: '用户', icon: <Icon name="customer" />,
+    children: [
+      { key: 'user-list', label: '用户列表' },
+      { key: 'user-role', label: '角色管理' },
+    ],
+  },
+  { type: 'divider' },
+  { key: 'logout', label: '退出登录', icon: <Icon name="return" />, danger: true },
+];
+
+<Menu
   mode="inline"
   defaultSelectedKeys={['dashboard']}
   defaultOpenKeys={['users']}
-  items={[
-    { key: 'dashboard', label: '仪表盘', icon: '📊' },
-    { key: 'users', label: '用户', icon: '👤', children: [...] },
-  ]}
+  items={items}
 />`}
       >
         <InlineDemo />
@@ -61,7 +72,9 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="可折叠侧栏"
         description="collapsed + mode='inline' 收成图标条,子菜单悬浮展开。"
-        code={`<Menu mode="inline" collapsed={collapsed} items={...} />`}
+        code={`const [collapsed, setCollapsed] = useState(false);
+
+<Menu mode="inline" collapsed={collapsed} items={items} />`}
       >
         <CollapsedDemo />
       </DemoBlock>
@@ -69,7 +82,7 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="垂直 + 子菜单悬浮"
         description="mode='vertical' 子菜单始终悬浮打开。"
-        code={`<Menu mode="vertical" items={...} />`}
+        code={`<Menu mode="vertical" items={items} style={{ width: 220 }} />`}
       >
         <Menu mode="vertical" defaultSelectedKeys={['dashboard']} style={{ width: 220 }} items={baseItems} />
       </DemoBlock>
@@ -77,7 +90,21 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="水平顶部导航"
         description="mode='horizontal' 用作顶部栏。"
-        code={`<Menu mode="horizontal" items={...} />`}
+        code={`const navItems = [
+  { key: 'dashboard', label: '首页' },
+  {
+    key: 'products', label: '产品',
+    children: [
+      { key: 'p1', label: '产品 A' },
+      { key: 'p2', label: '产品 B' },
+      { key: 'p3', label: '产品 C' },
+    ],
+  },
+  { key: 'docs', label: '文档' },
+  { key: 'about', label: '关于' },
+];
+
+<Menu mode="horizontal" items={navItems} />`}
       >
         <Menu
           mode="horizontal"
@@ -98,10 +125,26 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="分组 + 禁用"
         description="type='group' 分组; disabled 单项禁用。"
-        code={`[
-  { type: 'group', key: 'g1', label: '系统', children: [...] },
-  { type: 'group', key: 'g2', label: '账号', children: [...] },
-]`}
+        code={`<Menu
+  mode="inline"
+  defaultSelectedKeys={['profile']}
+  items={[
+    {
+      type: 'group', key: 'g-sys', label: '系统',
+      children: [
+        { key: 'dashboard', label: '仪表盘', icon: <Icon name="home" /> },
+        { key: 'alerts', label: '告警', icon: <Icon name="trade-alert" />, disabled: true },
+      ],
+    },
+    {
+      type: 'group', key: 'g-acc', label: '账号',
+      children: [
+        { key: 'profile', label: '个人资料', icon: <Icon name="customer" /> },
+        { key: 'team', label: '团队' },
+      ],
+    },
+  ]}
+/>`}
       >
         <Menu
           mode="inline"
@@ -133,7 +176,7 @@ const MenuDoc: React.FC = () => {
       <DemoBlock
         title="深色主题"
         description="theme='dark' 适合深色侧栏。"
-        code={`<Menu theme="dark" mode="inline" items={...} />`}
+        code={`<Menu theme="dark" mode="inline" items={items} style={{ width: 220 }} />`}
       >
         <Menu
           theme="dark"

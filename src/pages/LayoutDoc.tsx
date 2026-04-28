@@ -75,7 +75,16 @@ const LayoutDoc: React.FC = () => {
       <DemoBlock
         title="top: 仅顶栏 + 内容"
         description="无侧栏, 适合列表型管理后台 (路由分级浅)。"
-        code={`<Layout layout="top" header={...} content={...} />`}
+        code={`<Layout
+  layout="top"
+  header={
+    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <strong>🌌 Aurora Console</strong>
+      <Button type="primary" size="small">新建</Button>
+    </div>
+  }
+  content={<Card>主内容区</Card>}
+/>`}
       >
         <Frame>
           <Layout

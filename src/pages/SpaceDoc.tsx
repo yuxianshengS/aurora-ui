@@ -62,7 +62,7 @@ const SpaceDoc: React.FC = () => {
 </Space>`}
       >
         <Space direction="vertical">
-          <div>姓名: 余星辰</div>
+          <div>姓名: 赵子龙</div>
           <div>邮箱: yu@example.com</div>
           <div>电话: 138 0000 0000</div>
         </Space>

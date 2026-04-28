@@ -22,15 +22,40 @@ const TreeDoc: React.FC = () => {
 
       <h2>代码演示</h2>
 
-      <DemoBlock title="基础" code={`<Tree treeData={tree} defaultExpandedKeys={['1']} />`}>
+      <DemoBlock
+        title="基础"
+        code={`const treeData = [
+  { key: '1', title: '根目录', children: [
+    { key: '1-1', title: '文档', children: [
+      { key: '1-1-1', title: '产品规划.md' },
+      { key: '1-1-2', title: '会议纪要.md' },
+    ]},
+    { key: '1-2', title: '资源' },
+  ]},
+  { key: '2', title: '设置' },
+];
+
+<Tree treeData={treeData} defaultExpandedKeys={['1', '1-1']} />`}
+      >
         <Tree treeData={sampleTree} defaultExpandedKeys={['1', '1-1']} />
       </DemoBlock>
 
-      <DemoBlock title="复选框" code={`<Tree checkable treeData={...} />`}>
+      <DemoBlock
+        title="复选框"
+        code={`<Tree
+  treeData={treeData}
+  checkable
+  defaultExpandAll
+  defaultCheckedKeys={['1-1-1']}
+/>`}
+      >
         <Tree treeData={sampleTree} checkable defaultExpandAll defaultCheckedKeys={['1-1-1']} />
       </DemoBlock>
 
-      <DemoBlock title="连接线" code={`<Tree showLine treeData={...} />`}>
+      <DemoBlock
+        title="连接线"
+        code={`<Tree treeData={treeData} defaultExpandAll showLine />`}
+      >
         <Tree treeData={sampleTree} defaultExpandAll showLine />
       </DemoBlock>
 

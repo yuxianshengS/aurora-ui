@@ -81,7 +81,20 @@ Modal.success({ title: '操作成功', content: '已保存到草稿' });`}
       <DemoBlock
         title="居中显示"
         description="centered 垂直居中,适合小弹窗。"
-        code={`<Modal open={open} centered title="居中" onCancel={...}>...</Modal>`}
+        code={`const [open, setOpen] = useState(false);
+
+<>
+  <Button onClick={() => setOpen(true)}>打开</Button>
+  <Modal
+    open={open}
+    centered
+    title="居中"
+    onCancel={() => setOpen(false)}
+    onOk={() => setOpen(false)}
+  >
+    <p>居中弹窗的内容...</p>
+  </Modal>
+</>`}
       >
         <CenteredDemo />
       </DemoBlock>

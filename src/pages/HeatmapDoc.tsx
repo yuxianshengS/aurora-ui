@@ -90,7 +90,15 @@ const HeatmapDoc: React.FC = () => {
       <DemoBlock
         title="更大的单元"
         description="cellSize / cellGap 调整密度。"
-        code={`<Heatmap data={...} cellSize={16} cellGap={4} />`}
+        code={`// data: 每项 { date: 'YYYY-MM-DD', value: number }
+const data = [
+  { date: '2026-04-20', value: 5 },
+  { date: '2026-04-21', value: 12 },
+  { date: '2026-04-22', value: 3 },
+  // ... 更多日期
+];
+
+<Heatmap data={data} cellSize={16} cellGap={4} />`}
       >
         <Heatmap data={shortData} cellSize={16} cellGap={4} startDate={new Date(Date.now() - 100 * 86400000)} endDate={new Date()} />
       </DemoBlock>

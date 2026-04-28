@@ -75,8 +75,15 @@ const BreadcrumbDoc: React.FC = () => {
       <DemoBlock
         title="自定义分隔符"
         description="separator 可以是字符、节点、或图标。"
-        code={`<Breadcrumb separator=">" items={...} />
-<Breadcrumb separator={<span>›</span>} items={...} />`}
+        code={`<Breadcrumb
+  separator=">"
+  items={[
+    { title: '一级', href: '#' },
+    { title: '二级', href: '#' },
+    { title: '三级' },
+  ]}
+/>
+<Breadcrumb separator={<span>›</span>} items={items} />`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Breadcrumb

@@ -87,9 +87,15 @@ const RadioDoc: React.FC = () => {
       <DemoBlock
         title="尺寸"
         description="small / medium / large。"
-        code={`<Radio.Group size="small" ... />
-<Radio.Group size="medium" ... />
-<Radio.Group size="large" ... />`}
+        code={`const sizeOpts = [
+  { label: '小', value: '1' },
+  { label: '选项', value: '2' },
+  { label: '按钮', value: '3' },
+];
+
+<Radio.Group size="small"  optionType="button" options={sizeOpts} defaultValue="1" />
+<Radio.Group size="medium" optionType="button" options={sizeOpts} defaultValue="1" />
+<Radio.Group size="large"  optionType="button" options={sizeOpts} defaultValue="1" />`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Radio.Group
@@ -128,7 +134,15 @@ const RadioDoc: React.FC = () => {
       <DemoBlock
         title="纵向排列"
         description="direction='vertical'。"
-        code={`<Radio.Group direction="vertical" options={...} />`}
+        code={`<Radio.Group
+  direction="vertical"
+  defaultValue="m"
+  options={[
+    { label: '男', value: 'm' },
+    { label: '女', value: 'f' },
+    { label: '保密', value: 'x' },
+  ]}
+/>`}
       >
         <Radio.Group
           direction="vertical"
@@ -144,11 +158,20 @@ const RadioDoc: React.FC = () => {
       <DemoBlock
         title="禁用"
         description="组件级 disabled 全部禁用; options 内 disabled 单个禁用。"
-        code={`<Radio.Group disabled defaultValue="a" options={...} />
-<Radio.Group options={[
-  { label: 'A', value: 'a' },
-  { label: 'B (禁)', value: 'b', disabled: true },
-]} />`}
+        code={`{/* 全组禁用 */}
+<Radio.Group
+  disabled
+  defaultValue="a"
+  options={[{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }]}
+/>
+
+{/* 单项禁用 */}
+<Radio.Group
+  options={[
+    { label: 'A', value: 'a' },
+    { label: 'B (禁)', value: 'b', disabled: true },
+  ]}
+/>`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Radio.Group

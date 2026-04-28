@@ -29,9 +29,17 @@ const DrawerDoc: React.FC = () => {
       <DemoBlock
         title="四个方向"
         description="placement 支持 right (默认) / left / top / bottom。"
-        code={`<Drawer placement="left" open={open} onClose={...} />
-<Drawer placement="top"  open={open} onClose={...} />
-<Drawer placement="bottom" open={open} onClose={...} />`}
+        code={`const [open, setOpen] = useState(false);
+const [placement, setPlacement] = useState<'left' | 'right' | 'top' | 'bottom'>('right');
+
+<Drawer
+  placement={placement}
+  open={open}
+  onClose={() => setOpen(false)}
+  title={\`从 \${placement} 滑入\`}
+>
+  抽屉内容...
+</Drawer>`}
       >
         <PlacementDemo />
       </DemoBlock>
@@ -59,7 +67,13 @@ const DrawerDoc: React.FC = () => {
       <DemoBlock
         title="自定义宽度"
         description="宽度可传 number (px) 或任意 CSS 宽度字符串。"
-        code={`<Drawer width={560} open={...} />`}
+        code={`<Drawer width={560} open={open} onClose={() => setOpen(false)}>
+  更宽的抽屉, 适合表单或表格.
+</Drawer>
+
+<Drawer width="80%" open={open} onClose={() => setOpen(false)}>
+  width 也可以是百分比或任意 CSS 长度字符串
+</Drawer>`}
       >
         <WidthDemo />
       </DemoBlock>

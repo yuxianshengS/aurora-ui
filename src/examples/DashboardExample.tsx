@@ -390,7 +390,7 @@ const DashboardExample: React.FC = () => {
             >
               <div className="dash__user">
                 <Avatar size="small" background="var(--au-primary)" color="#fff">Y</Avatar>
-                {!collapsed && <span className="dash__user-name">余星辰</span>}
+                {!collapsed && <span className="dash__user-name">赵子龙</span>}
               </div>
             </Dropdown>
           </div>

@@ -39,7 +39,15 @@ const TabsDoc: React.FC = () => {
         description="activeKey + onChange。"
         code={`const [k, setK] = useState('2');
 
-<Tabs activeKey={k} onChange={setK} items={...} />`}
+<Tabs
+  activeKey={k}
+  onChange={setK}
+  items={[
+    { key: '1', label: '标签一', children: <p>内容一</p> },
+    { key: '2', label: '标签二', children: <p>内容二</p> },
+    { key: '3', label: '标签三', children: <p>内容三</p> },
+  ]}
+/>`}
       >
         <ControlledDemo />
       </DemoBlock>
@@ -47,7 +55,7 @@ const TabsDoc: React.FC = () => {
       <DemoBlock
         title="类型 · 卡片"
         description="type='card' 卡片风格,常用于多文档切换。"
-        code={`<Tabs type="card" items={...} />`}
+        code={`<Tabs type="card" items={items} />`}
       >
         <Tabs type="card" items={baseItems} />
       </DemoBlock>
@@ -55,7 +63,7 @@ const TabsDoc: React.FC = () => {
       <DemoBlock
         title="类型 · Segment"
         description="type='segment' iOS 风格分段控件。"
-        code={`<Tabs type="segment" items={...} />`}
+        code={`<Tabs type="segment" items={items} />`}
       >
         <Tabs type="segment" items={baseItems} />
       </DemoBlock>
@@ -63,7 +71,7 @@ const TabsDoc: React.FC = () => {
       <DemoBlock
         title="方向 · 左侧"
         description="tabPosition='left' 用作侧边导航。"
-        code={`<Tabs tabPosition="left" items={...} />`}
+        code={`<Tabs tabPosition="left" items={items} />`}
       >
         <Tabs tabPosition="left" items={baseItems} />
       </DemoBlock>
@@ -91,8 +99,8 @@ const TabsDoc: React.FC = () => {
         description="centered 居中, tabBarExtraContent 放操作按钮。"
         code={`<Tabs
   centered
-  tabBarExtraContent={<button className="au-btn au-btn--primary au-btn--small">新增</button>}
-  items={...}
+  tabBarExtraContent={<Button type="primary" size="small">新增</Button>}
+  items={items}
 />`}
       >
         <Tabs
@@ -105,9 +113,9 @@ const TabsDoc: React.FC = () => {
       <DemoBlock
         title="尺寸"
         description="small / medium / large。"
-        code={`<Tabs size="small"  items={...} />
-<Tabs size="medium" items={...} />
-<Tabs size="large"  items={...} />`}
+        code={`<Tabs size="small"  items={items} />
+<Tabs size="medium" items={items} />
+<Tabs size="large"  items={items} />`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Tabs size="small" items={baseItems} />

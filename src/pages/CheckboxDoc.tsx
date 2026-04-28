@@ -78,7 +78,14 @@ const partial = value.length > 0 && value.length < all;
       <DemoBlock
         title="纵向排列"
         description="direction='vertical'。"
-        code={`<Checkbox.Group direction="vertical" options={...} />`}
+        code={`const hobbies = [
+  { label: '阅读', value: 'read' },
+  { label: '运动', value: 'sport' },
+  { label: '音乐', value: 'music' },
+  { label: '摄影', value: 'photo' },
+];
+
+<Checkbox.Group direction="vertical" defaultValue={['read']} options={hobbies} />`}
       >
         <Checkbox.Group direction="vertical" defaultValue={['read']} options={hobbies} />
       </DemoBlock>
@@ -86,7 +93,11 @@ const partial = value.length > 0 && value.length < all;
       <DemoBlock
         title="尺寸"
         description="small / medium / large。"
-        code={`<Checkbox.Group size="small" options={...} />`}
+        code={`const opts = [{ label: '小', value: 'a' }, { label: '项', value: 'b' }];
+
+<Checkbox.Group size="small"  defaultValue={['a']} options={opts} />
+<Checkbox.Group size="medium" defaultValue={['a']} options={opts} />
+<Checkbox.Group size="large"  defaultValue={['a']} options={opts} />`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Checkbox.Group size="small" defaultValue={['a']} options={[{ label: '小', value: 'a' }, { label: '项', value: 'b' }]} />
@@ -98,11 +109,20 @@ const partial = value.length > 0 && value.length < all;
       <DemoBlock
         title="禁用"
         description="组件级 / 单项级 两种禁用方式。"
-        code={`<Checkbox.Group disabled defaultValue={['a']} options={...} />
-<Checkbox.Group options={[
-  { label: 'A', value: 'a' },
-  { label: 'B (禁)', value: 'b', disabled: true },
-]} />`}
+        code={`{/* 全组禁用 */}
+<Checkbox.Group
+  disabled
+  defaultValue={['a']}
+  options={[{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }]}
+/>
+
+{/* 单项禁用 */}
+<Checkbox.Group
+  options={[
+    { label: 'A', value: 'a' },
+    { label: 'B (禁)', value: 'b', disabled: true },
+  ]}
+/>`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Checkbox.Group disabled defaultValue={['a']} options={[{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }]} />
