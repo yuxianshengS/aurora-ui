@@ -476,7 +476,6 @@ const AvoidDemo: React.FC = () => {
           defaultType="step"
           autoAvoid={avoid}
           obstacles={[obstacle]}
-          style={{ zIndex: 2 }}
         >
           <Box ref={a} style={{ left: 30, top: 30 }}>起点 A</Box>
           <Box ref={obstacle} variant="hub" style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
