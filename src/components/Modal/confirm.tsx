@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { createPortal } from 'react-dom';
 
@@ -91,15 +91,20 @@ interface ConfirmViewProps {
 const ConfirmView: React.FC<ConfirmViewProps> = ({ type, opts, onClose }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const closeTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const t = requestAnimationFrame(() => setOpen(true));
-    return () => cancelAnimationFrame(t);
+    return () => {
+      cancelAnimationFrame(t);
+      if (closeTimer.current != null) window.clearTimeout(closeTimer.current);
+    };
   }, []);
 
   const doClose = () => {
     setOpen(false);
-    setTimeout(onClose, 220);
+    if (closeTimer.current != null) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(onClose, 220);
   };
 
   const handleOk = async () => {

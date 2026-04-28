@@ -6,7 +6,9 @@
   --au-steps-node-size: 28px;
   --au-steps-finish: var(--au-primary);
   --au-steps-process: var(--au-primary);
-  --au-steps-wait: var(--au-border-strong);
+  /* wait 态:用 border-strong 在暗色主题里对比度太低 (tail 接近隐形, 看起来「没线」)。
+     改成 text-1 半透明叠加 — 不论容器是 bg / bg-soft / bg-mute 都能稳定看见。 */
+  --au-steps-wait: color-mix(in srgb, var(--au-text-1) 22%, transparent);
   --au-steps-error: var(--au-danger);
 }
 .au-steps--small { --au-steps-node-size: 22px; font-size: 13px; }
@@ -39,9 +41,21 @@
   flex-direction: row;
   padding-right: 16px;
 }
-.au-steps--horizontal .au-steps__item.is-last {
-  flex: 0;
+/* 默认水平 (label 横排 = 节点左, 标题右 同一行): tail 在 14px 行中线会穿过标题文字。
+   改成 column 排版 — 节点在上, 标题在下, tail 走节点之间, 跟文字物理分层, 不再重叠。
+   末位仍按内容宽紧贴行尾, 避免前面 flex:1 兄弟把末位空间吃光导致变形。 */
+.au-steps--horizontal:not(.label-vertical) .au-steps__item {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.au-steps--horizontal:not(.label-vertical) .au-steps__item.is-last {
+  flex: 0 0 auto;
   padding-right: 0;
+}
+/* label 竖排: 末位仍要 flex:1 等分, 否则指示器之间间距不均, 末位 label 被挤到第二位旁边显得不完整 */
+.au-steps--horizontal.label-vertical .au-steps__item.is-last {
+  flex: 1;
 }
 .au-steps--horizontal.label-vertical .au-steps__item {
   flex-direction: column;
@@ -69,6 +83,18 @@
   flex-shrink: 0;
   width: var(--au-steps-node-size);
   height: var(--au-steps-node-size);
+}
+/* 水平模式下 indicator 是固定 node 大小 (28px / dot 10px), tail 关在里面横向 100%-node-size=0 渲染不出。
+   让 tail 跳到 item 级别定位 (item 本身 position:relative), 才能跨过 node 延伸到下一格。
+   label-vertical 不变 — 它的 indicator 是 width:100%, tail 在 indicator 内本就够用。 */
+.au-steps--horizontal:not(.label-vertical) .au-steps__indicator {
+  position: static;
+}
+/* indicator 改 static 后 tail 相对 item 定位; top:50% 会用 item 总高 (受标题+描述影响),
+   非 dot 的 indicator 贴 item 顶, node 中心永远在 node-size/2 = 14px, 用绝对值锁住才会跟 node 居中。
+   dot 模式 indicator 自带 align-self:center, 与 item 中心重合, top:50% 仍正确, 用 :not() 排除掉。 */
+.au-steps--horizontal:not(.label-vertical):not(.au-steps--dot) .au-steps__tail {
+  top: calc(var(--au-steps-node-size) / 2);
 }
 .au-steps--horizontal.label-vertical .au-steps__indicator {
   width: 100%;
@@ -113,20 +139,26 @@
   width: calc(100% - var(--au-steps-node-size));
 }
 .au-steps--horizontal.label-vertical .au-steps__tail {
+  /* tail 关在 indicator 内, indicator 是 width:100% — 但 item 有 padding-right:16px,
+     所以 indicator 的 100% = item 宽 - 16, 比实际可用空间窄。
+     left 50% + node/2 数学上正好是当前 node 右边缘, 不需要改;
+     width 在 indicator 100% 基础上 +16px 把被 padding 吃掉的那段补回, tail 才能真正连到下一个 node 左边。
+     (经验性的 54% 只在某一档 item 宽度下视觉对齐, 换宽度就会再次错位) */
   left: calc(50% + var(--au-steps-node-size) / 2);
   right: auto;
-  width: calc(100% - var(--au-steps-node-size));
+  width: calc(100% - var(--au-steps-node-size) + 16px);
 }
 .au-steps--horizontal .au-steps__item.is-last .au-steps__tail { display: none; }
 
-/* vertical tail */
+/* vertical tail — bug: 原 left:50% 是 item 横向中点 (item 是整行), 不是 node 中心,
+   所以 tail 落到 content 区中段, 视觉上根本没接到下个 node。锁定到 indicator 一半宽度 (14px) 才对齐 node。
+   高度仍要超出当前 item 底部 20px (= padding-bottom), 才能延伸进下一个 item 的 node 中段, 形成连续视觉。 */
 .au-steps--vertical .au-steps__tail {
-  left: 50%;
+  left: calc(var(--au-steps-node-size) / 2);
   top: var(--au-steps-node-size);
-  bottom: 0;
   width: 1px;
   transform: translateX(-50%);
-  height: calc(100% + 20px - var(--au-steps-node-size));
+  height: calc(100% + 20px);
 }
 .au-steps--vertical .au-steps__item.is-last .au-steps__tail { display: none; }
 
@@ -164,6 +196,11 @@
   align-self: center;
   margin: 6px 0;
 }
+/* horizontal-非label-vertical 已改 column 排版, 小圆点要回到左上角而不是水平居中, 与下方标题对齐起头 */
+.au-steps--horizontal:not(.label-vertical).au-steps--dot .au-steps__indicator {
+  align-self: flex-start;
+  margin: 0;
+}
 .au-steps--dot .au-steps__item.is-finish .au-steps__node,
 .au-steps--dot .au-steps__item.is-process .au-steps__node {
   background: var(--au-steps-finish);
@@ -178,9 +215,14 @@
   left: 10px;
   width: calc(100% - 10px);
 }
+/* column 排版下 item 比 dot 高很多, top:50% 会沉到标题中段; 锁定到 dot 圆心 (5px) */
+.au-steps--horizontal:not(.label-vertical).au-steps--dot .au-steps__tail {
+  top: 5px;
+}
 .au-steps--dot.au-steps--vertical .au-steps__tail {
+  left: 5px;
   top: 10px;
-  height: calc(100% + 20px - 10px);
+  height: calc(100% + 20px);
 }
 
 .au-steps__dot {

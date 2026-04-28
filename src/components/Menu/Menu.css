@@ -181,7 +181,7 @@
 /* popup (horizontal submenu or collapsed) */
 .au-menu__popup {
   position: absolute;
-  z-index: 100;
+  z-index: var(--au-z-popup, 1050);
   animation: au-menu-pop 0.14s var(--au-ease);
 }
 .au-menu__popup--below {

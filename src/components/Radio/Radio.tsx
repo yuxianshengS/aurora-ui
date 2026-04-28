@@ -35,65 +35,72 @@ export interface RadioProps {
   style?: React.CSSProperties;
 }
 
-const Radio: React.FC<RadioProps> = ({
-  value,
-  checked,
-  defaultChecked,
-  disabled,
-  name,
-  autoFocus,
-  children,
-  onChange,
-  className = '',
-  style,
-}) => {
-  const group = useContext(GroupContext);
-  const inGroup = !!group;
+const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
+  (
+    {
+      value,
+      checked,
+      defaultChecked,
+      disabled,
+      name,
+      autoFocus,
+      children,
+      onChange,
+      className = '',
+      style,
+    },
+    ref,
+  ) => {
+    const group = useContext(GroupContext);
+    const inGroup = !!group;
 
-  const isChecked = inGroup ? group!.value === value : checked ?? defaultChecked ?? false;
-  const isDisabled = disabled || (inGroup && group!.disabled);
-  const isButton = inGroup && group!.optionType === 'button';
-  const size = (inGroup && group!.size) || 'medium';
+    const isChecked = inGroup ? group!.value === value : checked ?? defaultChecked ?? false;
+    const isDisabled = disabled || (inGroup && group!.disabled);
+    const isButton = inGroup && group!.optionType === 'button';
+    const size = (inGroup && group!.size) || 'medium';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isDisabled) return;
-    if (inGroup) {
-      group!.onChange?.(value);
-    }
-    onChange?.(e);
-  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (isDisabled) return;
+      if (inGroup) {
+        group!.onChange?.(value);
+      }
+      onChange?.(e);
+    };
 
-  const cls = [
-    isButton ? 'au-radio-btn' : 'au-radio',
-    `au-radio--${size}`,
-    isChecked ? 'is-checked' : '',
-    isDisabled ? 'is-disabled' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const cls = [
+      isButton ? 'au-radio-btn' : 'au-radio',
+      `au-radio--${size}`,
+      isChecked ? 'is-checked' : '',
+      isDisabled ? 'is-disabled' : '',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  return (
-    <label className={cls} style={style}>
-      <input
-        type="radio"
-        className={isButton ? 'au-radio-btn__input' : 'au-radio__input'}
-        name={name ?? group?.name}
-        value={String(value)}
-        checked={isChecked}
-        disabled={isDisabled}
-        autoFocus={autoFocus}
-        onChange={handleChange}
-      />
-      {!isButton && <span className="au-radio__dot" aria-hidden />}
-      {children != null && (
-        <span className={isButton ? 'au-radio-btn__label' : 'au-radio__label'}>
-          {children}
-        </span>
-      )}
-    </label>
-  );
-};
+    return (
+      <label className={cls} style={style}>
+        <input
+          ref={ref}
+          type="radio"
+          className={isButton ? 'au-radio-btn__input' : 'au-radio__input'}
+          name={name ?? group?.name}
+          value={String(value)}
+          checked={isChecked}
+          disabled={isDisabled}
+          autoFocus={autoFocus}
+          onChange={handleChange}
+        />
+        {!isButton && <span className="au-radio__dot" aria-hidden />}
+        {children != null && (
+          <span className={isButton ? 'au-radio-btn__label' : 'au-radio__label'}>
+            {children}
+          </span>
+        )}
+      </label>
+    );
+  },
+);
+Radio.displayName = 'Radio';
 
 export interface RadioGroupProps {
   value?: RadioValue;
@@ -166,7 +173,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   );
 };
 
-type RadioComponent = React.FC<RadioProps> & { Group: typeof RadioGroup };
+type RadioComponent = typeof Radio & { Group: typeof RadioGroup };
 
 const RadioWithGroup = Radio as RadioComponent;
 RadioWithGroup.Group = RadioGroup;

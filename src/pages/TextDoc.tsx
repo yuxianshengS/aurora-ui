@@ -21,8 +21,8 @@ const TextDoc: React.FC = () => {
 <Text variant="h2">副标题 H2</Text>
 <Text variant="h3">小节 H3</Text>
 <Text variant="h4">强调 H4</Text>
-<Text variant="body">正文 body</Text>
-<Text variant="caption">辅助说明 caption</Text>`}
+<Text variant="body">正文 body — 这是一段普通段落文字, 用来展示阅读字号和行高。</Text>
+<Text variant="caption">caption — 辅助说明文字, 灰色字体</Text>`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <Text variant="h1">主标题 H1</Text>
@@ -37,13 +37,14 @@ const TextDoc: React.FC = () => {
       <DemoBlock
         title="预设颜色"
         description="主文本 / 次文本 / 弱文本 / 主色 / 状态色, 也接受任意 CSS 颜色字符串。"
-        code={`<Text color="default">主文本</Text>
-<Text color="secondary">次文本</Text>
-<Text color="primary">主色</Text>
-<Text color="success">成功</Text>
-<Text color="warning">警告</Text>
-<Text color="danger">危险</Text>
-<Text color="#a855f7">自定义紫</Text>`}
+        code={`<Text color="default">主文本 (default)</Text>
+<Text color="secondary">次文本 (secondary)</Text>
+<Text color="tertiary">弱文本 (tertiary)</Text>
+<Text color="primary">主色 (primary)</Text>
+<Text color="success">成功 (success)</Text>
+<Text color="warning">警告 (warning)</Text>
+<Text color="danger">危险 (danger)</Text>
+<Text color="#a855f7">自定义紫色 #a855f7</Text>`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Text color="default">主文本 (default)</Text>
@@ -60,11 +61,14 @@ const TextDoc: React.FC = () => {
       <DemoBlock
         title="字重 + 对齐 + 装饰"
         description="weight / align / italic / underline / strikethrough 自由组合。"
-        code={`<Text weight="bold">加粗</Text>
-<Text italic>斜体</Text>
+        code={`<Text weight="bold">加粗 (bold)</Text>
+<Text weight="medium">中等 (medium)</Text>
+<Text italic>斜体 italic</Text>
 <Text underline>下划线</Text>
 <Text strikethrough>删除线</Text>
-<Text align="center">居中</Text>`}
+<Text align="center" style={{ background: 'var(--au-bg-mute)', padding: 4, borderRadius: 4 }}>
+  居中对齐 align="center"
+</Text>`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Text weight="bold">加粗 (bold)</Text>

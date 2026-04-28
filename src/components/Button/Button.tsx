@@ -147,8 +147,9 @@ const LikeButtonVariant: React.FC<ButtonProps> = ({
   );
 };
 
-const Button: React.FC<ButtonProps> = (props) => {
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   if (props.type === 'like') {
+    // Like 变体内部是 div 不是 button, 不接 ref(消费者用 like 时不期望拿 button ref)
     return <LikeButtonVariant {...props} />;
   }
 
@@ -200,6 +201,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
   return (
     <button
+      ref={ref}
       className={classes}
       disabled={disabled || loading}
       style={mergedStyle}
@@ -210,6 +212,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       {children && <span>{children}</span>}
     </button>
   );
-};
+});
+Button.displayName = 'Button';
 
 export default Button;

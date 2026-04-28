@@ -30,6 +30,13 @@
   background: var(--au-bg-soft);
   border-top: 1px solid var(--au-border);
 }
+.demo-block__preview > * {
+  max-width: 100%;
+  min-width: 0;
+}
+.demo-block__preview > div:only-child {
+  width: 100%;
+}
 
 .demo-block__toolbar {
   display: flex;

@@ -1,5 +1,5 @@
 .au-dropdown {
-  z-index: 1050;
+  z-index: var(--au-z-popup, 1050);
   animation: au-dd-in 0.14s var(--au-ease);
 }
 

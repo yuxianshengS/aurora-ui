@@ -57,31 +57,34 @@ const parseRaw = (raw: string): number | null => {
   return n;
 };
 
-const InputNumber: React.FC<InputNumberProps> = ({
-  value,
-  defaultValue = null,
-  min,
-  max,
-  step = 1,
-  precision,
-  disabled,
-  readOnly,
-  size = 'medium',
-  status,
-  placeholder,
-  prefix,
-  suffix,
-  formatter,
-  parser,
-  controls = 'default',
-  keyboard = true,
-  className = '',
-  style,
-  onChange,
-  onBlur,
-  onFocus,
-  onPressEnter,
-}) => {
+const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((
+  {
+    value,
+    defaultValue = null,
+    min,
+    max,
+    step = 1,
+    precision,
+    disabled,
+    readOnly,
+    size = 'medium',
+    status,
+    placeholder,
+    prefix,
+    suffix,
+    formatter,
+    parser,
+    controls = 'default',
+    keyboard = true,
+    className = '',
+    style,
+    onChange,
+    onBlur,
+    onFocus,
+    onPressEnter,
+  },
+  forwardedRef,
+) => {
   const isControlled = value !== undefined;
   const [inner, setInner] = useState<number | null>(defaultValue);
   const current = isControlled ? value ?? null : inner;
@@ -90,7 +93,13 @@ const InputNumber: React.FC<InputNumberProps> = ({
     formatter ? formatter(current) : formatDisplay(current, precision),
   );
   const [focused, setFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // 把内部 ref 同时同步到外部 ref(callback / object 都支持)
+  const setInputRef = (node: HTMLInputElement | null) => {
+    inputRef.current = node;
+    if (typeof forwardedRef === 'function') forwardedRef(node);
+    else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
+  };
 
   // Sync text when current changes externally (and not actively typing)
   useEffect(() => {
@@ -173,7 +182,7 @@ const InputNumber: React.FC<InputNumberProps> = ({
 
   const innerInput = (
     <input
-      ref={inputRef}
+      ref={setInputRef}
       className="au-inputnum__inner"
       type="text"
       inputMode="decimal"
@@ -258,6 +267,7 @@ const InputNumber: React.FC<InputNumberProps> = ({
       )}
     </span>
   );
-};
+});
+InputNumber.displayName = 'InputNumber';
 
 export default InputNumber;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs } from '../components';
+import { Tabs, Icon } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
@@ -80,16 +80,16 @@ const TabsDoc: React.FC = () => {
         title="带图标 / 禁用"
         description="item.icon 放图标; item.disabled 禁用单项。"
         code={`<Tabs items={[
-  { key: 'dash', label: '仪表盘', icon: '📊', children: ... },
-  { key: 'list', label: '列表', icon: '📋', children: ... },
-  { key: 'lock', label: '已归档', icon: '🔒', disabled: true, children: ... },
+  { key: 'dash', label: '仪表盘', icon: <Icon name="home" />, children: ... },
+  { key: 'list', label: '列表', icon: <Icon name="list" />, children: ... },
+  { key: 'lock', label: '已归档', icon: <Icon name="lock" />, disabled: true, children: ... },
 ]} />`}
       >
         <Tabs
           items={[
-            { key: 'dash', label: '仪表盘', icon: <span>📊</span>, children: <p style={{ margin: 0 }}>仪表盘内容</p> },
-            { key: 'list', label: '列表', icon: <span>📋</span>, children: <p style={{ margin: 0 }}>列表内容</p> },
-            { key: 'lock', label: '已归档', icon: <span>🔒</span>, disabled: true, children: <p style={{ margin: 0 }}>该内容已归档</p> },
+            { key: 'dash', label: '仪表盘', icon: <Icon name="home" />, children: <p style={{ margin: 0 }}>仪表盘内容</p> },
+            { key: 'list', label: '列表', icon: <Icon name="list" />, children: <p style={{ margin: 0 }}>列表内容</p> },
+            { key: 'lock', label: '已归档', icon: <Icon name="lock" />, disabled: true, children: <p style={{ margin: 0 }}>该内容已归档</p> },
           ]}
         />
       </DemoBlock>

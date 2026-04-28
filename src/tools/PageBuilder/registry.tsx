@@ -32,7 +32,6 @@ import Gauge from '../../components/Gauge';
 import Funnel from '../../components/Funnel';
 import Heatmap from '../../components/Heatmap';
 import ActivityFeed from '../../components/ActivityFeed';
-import Bar3D from '../../components/Bar3D';
 import Space from '../../components/Space';
 import Divider from '../../components/Divider';
 import Typewriter from '../../components/Typewriter';
@@ -263,16 +262,6 @@ const sampleDayTimelineStatus = [
   { value: new Date(Date.now() - 2 * 3600_000).toISOString(), status: 'warning' },
   { value: new Date(Date.now() - 1 * 3600_000).toISOString(), status: 'danger' },
 ];
-
-const sampleBar3D = {
-  xCategories: ['Q1', 'Q2', 'Q3', 'Q4'],
-  yCategories: ['北区', '南区', '东区'],
-  data: [
-    [48, 72, 56, 94],
-    [30, 55, 48, 82],
-    [42, 66, 70, 90],
-  ],
-};
 
 const sampleFunnelData = [
   { label: '访问', value: 10000 },
@@ -2376,64 +2365,6 @@ export const REGISTRY: BlockSchema[] = [
       { key: 'reverse', label: '新在顶', type: 'boolean' },
     ],
   },
-  {
-    type: 'Bar3D',
-    label: 'Bar3D 3D 柱状图',
-    icon: <Ico n="layered-configuration" />,
-    category: '可视化',
-    component: Bar3D,
-    defaultProps: {
-      xCategories: sampleBar3D.xCategories,
-      yCategories: sampleBar3D.yCategories,
-      data: sampleBar3D.data,
-      height: 300,
-    },
-    previewWrapperStyle: { width: '100%' },
-    fields: [
-      {
-        key: 'xCategories',
-        label: 'X 轴分类',
-        type: 'json',
-        help: '字符串数组, 如 ["Q1","Q2"]',
-      },
-      {
-        key: 'yCategories',
-        label: 'Y 轴分类',
-        type: 'json',
-        help: '字符串数组',
-      },
-      {
-        key: 'data',
-        label: '数据 (二维)',
-        type: 'json',
-        help: '每行对应一个 Y 分类, 长度 = X 分类数',
-      },
-      { key: 'title', label: '标题', type: 'text' },
-      { key: 'height', label: '高度 (px)', type: 'number', min: 200, max: 600 },
-      { key: 'autoRotate', label: '自动旋转', type: 'boolean' },
-      { key: 'showAxis', label: '显示坐标轴', type: 'boolean' },
-      {
-        key: 'theme',
-        label: '主题',
-        type: 'select',
-        options: [
-          { label: 'light', value: 'light' },
-          { label: 'dark', value: 'dark' },
-        ],
-      },
-      {
-        key: 'shading',
-        label: '着色',
-        type: 'select',
-        options: [
-          { label: 'color', value: 'color' },
-          { label: 'lambert', value: 'lambert' },
-          { label: 'realistic', value: 'realistic' },
-        ],
-      },
-    ],
-  },
-
   /* ---------- 布局 ---------- */
   {
     type: 'Split',

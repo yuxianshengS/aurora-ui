@@ -38,7 +38,12 @@ const CardDoc: React.FC = () => (
     <DemoBlock
       title="可悬浮卡片"
       code={`<Card hoverable title="悬停有阴影">
-  ...
+  试试把鼠标移到卡片上。
+</Card>
+
+<Card hoverable title="包含操作">
+  <p>卡片支持嵌套任意组件。</p>
+  <Button type="primary" size="small">前往查看</Button>
 </Card>`}
     >
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>

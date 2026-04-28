@@ -53,7 +53,13 @@ const FlexDoc: React.FC = () => {
       <DemoBlock
         title="主轴对齐 (justify)"
         description="决定子元素在主轴方向上的分布。两端 / 居中 / 等距等。"
-        code={`<Flex justify="between" gap={12}>...</Flex>`}
+        code={`{(['start', 'center', 'end', 'between', 'around', 'evenly'] as const).map((j) => (
+  <Flex key={j} justify={j} gap={8}>
+    <Box>1</Box>
+    <Box>2</Box>
+    <Box>3</Box>
+  </Flex>
+))}`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {(['start', 'center', 'end', 'between', 'around', 'evenly'] as const).map((j) => (
@@ -74,7 +80,13 @@ const FlexDoc: React.FC = () => {
       <DemoBlock
         title="交叉轴对齐 (align)"
         description="子元素在交叉轴方向的对齐方式, 横向布局时控制垂直对齐。"
-        code={`<Flex align="center" gap={12} style={{ height: 80 }}>...</Flex>`}
+        code={`{(['start', 'center', 'end', 'stretch'] as const).map((a) => (
+  <Flex key={a} align={a} gap={8} style={{ height: 80 }}>
+    <Box>短</Box>
+    <div style={{ width: 80 }}>内容多<br />两行</div>
+    <Box>短</Box>
+  </Flex>
+))}`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {(['start', 'center', 'end', 'stretch'] as const).map((a) => (

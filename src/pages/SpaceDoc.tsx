@@ -33,10 +33,13 @@ const SpaceDoc: React.FC = () => {
       <DemoBlock
         title="间距尺寸"
         description="size 支持 small (8) / medium (16) / large (24) 关键字或任意像素数。"
-        code={`<Space size="small">...</Space>
-<Space size="middle">...</Space>
-<Space size="large">...</Space>
-<Space size={40}>...</Space>`}
+        code={`{(['small', 'medium', 'large', 40] as const).map((s) => (
+  <Space key={String(s)} size={s}>
+    <button>按钮 1</button>
+    <button>按钮 2</button>
+    <button>按钮 3</button>
+  </Space>
+))}`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {(['small', 'medium', 'large', 40] as const).map((s) => (
@@ -105,11 +108,13 @@ const SpaceDoc: React.FC = () => {
       <DemoBlock
         title="对齐"
         description="align 控制交叉轴对齐 (水平方向下是纵向对齐)。"
-        code={`<Space align="baseline">
-  <span style={{ fontSize: 12 }}>小</span>
-  <span style={{ fontSize: 18 }}>中</span>
-  <span style={{ fontSize: 28 }}>大</span>
-</Space>`}
+        code={`{(['start', 'center', 'end', 'baseline'] as const).map((a) => (
+  <Space key={a} align={a}>
+    <span style={{ fontSize: 12 }}>小字</span>
+    <span style={{ fontSize: 18 }}>中字</span>
+    <span style={{ fontSize: 28 }}>大字</span>
+  </Space>
+))}`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {(['start', 'center', 'end', 'baseline'] as const).map((a) => (

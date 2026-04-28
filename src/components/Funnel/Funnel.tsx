@@ -137,4 +137,4 @@ const Funnel: React.FC<FunnelProps> = ({
   );
 };
 
-export default Funnel;
+export default React.memo(Funnel);

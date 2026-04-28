@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Menu } from '../components';
+import { Menu, Icon } from '../components';
 import type { MenuItem } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
 const baseItems: MenuItem[] = [
-  { key: 'dashboard', label: '仪表盘', icon: <span>📊</span> },
-  { key: 'orders', label: '订单', icon: <span>🧾</span> },
+  { key: 'dashboard', label: '仪表盘', icon: <Icon name="home" /> },
+  { key: 'orders', label: '订单', icon: <Icon name="order" /> },
   {
     key: 'users',
     label: '用户',
-    icon: <span>👤</span>,
+    icon: <Icon name="customer" />,
     children: [
       { key: 'user-list', label: '用户列表' },
       { key: 'user-role', label: '角色管理' },
@@ -20,7 +20,7 @@ const baseItems: MenuItem[] = [
   {
     key: 'settings',
     label: '设置',
-    icon: <span>⚙️</span>,
+    icon: <Icon name="settings" />,
     children: [
       { key: 'setting-basic', label: '基础设置' },
       { key: 'setting-security', label: '安全' },
@@ -28,7 +28,7 @@ const baseItems: MenuItem[] = [
     ],
   },
   { type: 'divider' },
-  { key: 'logout', label: '退出登录', icon: <span>🚪</span>, danger: true },
+  { key: 'logout', label: '退出登录', icon: <Icon name="return" />, danger: true },
 ];
 
 const MenuDoc: React.FC = () => {
@@ -156,8 +156,8 @@ const MenuDoc: React.FC = () => {
               key: 'g-sys',
               label: '系统',
               children: [
-                { key: 'dashboard', label: '仪表盘', icon: <span>📊</span> },
-                { key: 'alerts', label: '告警', icon: <span>🚨</span>, disabled: true },
+                { key: 'dashboard', label: '仪表盘', icon: <Icon name="home" /> },
+                { key: 'alerts', label: '告警', icon: <Icon name="trade-alert" />, disabled: true },
               ],
             },
             {
@@ -165,7 +165,7 @@ const MenuDoc: React.FC = () => {
               key: 'g-acc',
               label: '账号',
               children: [
-                { key: 'profile', label: '个人资料', icon: <span>👤</span> },
+                { key: 'profile', label: '个人资料', icon: <Icon name="customer" /> },
                 { key: 'team', label: '团队' },
               ],
             },

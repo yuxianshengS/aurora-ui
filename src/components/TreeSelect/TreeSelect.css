@@ -62,17 +62,12 @@
 .au-tree-select__caret.is-open { transform: rotate(180deg); }
 
 .au-tree-select__popup {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  min-width: 100%;
-  max-height: 320px;
-  overflow: auto;
+  /* portal 化后位置由 JS 控制 (top/left/width inline), 这里只管视觉 */
   background: var(--au-bg);
   border: 1px solid var(--au-border);
   border-radius: var(--au-radius-sm);
   box-shadow: 0 8px 24px rgba(17, 24, 39, 0.12);
-  z-index: 100;
+  z-index: var(--au-z-popup, 1050);
   padding: 4px;
   animation: au-tree-select-pop 0.15s var(--au-ease);
 }

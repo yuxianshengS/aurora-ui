@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import './Drawer.css';
 
 export type DrawerPlacement = 'top' | 'right' | 'bottom' | 'left';
@@ -78,6 +79,8 @@ const Drawer: React.FC<DrawerProps> = ({
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
   const locked = useRef(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, mounted && visible);
 
   useEffect(() => {
     if (open) {
@@ -147,9 +150,11 @@ const Drawer: React.FC<DrawerProps> = ({
         />
       )}
       <div
+        ref={panelRef}
         className="au-drawer__panel"
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         style={panelStyle}
       >
         {(title || closable) && (

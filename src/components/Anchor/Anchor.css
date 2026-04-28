@@ -1,0 +1,46 @@
+.au-anchor {
+  position: relative;
+}
+.au-anchor__list {
+  position: relative;
+  list-style: none;
+  padding: 0 0 0 12px;
+  margin: 0;
+  border-left: 1px solid var(--au-border);
+}
+.au-anchor__sublist {
+  list-style: none;
+  padding-left: 16px;
+  margin: 0;
+}
+.au-anchor__item {
+  position: relative;
+  margin: 2px 0;
+}
+.au-anchor__link {
+  display: block;
+  padding: 4px 8px;
+  font-size: 13px;
+  color: var(--au-text-2);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: color 0.15s var(--au-ease), background 0.15s var(--au-ease);
+}
+.au-anchor__link:hover {
+  color: var(--au-primary);
+  background: var(--au-bg-mute);
+}
+.au-anchor__item.is-active > .au-anchor__link {
+  color: var(--au-primary);
+  font-weight: 600;
+}
+
+/* 高亮指示线 — 跟着 active 移动 */
+.au-anchor__bar {
+  position: absolute;
+  left: -1px;
+  width: 2px;
+  background: var(--au-primary);
+  border-radius: 1px;
+  transition: top 0.2s var(--au-ease), height 0.2s var(--au-ease);
+}

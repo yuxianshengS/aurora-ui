@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Steps } from '../components';
+import { Steps, Icon } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
@@ -159,20 +159,20 @@ const items = [
         code={`<Steps
   current={2}
   items={[
-    { title: '登录', icon: <span>🔑</span> },
-    { title: '验证', icon: <span>🛡</span> },
-    { title: '支付', icon: <span>💳</span> },
-    { title: '完成', icon: <span>🎉</span> },
+    { title: '登录', icon: <Icon name="lock" /> },
+    { title: '验证', icon: <Icon name="security" /> },
+    { title: '支付', icon: <Icon name="money-credit-card" /> },
+    { title: '完成', icon: <Icon name="success" /> },
   ]}
 />`}
       >
         <Steps
           current={2}
           items={[
-            { title: '登录', icon: <span>🔑</span> },
-            { title: '验证', icon: <span>🛡</span> },
-            { title: '支付', icon: <span>💳</span> },
-            { title: '完成', icon: <span>🎉</span> },
+            { title: '登录', icon: <Icon name="lock" /> },
+            { title: '验证', icon: <Icon name="security" /> },
+            { title: '支付', icon: <Icon name="money-credit-card" /> },
+            { title: '完成', icon: <Icon name="success" /> },
           ]}
         />
       </DemoBlock>

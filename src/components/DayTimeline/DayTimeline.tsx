@@ -339,6 +339,7 @@ const DayTimeline: React.FC<DayTimelineProps> = ({
     const onUp = () => {
       if (!draggingRef.current) return;
       draggingRef.current = false;
+      document.body.style.userSelect = '';
       // 拖动结束: 用最后一次位置触发 onChangeComplete
       const last = lastEmittedRef.current;
       if (last && onChangeComplete) {
@@ -503,7 +504,11 @@ const DayTimeline: React.FC<DayTimelineProps> = ({
       <circle
         className="au-daytimeline__marker"
         cx={markerX} cy={baseY - 18} r={6}
-        onMouseDown={() => { draggingRef.current = true; }}
+        onMouseDown={() => {
+          draggingRef.current = true;
+          // 拖标记期间禁掉 body 文本选中
+          document.body.style.userSelect = 'none';
+        }}
       />
 
       <polygon

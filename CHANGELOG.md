@@ -4,7 +4,67 @@
 
 ## [Unreleased]
 
-待发布的改动会列在这里.
+### 新增 — 国际化基础
+- **`<ConfigProvider>` 组件** + `useLocale()` / `useConfig()` hook — 全局注入 locale 包 + 主色
+- `Locale` 接口涵盖 8 类组件文案(Pagination / Tour / Modal / Result / Empty / Table / Upload / Common)
+- 内置 `zhCN`(默认)/ `enUS` 两个 locale 包,`Result` / `Empty` / `Tour` 已接入,prop 优先级最高仍可覆盖
+- `primaryColor` 写到 `document.documentElement` 而非包裹 div — 既不破坏外层布局,又能覆盖到 portal 渲染的 Modal / Drawer / Tooltip / Tour 等弹层
+
+### 新增 — Tour 引导组件 (零依赖)
+- 步骤数组 + 高亮目标 + 气泡卡片,`portal` 渲染 + `useFocusTrap` + ESC/←/→ 键盘
+- spotlight 用 `box-shadow: 0 0 0 100vmax` 反向阴影抠洞,GPU 友好,step 切换 transition 平滑
+- target 支持 `HTMLElement | string (CSS 选择器) | () => HTMLElement | null`
+- `step.actions` 完全自定义底部按钮区(拿到 next/prev/close/goTo);`step.onNext` 拦截前进(返回 false 阻止)
+- `closable={false}` 强制走完;`scrollIntoViewOptions` 滚动策略可控
+- 文档站 9 个 demo 含首次访问 localStorage、分支引导、异步校验、合规强引导、CSS 选择器引导
+
+### 新增 — Form 表单 API 补齐
+- `isFieldTouched(name)` / `isFieldsTouched(names?, allTouched?)` — 字段 dirty 跟踪
+- `setFields([{name, value?, errors?, touched?}])` — 一次性回写多字段(适合服务端校验失败、恢复草稿快照)
+
+### 修复
+- **拖动期间禁用 body 文本选中** — Slider / DayTimeline 拖动时不会蓝选页面文本
+- **`vite-plugin-dts` 的 include 扩展到 hooks/ + locale/** — 之前 lib.ts 导出的 useTheme/useFocusTrap/Locale/zhCN/enUS 在 dist d.ts 中缺类型
+
+### 移除 — 重要
+- **删除 Bar3D 组件** — 依赖 echarts + echarts-gl 共 ~1MB raw / 326KB gzip,体积代价过高,使用率低,移交给消费者按需自接
+- 同步清理 `peerDependencies` 中的 `echarts` / `echarts-gl`,vite 的 manualChunks 也去掉对应规则
+
+### 新增 — 组件能力
+- **Table 行/列拖拽**(零依赖,原生 HTML5 Drag API):`draggableRows` / `draggableColumns` / `onRowReorder` / `onColumnReorder`,drop 指示线用 `box-shadow: inset` 绘制,拖列不影响 sorter 点击
+- **Tooltip 大改**:`createPortal` 渲染避免被 `overflow:hidden` 裁切;新增 `trigger='click'/'hover'/'focus'`(组合);新增 `mouseEnterDelay` / `mouseLeaveDelay` 防闪烁;新增 `onOpenChange` / `disabled`;`forwardRef` + 暗模式 token
+- **TreeSelect portal 化**:跟 Select / Dropdown 同 portal 模式,新增 `popupMaxHeight`,scroll/resize/ESC 跟随
+- **Modal / Drawer focus trap**:Tab/Shift+Tab 在面板内循环,关闭时还原焦点到打开前的元素;新建 `useFocusTrap` 共享 hook
+- **Tabs 键盘导航**:ArrowLeft/Right/Up/Down + Home/End 切换,符合 WAI-ARIA Tabs pattern
+- **Menu 键盘导航**:Enter/Space 触发 + ArrowDown/Up 同级移焦
+- **Card onClick a11y**:传 onClick 时自动 `role="button"` + `tabIndex={0}` + Enter/Space 触发 + `:focus-visible` 焦点环
+
+### 新增 — forwardRef + displayName
+- 表单控件:Input / InputNumber / Switch / Checkbox / Radio / Slider
+- 展示组件:Card / Tag / Avatar / Alert / Tooltip
+- 共 11 个组件可被外部 ref 拿到,与 React Hook Form / focus 管理 / scrollIntoView 集成更顺
+
+### 改进 — 工程 / 性能
+- **可视化组件加 React.memo**:Sparkline / Heatmap / Funnel / Gauge — 父级随便 setState 不再带累整图重算
+- **PdfDownload 动态加载**:`html2canvas` + `jspdf`(~186KB gzip)从顶部静态 import 改成 `exportPdf()` 内 `await import()`,只有用户点"下载"时才拉
+- **z-index 全局 token 化**:`--au-z-affix/modal/popup/tooltip/spin/message`,修正之前 Modal(1000) 内的 Dropdown(1050) 反而盖住 Modal 的 stacking 错乱
+- **iconfont CDN preconnect**:`<link rel="preconnect">` 提前 DNS+TLS,首屏 ~100ms FCP 收益
+- **index.html SEO 补全**:description / theme-color / Open Graph / Twitter Card
+- **lib 入口导出 hooks**:`useTheme` / `useFocusTrap` 可被消费者复用
+- **`<img>` 普遍 `loading="lazy" decoding="async"`**:Avatar / Empty / ActivityFeed / Upload
+
+### 改进 — 文档与示例
+- 全量纠正 demo `code` prop 与实际渲染的 1:1 对齐(15+ doc 文件):删除 `={...}` / `...省略...` 等占位符,补齐 emoji icon 替换为真实 `<Icon name="..." />`
+- IconDoc 增量渲染(IntersectionObserver):首屏只挂 120 个 button,滚动追加,慢机首屏 LCP 节点数 -78%
+- AvatarDoc 去掉 `i.pravatar.cc` 外链,改成内联 SVG dataURL,断网/CDN 抖动也能跑
+
+### 修复
+- **Gauge SVG 渐变 id 改用 `useId()`**,SSR / RSC 不再 hydration mismatch
+- **Pagination / Modal.confirm / Dropdown 的 setTimeout 全部 ref 化**,unmount 时清理避免 setState on unmounted
+- **react-router-dom 从 dependencies 挪到 devDependencies**(组件库本身不用,只 docs/builder 用)
+- **Tag 暗模式色彩**:`info/purple/magenta/cyan` 在暗主题下提一档亮度
+- **添加 LICENSE 文件**(MIT,与 package.json 字段对齐)
+- **package.json keywords**:去掉错误的 `tailwind`,补 `aurora` `kpi` `echarts` `data-visualization` `react18`
 
 ## [0.7.0] — 2026-04-28 — Polish & Quality
 

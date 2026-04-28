@@ -44,8 +44,13 @@ const DraggableDoc: React.FC = () => {
       <DemoBlock
         title="轴向锁定"
         description="axis='x' 只允许水平拖动; 'y' 只允许垂直; 默认 'both'。"
-        code={`<Draggable axis="x">...</Draggable>
-<Draggable axis="y">...</Draggable>`}
+        code={`<Draggable axis="x" bounds="parent">
+  <div>仅水平</div>
+</Draggable>
+
+<Draggable axis="y" bounds="parent">
+  <div>仅垂直</div>
+</Draggable>`}
       >
         <AxisDemo />
       </DemoBlock>
@@ -54,7 +59,9 @@ const DraggableDoc: React.FC = () => {
         title="限制范围 · 父容器"
         description="bounds='parent' 限制在父容器内 (父需 position 非 static)。"
         code={`<div style={{ position: 'relative', width: 400, height: 200 }}>
-  <Draggable bounds="parent">...</Draggable>
+  <Draggable bounds="parent">
+    <div>我被关在这里了 🎁</div>
+  </Draggable>
 </div>`}
       >
         <ParentBoundsDemo />
@@ -63,8 +70,8 @@ const DraggableDoc: React.FC = () => {
       <DemoBlock
         title="限制范围 · 自定义"
         description="传入 { left, top, right, bottom } 显式限定 translate 范围。"
-        code={`<Draggable bounds={{ left: -100, right: 100, top: -50, bottom: 50 }}>
-  ...
+        code={`<Draggable bounds={{ left: -150, right: 150, top: -50, bottom: 50 }}>
+  <div>范围 ±150 / ±50</div>
 </Draggable>`}
       >
         <CustomBoundsDemo />
@@ -74,7 +81,7 @@ const DraggableDoc: React.FC = () => {
         title="网格吸附"
         description="grid=[20, 20] 按 20px 步长吸附, 适合画布 / 布局器。"
         code={`<Draggable grid={[20, 20]} bounds="parent">
-  ...
+  <div>每 20px 吸附一次</div>
 </Draggable>`}
       >
         <GridDemo />

@@ -149,9 +149,75 @@ const reset = () => form.resetFields();
   labelWidth={108}
   initialValues={{ gender: 'x', hobbies: ['read'], score: 60, subscribed: true }}
   onFinish={(values) => message.success('注册成功')}
-  onValuesChange={(changed, all) => console.log(changed, all)}
 >
-  ...省略...
+  <Form.Item
+    label="昵称" name="nickname"
+    rules={[
+      { required: true, message: '请填写昵称' },
+      { min: 2, max: 16, message: '2-16 个字符' },
+    ]}
+  >
+    <Input placeholder="2-16 个字符" />
+  </Form.Item>
+
+  <Form.Item
+    label="邮箱" name="email" help="将作为登录账号"
+    rules={[
+      { required: true, message: '请填写邮箱' },
+      { type: 'email', message: '邮箱格式不正确' },
+    ]}
+  >
+    <Input placeholder="you@example.com" />
+  </Form.Item>
+
+  <Form.Item label="性别" name="gender">
+    <Radio.Group options={[
+      { label: '男', value: 'm' },
+      { label: '女', value: 'f' },
+      { label: '保密', value: 'x' },
+    ]} />
+  </Form.Item>
+
+  <Form.Item label="出生日期" name="birthday">
+    <DatePicker placeholder="选择日期" />
+  </Form.Item>
+
+  <Form.Item
+    label="兴趣爱好" name="hobbies" help="可多选"
+    rules={[{ type: 'array', min: 1, message: '至少选 1 项' }]}
+  >
+    <Checkbox.Group options={[
+      { label: '阅读', value: 'read' },
+      { label: '运动', value: 'sport' },
+      { label: '音乐', value: 'music' },
+      { label: '摄影', value: 'photo' },
+    ]} />
+  </Form.Item>
+
+  <Form.Item label="活跃度" name="score" extra="滑块评估你每周使用时长">
+    <Slider />
+  </Form.Item>
+
+  <Form.Item label="城市" name="city">
+    <Select
+      placeholder="请选择"
+      allowClear
+      options={[
+        { label: '北京', value: 'bj' },
+        { label: '上海', value: 'sh' },
+        { label: '深圳', value: 'sz' },
+        { label: '成都', value: 'cd' },
+      ]}
+    />
+  </Form.Item>
+
+  <Form.Item label="接收推送" name="subscribed" valuePropName="checked">
+    <Switch />
+  </Form.Item>
+
+  <Form.Item>
+    <Button type="primary">注册</Button>
+  </Form.Item>
 </Form>`}
       >
         <RegDemo />

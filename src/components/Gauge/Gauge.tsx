@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useId, useMemo } from 'react';
 import './Gauge.css';
 
 export interface GaugeThreshold {
@@ -76,7 +76,10 @@ const Gauge: React.FC<GaugeProps> = ({
   style,
   animated = true,
 }) => {
-  const { clampValue, percent, sweep, mainPath, bgPath, chosenColor, gradId } = useMemo(() => {
+  // 用 React 18 的 useId 生成 SSR 稳定的渐变 id, 避免 hydration mismatch
+  const reactId = useId();
+  const gradId = gradient ? `au-gauge-grad-${reactId.replace(/:/g, '')}` : '';
+  const { clampValue, percent, sweep, mainPath, bgPath, chosenColor } = useMemo(() => {
     const cv = Math.max(min, Math.min(max, value));
     const p = max - min === 0 ? 0 : (cv - min) / (max - min);
     const totalSpan = endAngle - startAngle;
@@ -87,9 +90,8 @@ const Gauge: React.FC<GaugeProps> = ({
     const bg = describeArc(cx, cy, r, startAngle, endAngle);
     const main = describeArc(cx, cy, r, startAngle, sweepDeg);
     const picked = pickColorByThreshold(cv, max, thresholds, color);
-    const gId = gradient ? `au-gauge-grad-${Math.random().toString(36).slice(2, 9)}` : '';
-    return { clampValue: cv, percent: p * 100, sweep: sweepDeg, mainPath: main, bgPath: bg, chosenColor: picked, gradId: gId };
-  }, [value, min, max, size, thickness, startAngle, endAngle, color, thresholds, gradient]);
+    return { clampValue: cv, percent: p * 100, sweep: sweepDeg, mainPath: main, bgPath: bg, chosenColor: picked };
+  }, [value, min, max, size, thickness, startAngle, endAngle, color, thresholds]);
 
   const cx = size / 2;
   const cy = size / 2;
@@ -142,4 +144,4 @@ const Gauge: React.FC<GaugeProps> = ({
   );
 };
 
-export default Gauge;
+export default React.memo(Gauge);

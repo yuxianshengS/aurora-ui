@@ -60,10 +60,25 @@ const GlowCardDoc: React.FC = () => {
       <DemoBlock
         title="价格卡组合"
         description="GlowCard + GradientText + NumberRoll, 招牌组合."
-        code={`<GlowCard glowColor="#7c3aed" intensity={0.8}>
-  <GradientText preset="cosmic" weight={700} size={20}>Pro 版</GradientText>
-  <div><NumberRoll prefix="¥" value={199} size={40} /> /月</div>
+        code={`<GlowCard glowColor="var(--au-primary)" padding={28}>
+  <div>Free</div>
+  <NumberRoll prefix="¥" value={0} size={40} weight={700} />
+  <p>个人开发者免费.</p>
+  <Button block>开始使用</Button>
+</GlowCard>
+
+<GlowCard glowColor="#7c3aed" intensity={0.8} padding={28}>
+  <GradientText preset="cosmic" weight={700} size={16}>Pro 版</GradientText>
+  <NumberRoll prefix="¥" value={199} size={40} weight={700} suffix={<span>/月</span>} />
+  <p>无限项目, 优先支持.</p>
   <Button type="primary" block>立即升级</Button>
+</GlowCard>
+
+<GlowCard glowColor="#fb923c" padding={28}>
+  <div>Enterprise</div>
+  <NumberRoll prefix="¥" value={1999} size={40} weight={700} suffix={<span>/月</span>} />
+  <p>SLA + 专属客户经理.</p>
+  <Button block>联系销售</Button>
 </GlowCard>`}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>

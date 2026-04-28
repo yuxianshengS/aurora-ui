@@ -194,6 +194,27 @@ const columns = [
         />
       </DemoBlock>
 
+      <DemoBlock
+        title="拖拽行 / 拖拽列"
+        description={`draggableRows 在最左侧加一个拖拽手柄, 拖动行可重排; draggableColumns 让所有表头可拖动以重排列序。两者可叠加。onRowReorder / onColumnReorder 拿到新顺序。`}
+        code={`<Table
+  rowKey="id"
+  draggableRows
+  draggableColumns
+  columns={columns}
+  dataSource={users}
+  onRowReorder={(next, { from, to }) =>
+    message.success(\`行移动: \${from} → \${to}\`)
+  }
+  onColumnReorder={(next, { from, to }) =>
+    message.info(\`列移动: \${from} → \${to}\`)
+  }
+  pagination={false}
+/>`}
+      >
+        <DraggableDemo />
+      </DemoBlock>
+
       <h2>API</h2>
       <h3>Table</h3>
       <ApiTable
@@ -213,6 +234,10 @@ const columns = [
           { prop: 'empty', desc: '空态内容', type: 'ReactNode', default: '<Empty />' },
           { prop: 'onRow', desc: '自定义行属性', type: '(record, index) => HTMLAttributes', default: '-' },
           { prop: 'rowClassName', desc: '自定义行 className', type: 'string | (record, index) => string', default: '-' },
+          { prop: 'draggableRows', desc: '行拖拽排序 (左侧加拖拽手柄列)', type: 'boolean', default: 'false' },
+          { prop: 'onRowReorder', desc: '行排序变化回调', type: '(next, { from, to }) => void', default: '-' },
+          { prop: 'draggableColumns', desc: '列拖拽改顺序 (拖表头)', type: 'boolean', default: 'false' },
+          { prop: 'onColumnReorder', desc: '列排序变化回调', type: '(next, { from, to }) => void', default: '-' },
         ]}
       />
       <h3>TableColumn</h3>
@@ -227,6 +252,7 @@ const columns = [
           { prop: 'ellipsis', desc: '超长省略', type: 'boolean', default: 'false' },
           { prop: 'sorter', desc: '排序 (true 默认比较; 或传比较函数)', type: 'boolean | (a, b, order) => number', default: '-' },
           { prop: 'defaultSortOrder', desc: '默认排序方向', type: `'ascend' | 'descend' | null`, default: '-' },
+          { prop: 'draggable', desc: '此列是否参与拖拽 (Table draggableColumns 开启时)', type: 'boolean', default: 'true' },
         ]}
       />
       <h3>RowSelection</h3>
@@ -302,6 +328,36 @@ const SelectionDemo: React.FC = () => {
         pagination={false}
       />
     </div>
+  );
+};
+
+const DraggableDemo: React.FC = () => {
+  const [rows, setRows] = useState<User[]>(users);
+  const [cols, setCols] = useState<TableColumn<User>[]>(() => [
+    { title: '姓名', dataIndex: 'name', width: 160 },
+    { title: '角色', dataIndex: 'role', width: 120, render: (r: User['role']) => <Tag color={roleColor[r]}>{r}</Tag> },
+    { title: '邮箱', dataIndex: 'email' },
+    { title: '余额', dataIndex: 'balance', width: 140, align: 'right', render: (v: number) => `¥ ${v.toLocaleString()}` },
+    { title: '状态', dataIndex: 'status', width: 100, render: (s: User['status']) => (s === 'online' ? <Tag color="success">在线</Tag> : <Tag>离线</Tag>) },
+  ]);
+  return (
+    <Table<User>
+      rowKey="id"
+      bordered
+      draggableRows
+      draggableColumns
+      columns={cols}
+      dataSource={rows}
+      onRowReorder={(next, { from, to }) => {
+        setRows(next);
+        message.success(`行移动: ${from} → ${to}`);
+      }}
+      onColumnReorder={(next, { from, to }) => {
+        setCols(next);
+        message.info(`列移动: ${from} → ${to}`);
+      }}
+      pagination={false}
+    />
   );
 };
 

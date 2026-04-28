@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tag } from '../components';
+import { Tag, Icon } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
@@ -86,14 +86,14 @@ const TagDoc: React.FC = () => {
       <DemoBlock
         title="带图标"
         description="icon 放在文字前,适合标识来源、类型。"
-        code={`<Tag color="primary" icon={<span>⭐</span>}>精选</Tag>
-<Tag color="success" icon={<span>✓</span>}>已完成</Tag>
-<Tag color="danger"  icon={<span>🔥</span>}>热门</Tag>`}
+        code={`<Tag color="primary" icon={<Icon name="favorites" />}>精选</Tag>
+<Tag color="success" icon={<Icon name="success" />}>已完成</Tag>
+<Tag color="danger"  icon={<Icon name="hot-for-ux" />}>热门</Tag>`}
       >
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Tag color="primary" icon={<span>⭐</span>}>精选</Tag>
-          <Tag color="success" icon={<span>✓</span>}>已完成</Tag>
-          <Tag color="danger" icon={<span>🔥</span>}>热门</Tag>
+          <Tag color="primary" icon={<Icon name="favorites" />}>精选</Tag>
+          <Tag color="success" icon={<Icon name="success" />}>已完成</Tag>
+          <Tag color="danger" icon={<Icon name="hot-for-ux" />}>热门</Tag>
         </div>
       </DemoBlock>
 

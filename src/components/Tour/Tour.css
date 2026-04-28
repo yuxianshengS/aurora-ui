@@ -1,0 +1,207 @@
+/* Tour 引导:整层固定到视口, mask 用 box-shadow 100vmax 实现透明洞 */
+.au-tour {
+  position: fixed;
+  inset: 0;
+  z-index: var(--au-z-modal, 1000);
+  pointer-events: none;
+}
+
+/* 高亮目标的"洞" — 边框 + 巨大反向阴影模拟全屏蒙层 */
+.au-tour__spotlight {
+  position: fixed;
+  border-radius: 8px;
+  pointer-events: auto;
+  box-shadow: 0 0 0 100vmax rgba(15, 20, 27, 0.55);
+  outline: 2px solid var(--au-primary);
+  outline-offset: 0;
+  transition: top 0.24s var(--au-ease), left 0.24s var(--au-ease),
+    width 0.24s var(--au-ease), height 0.24s var(--au-ease);
+}
+[data-theme='dark'] .au-tour__spotlight {
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.7);
+}
+
+/* center 步骤(无 target)用扁平蒙层 */
+.au-tour__flat-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 27, 0.55);
+  pointer-events: auto;
+}
+[data-theme='dark'] .au-tour__flat-mask {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* 卡片 */
+.au-tour__card {
+  position: fixed;
+  pointer-events: auto;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: var(--au-bg);
+  color: var(--au-text-1);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius);
+  box-shadow: var(--au-shadow-lg, 0 20px 48px rgba(0, 0, 0, 0.18));
+  display: flex;
+  flex-direction: column;
+  animation: au-tour-in 0.18s var(--au-ease);
+}
+@keyframes au-tour-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* primary 主题: 卡片背景跟随主色, 文字反白 */
+.au-tour__card--primary {
+  background: var(--au-primary);
+  color: #fff;
+  border-color: transparent;
+}
+.au-tour__card--primary .au-tour__close,
+.au-tour__card--primary .au-tour__progress { color: rgba(255, 255, 255, 0.85); }
+
+.au-tour__cover {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  overflow: hidden;
+}
+.au-tour__cover img,
+.au-tour__cover video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.au-tour__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px 6px;
+}
+.au-tour__title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.au-tour__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 0;
+  color: var(--au-text-3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s var(--au-ease), color 0.15s var(--au-ease);
+}
+.au-tour__close:hover {
+  background: var(--au-bg-mute);
+  color: var(--au-text-1);
+}
+.au-tour__card--primary .au-tour__close:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.au-tour__desc {
+  padding: 0 16px 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--au-text-2);
+}
+.au-tour__card--primary .au-tour__desc { color: rgba(255, 255, 255, 0.92); }
+
+.au-tour__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 12px 16px;
+  gap: 12px;
+}
+.au-tour__progress {
+  font-size: 12px;
+  color: var(--au-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.au-tour__actions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.au-tour__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 14px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s var(--au-ease), color 0.15s var(--au-ease),
+    border-color 0.15s var(--au-ease);
+}
+.au-tour__btn--ghost {
+  background: transparent;
+  color: var(--au-text-2);
+  border-color: var(--au-border);
+}
+.au-tour__btn--ghost:hover {
+  border-color: var(--au-primary);
+  color: var(--au-primary);
+}
+.au-tour__card--primary .au-tour__btn--ghost {
+  color: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.au-tour__card--primary .au-tour__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.au-tour__btn--primary {
+  background: var(--au-primary);
+  color: #fff;
+  border-color: var(--au-primary);
+}
+.au-tour__btn--primary:hover {
+  background: var(--au-primary-hover, var(--au-primary));
+}
+.au-tour__card--primary .au-tour__btn--primary {
+  background: #fff;
+  color: var(--au-primary);
+  border-color: #fff;
+}
+.au-tour__card--primary .au-tour__btn--primary:hover {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* 箭头 */
+.au-tour__arrow {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.au-tour__card--primary .au-tour__arrow {
+  background: var(--au-primary);
+  border-color: var(--au-primary);
+}
+/* 各方向只保留两条边的边框, 让箭头尖头无缝接卡片 */
+.au-tour__arrow--top    { border-right: 0; border-bottom: 0; }
+.au-tour__arrow--bottom { border-left: 0;  border-top: 0; }
+.au-tour__arrow--left   { border-right: 0; border-top: 0; }
+.au-tour__arrow--right  { border-left: 0;  border-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .au-tour__spotlight { transition: none; }
+  .au-tour__card { animation: none; }
+}

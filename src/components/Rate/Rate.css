@@ -1,0 +1,82 @@
+.au-rate {
+  --au-rate-color: #fbbf24;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.au-rate__star {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.12);
+  transition: transform 0.12s var(--au-ease);
+}
+.au-rate__star.is-locked { cursor: default; }
+.au-rate__star:hover:not(.is-locked) {
+  transform: scale(1.12);
+}
+
+[data-theme='dark'] .au-rate__star {
+  color: rgba(255, 255, 255, 0.18);
+}
+
+.au-rate__bg {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  /* 跟图标自身 fill 配合: 用 currentColor */
+}
+.au-rate__fg {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  overflow: hidden;
+  color: var(--au-rate-color);
+  /* 半星: width 由 inline style 控制 */
+  transition: width 0.16s var(--au-ease);
+}
+
+/* aurora variant: 满分时 5 颗星走极光渐变 */
+.au-rate--aurora .au-rate__fg {
+  color: transparent;
+  background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+.au-rate--aurora .au-rate__fg svg {
+  /* 用 SVG 当做 mask, 让背景渐变透出来 */
+  fill: black;
+}
+.au-rate--aurora .au-rate__fg {
+  -webkit-mask-image: var(--au-rate-mask-img, none);
+  mask-image: var(--au-rate-mask-img, none);
+}
+/* 上面是 mask 法的占位; 实际更稳的方式: 用 CSS background-clip: text 不行, 因为 text 是 SVG.
+   退一步: 给 svg 加 fill = url(#aurora-grad) 渐变 SVG defs. 但跨实例复用麻烦.
+   最简单可靠: 满分时 fg color 用一个渐变近似的中间色, 由 .is-full 状态切换 */
+.au-rate--aurora.is-full .au-rate__fg {
+  color: #a855f7;
+  filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.5));
+}
+/* 把 svg 直接换成渐变 fill (用 CSS 变量传给 svg fill): SVG 不支持 currentColor 换渐变,
+   所以最终采用一个偏紫的"满分色" + drop-shadow, 视觉上是"高级感的紫粉发光" */
+
+.au-rate.is-disabled .au-rate__star {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.au-rate.is-readonly .au-rate__star {
+  cursor: default;
+}
+.au-rate.is-readonly .au-rate__star:hover {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au-rate__star,
+  .au-rate__fg { transition: none; }
+}

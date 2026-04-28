@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Tree, { type TreeNode } from '../Tree/Tree';
 import './TreeSelect.css';
 
@@ -14,6 +15,8 @@ export interface TreeSelectProps {
   treeDefaultExpandAll?: boolean;
   /** 弹出框宽度, 默认跟触发器同宽 */
   popupWidth?: number | string;
+  /** 弹出框最大高度, 超出滚动 */
+  popupMaxHeight?: number;
   onChange?: (value: string, label?: React.ReactNode) => void;
   className?: string;
   style?: React.CSSProperties;
@@ -39,6 +42,7 @@ const TreeSelect: React.FC<TreeSelectProps> = ({
   allowClear,
   treeDefaultExpandAll,
   popupWidth,
+  popupMaxHeight = 320,
   onChange,
   className = '',
   style,
@@ -47,15 +51,51 @@ const TreeSelect: React.FC<TreeSelectProps> = ({
   const [innerValue, setInnerValue] = useState<string | undefined>(defaultValue);
   const value = isCtrl ? ctrlValue! : innerValue;
   const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; width: number }>({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
+  // 定位
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const update = () => {
+      const r = triggerRef.current!.getBoundingClientRect();
+      setPos({ top: r.bottom + 4, left: r.left, width: r.width });
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [open]);
+
+  // 点击外部关闭
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t)) return;
+      if (popupRef.current?.contains(t)) return;
+      setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
+  }, [open]);
+
+  // ESC 关闭
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
   const label = value ? findTitle(treeData, value) : undefined;
@@ -83,9 +123,17 @@ const TreeSelect: React.FC<TreeSelectProps> = ({
     .filter(Boolean)
     .join(' ');
 
+  const popupW =
+    popupWidth != null
+      ? typeof popupWidth === 'number'
+        ? popupWidth
+        : popupWidth
+      : pos.width;
+
   return (
-    <div ref={wrapRef} className={cls} style={style}>
+    <div className={cls} style={style}>
       <div
+        ref={triggerRef}
         className="au-tree-select__trigger"
         onClick={() => !disabled && setOpen((v) => !v)}
         role="combobox"
@@ -101,20 +149,30 @@ const TreeSelect: React.FC<TreeSelectProps> = ({
           </svg>
         </span>
       </div>
-      {open && (
-        <div
-          className="au-tree-select__popup"
-          style={popupWidth ? { width: typeof popupWidth === 'number' ? `${popupWidth}px` : popupWidth } : undefined}
-        >
-          <Tree
-            treeData={treeData}
-            selectedKeys={value ? [value] : []}
-            defaultExpandAll={treeDefaultExpandAll}
-            onSelect={(keys) => handleSelect(keys)}
-            blockNode
-          />
-        </div>
-      )}
+      {open &&
+        createPortal(
+          <div
+            ref={popupRef}
+            className="au-tree-select__popup"
+            style={{
+              position: 'fixed',
+              top: pos.top,
+              left: pos.left,
+              width: popupW,
+              maxHeight: popupMaxHeight,
+              overflow: 'auto',
+            }}
+          >
+            <Tree
+              treeData={treeData}
+              selectedKeys={value ? [value] : []}
+              defaultExpandAll={treeDefaultExpandAll}
+              onSelect={(keys) => handleSelect(keys)}
+              blockNode
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };

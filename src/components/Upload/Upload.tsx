@@ -202,7 +202,7 @@ const Upload: React.FC<UploadProps> = ({
           {list.map((f) => (
             <div key={f.uid} className={`au-upload__item is-${f.status ?? 'done'}`}>
               {(listType === 'picture' || listType === 'card') && f.url && (
-                <img src={f.url} alt={f.name} className="au-upload__thumb" />
+                <img src={f.url} alt={f.name} className="au-upload__thumb" loading="lazy" decoding="async" />
               )}
               <div className="au-upload__meta">
                 <div className="au-upload__name" title={f.name}>{f.name}</div>

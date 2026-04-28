@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Pagination, { type PaginationProps } from '../Pagination/Pagination';
 import Empty from '../Empty/Empty';
 import Checkbox from '../Checkbox/Checkbox';
@@ -20,6 +20,8 @@ export interface TableColumn<T = any> {
   defaultSortOrder?: SortOrder;
   render?: (value: any, record: T, index: number) => React.ReactNode;
   className?: string;
+  /** 该列是否可拖拽改顺序; 默认 true (前提是 Table 上 draggableColumns 开启) */
+  draggable?: boolean;
 }
 
 export interface RowSelection<T = any> {
@@ -54,6 +56,15 @@ export interface TableProps<T = any> {
   rowClassName?: string | ((record: T, index: number) => string);
   className?: string;
   style?: React.CSSProperties;
+
+  /** 行可拖拽排序 — 在最左侧多一列拖拽手柄 */
+  draggableRows?: boolean;
+  /** 行排序变化回调; 返回新的 dataSource 顺序与 from/to 索引(基于排序后的视图) */
+  onRowReorder?: (next: T[], info: { from: number; to: number }) => void;
+  /** 列可拖拽改顺序 — 直接拖表头 */
+  draggableColumns?: boolean;
+  /** 列排序变化回调 */
+  onColumnReorder?: (next: TableColumn<T>[], info: { from: number; to: number }) => void;
 }
 
 const SortIcon: React.FC<{ order: SortOrder }> = ({ order }) => (
@@ -71,6 +82,17 @@ const SortIcon: React.FC<{ order: SortOrder }> = ({ order }) => (
       />
     </svg>
   </span>
+);
+
+const DragHandleIcon: React.FC = () => (
+  <svg className="au-table__drag-icon" width="10" height="16" viewBox="0 0 10 16" aria-hidden>
+    <circle cx="2" cy="3"  r="1.2" fill="currentColor" />
+    <circle cx="8" cy="3"  r="1.2" fill="currentColor" />
+    <circle cx="2" cy="8"  r="1.2" fill="currentColor" />
+    <circle cx="8" cy="8"  r="1.2" fill="currentColor" />
+    <circle cx="2" cy="13" r="1.2" fill="currentColor" />
+    <circle cx="8" cy="13" r="1.2" fill="currentColor" />
+  </svg>
 );
 
 const getKey = <T,>(
@@ -95,6 +117,9 @@ const getCellValue = <T,>(record: T, col: TableColumn<T>, index: number): any =>
   return (record as any)[path];
 };
 
+const colKeyOf = (c: TableColumn<any>, fallbackIndex: number) =>
+  c.key ?? String(c.dataIndex ?? `__col_${fallbackIndex}`);
+
 function Table<T = any>({
   columns,
   dataSource,
@@ -113,18 +138,73 @@ function Table<T = any>({
   rowClassName,
   className = '',
   style,
+  draggableRows,
+  onRowReorder,
+  draggableColumns,
+  onColumnReorder,
 }: TableProps<T>) {
-  // sort state (single-column client-side)
-  const [sortKey, setSortKey] = useState<string | null>(
-    () => {
-      for (const col of columns) {
-        if (col.sorter && col.defaultSortOrder != null) {
-          return col.key ?? String(col.dataIndex ?? '');
-        }
-      }
-      return null;
-    },
+  /* ============ 列顺序 (内部状态, 跟 columns prop 保持同步, 但拖动时由内部主导) ============ */
+  const columnsKeySig = useMemo(
+    () => columns.map((c, i) => colKeyOf(c, i)).join('|'),
+    [columns],
   );
+  const [colOrder, setColOrder] = useState<string[]>(() =>
+    columns.map((c, i) => colKeyOf(c, i)),
+  );
+  // 当外部 columns 改变(增删/换 key), 同步重置内部顺序避免出现幽灵列
+  useEffect(() => {
+    setColOrder(columns.map((c, i) => colKeyOf(c, i)));
+  }, [columnsKeySig]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const orderedColumns = useMemo(() => {
+    if (!draggableColumns) return columns;
+    const byKey = new Map<string, TableColumn<T>>();
+    columns.forEach((c, i) => byKey.set(colKeyOf(c, i), c));
+    const ordered = colOrder.map((k) => byKey.get(k)).filter(Boolean) as TableColumn<T>[];
+    // 兜底: 如果有新增列还没进 colOrder, 追加在末尾
+    columns.forEach((c, i) => {
+      const k = colKeyOf(c, i);
+      if (!colOrder.includes(k)) ordered.push(c);
+    });
+    return ordered;
+  }, [columns, colOrder, draggableColumns]);
+
+  /* ============ 行顺序 (本地排序) ============ */
+  const [rowOrderKeys, setRowOrderKeys] = useState<React.Key[] | null>(null);
+  // dataSource 变化(增删行)清掉本地排序, 避免出现幽灵行
+  const dataKeySig = useMemo(
+    () => dataSource.map((r, i) => String(getKey(r, i, rowKey))).join('|'),
+    [dataSource, rowKey],
+  );
+  useEffect(() => {
+    setRowOrderKeys(null);
+  }, [dataKeySig]);
+
+  const orderedDataSource = useMemo(() => {
+    if (!draggableRows || !rowOrderKeys) return dataSource;
+    const byKey = new Map<React.Key, T>();
+    dataSource.forEach((r, i) => byKey.set(getKey(r, i, rowKey), r));
+    const out: T[] = [];
+    rowOrderKeys.forEach((k) => {
+      const r = byKey.get(k);
+      if (r) out.push(r);
+    });
+    // 兜底新增项
+    dataSource.forEach((r, i) => {
+      if (!rowOrderKeys.includes(getKey(r, i, rowKey))) out.push(r);
+    });
+    return out;
+  }, [draggableRows, rowOrderKeys, dataSource, rowKey]);
+
+  /* ============ 排序状态 ============ */
+  const [sortKey, setSortKey] = useState<string | null>(() => {
+    for (const col of columns) {
+      if (col.sorter && col.defaultSortOrder != null) {
+        return col.key ?? String(col.dataIndex ?? '');
+      }
+    }
+    return null;
+  });
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     () => columns.find((c) => c.sorter && c.defaultSortOrder)?.defaultSortOrder ?? null,
   );
@@ -141,10 +221,10 @@ function Table<T = any>({
   };
 
   const sorted = useMemo(() => {
-    if (!sortKey || !sortOrder) return dataSource;
-    const col = columns.find((c) => (c.key ?? String(c.dataIndex ?? '')) === sortKey);
-    if (!col || !col.sorter) return dataSource;
-    const arr = [...dataSource];
+    if (!sortKey || !sortOrder) return orderedDataSource;
+    const col = orderedColumns.find((c) => (c.key ?? String(c.dataIndex ?? '')) === sortKey);
+    if (!col || !col.sorter) return orderedDataSource;
+    const arr = [...orderedDataSource];
     if (typeof col.sorter === 'function') {
       const sorter = col.sorter;
       const order = sortOrder;
@@ -162,9 +242,9 @@ function Table<T = any>({
     }
     if (sortOrder === 'descend') arr.reverse();
     return arr;
-  }, [dataSource, columns, sortKey, sortOrder]);
+  }, [orderedDataSource, orderedColumns, sortKey, sortOrder]);
 
-  // pagination state
+  /* ============ 分页 ============ */
   const pgProp = pagination === false || pagination == null ? null : pagination;
   const [innerPage, setInnerPage] = useState(pgProp?.defaultCurrent ?? 1);
   const [innerSize, setInnerSize] = useState(pgProp?.defaultPageSize ?? 10);
@@ -177,7 +257,7 @@ function Table<T = any>({
     return sorted.slice(start, start + pageSize);
   }, [sorted, pgProp, current, pageSize]);
 
-  // row selection state
+  /* ============ 行选 ============ */
   const selCtrl = rowSelection?.selectedRowKeys !== undefined;
   const [innerSel, setInnerSel] = useState<React.Key[]>(
     rowSelection?.defaultSelectedRowKeys ?? [],
@@ -207,7 +287,7 @@ function Table<T = any>({
 
   const commitSelection = (next: React.Key[]) => {
     if (!selCtrl) setInnerSel(next);
-    const rows = (pgProp ? sorted : dataSource).filter((r, i) =>
+    const rows = (pgProp ? sorted : orderedDataSource).filter((r, i) =>
       next.includes(getKey(r, i, rowKey)),
     );
     rowSelection?.onChange?.(next, rows);
@@ -234,30 +314,154 @@ function Table<T = any>({
     }
   };
 
+  /* ============ 拖拽: 行 ============ */
+  const [dragRowKey, setDragRowKey] = useState<React.Key | null>(null);
+  const [dragOverRow, setDragOverRow] = useState<{ key: React.Key; pos: 'before' | 'after' } | null>(null);
+
+  const handleRowDragStart = (key: React.Key, e: React.DragEvent) => {
+    if (sortOrder) return; // 排序激活时禁止拖拽避免视觉混淆
+    setDragRowKey(key);
+    e.dataTransfer.effectAllowed = 'move';
+    try {
+      e.dataTransfer.setData('text/plain', String(key));
+    } catch {/* Firefox 需要至少 setData 一次 */}
+  };
+  const handleRowDragOver = (key: React.Key, e: React.DragEvent) => {
+    if (dragRowKey == null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const pos: 'before' | 'after' = e.clientY < r.top + r.height / 2 ? 'before' : 'after';
+    if (!dragOverRow || dragOverRow.key !== key || dragOverRow.pos !== pos) {
+      setDragOverRow({ key, pos });
+    }
+  };
+  const handleRowDrop = (key: React.Key, e: React.DragEvent) => {
+    e.preventDefault();
+    if (dragRowKey == null || dragRowKey === key) {
+      setDragRowKey(null);
+      setDragOverRow(null);
+      return;
+    }
+    const pos: 'before' | 'after' = dragOverRow?.key === key ? dragOverRow.pos : 'after';
+    // 在当前 sorted (= 排序应用过, 含本地行序) 上做整体移动
+    const baseKeys = sorted.map((r, i) => getKey(r, i, rowKey));
+    const from = baseKeys.indexOf(dragRowKey);
+    let to = baseKeys.indexOf(key);
+    if (from < 0 || to < 0) {
+      setDragRowKey(null);
+      setDragOverRow(null);
+      return;
+    }
+    const next = [...baseKeys];
+    const [moved] = next.splice(from, 1);
+    let insertAt = next.indexOf(key);
+    if (pos === 'after') insertAt += 1;
+    next.splice(insertAt, 0, moved);
+
+    setRowOrderKeys(next);
+    if (onRowReorder) {
+      const byKey = new Map<React.Key, T>();
+      dataSource.forEach((r, i) => byKey.set(getKey(r, i, rowKey), r));
+      const reorderedRecords = next.map((k) => byKey.get(k)).filter(Boolean) as T[];
+      onRowReorder(reorderedRecords, { from, to: insertAt });
+    }
+    setDragRowKey(null);
+    setDragOverRow(null);
+  };
+  const handleRowDragEnd = () => {
+    setDragRowKey(null);
+    setDragOverRow(null);
+  };
+
+  /* ============ 拖拽: 列 ============ */
+  const [dragColKey, setDragColKey] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<{ key: string; pos: 'before' | 'after' } | null>(null);
+
+  const handleColDragStart = (k: string, e: React.DragEvent) => {
+    setDragColKey(k);
+    e.dataTransfer.effectAllowed = 'move';
+    try {
+      e.dataTransfer.setData('text/plain', k);
+    } catch {/* noop */}
+  };
+  const handleColDragOver = (k: string, e: React.DragEvent) => {
+    if (dragColKey == null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const pos: 'before' | 'after' = e.clientX < r.left + r.width / 2 ? 'before' : 'after';
+    if (!dragOverCol || dragOverCol.key !== k || dragOverCol.pos !== pos) {
+      setDragOverCol({ key: k, pos });
+    }
+  };
+  const handleColDrop = (k: string, e: React.DragEvent) => {
+    e.preventDefault();
+    if (dragColKey == null || dragColKey === k) {
+      setDragColKey(null);
+      setDragOverCol(null);
+      return;
+    }
+    const pos: 'before' | 'after' = dragOverCol?.key === k ? dragOverCol.pos : 'after';
+    const next = [...colOrder];
+    const from = next.indexOf(dragColKey);
+    if (from < 0) {
+      setDragColKey(null);
+      setDragOverCol(null);
+      return;
+    }
+    const [moved] = next.splice(from, 1);
+    let insertAt = next.indexOf(k);
+    if (pos === 'after') insertAt += 1;
+    next.splice(insertAt, 0, moved);
+    setColOrder(next);
+    if (onColumnReorder) {
+      const byKey = new Map<string, TableColumn<T>>();
+      columns.forEach((c, i) => byKey.set(colKeyOf(c, i), c));
+      const reorderedCols = next.map((kk) => byKey.get(kk)).filter(Boolean) as TableColumn<T>[];
+      onColumnReorder(reorderedCols, { from, to: insertAt });
+    }
+    setDragColKey(null);
+    setDragOverCol(null);
+  };
+  const handleColDragEnd = () => {
+    setDragColKey(null);
+    setDragOverCol(null);
+  };
+
+  /* ============ 渲染 ============ */
   const cls = [
     'au-table',
     `au-table--${size}`,
     bordered ? 'is-bordered' : '',
     striped ? 'is-striped' : '',
     sticky ? 'is-sticky' : '',
+    draggableRows ? 'has-row-drag' : '',
+    draggableColumns ? 'has-col-drag' : '',
     className,
   ]
     .filter(Boolean)
     .join(' ');
 
+  const dragHandleColWidth = 36;
+
   const tableBody = (
     <table className="au-table__table" style={scroll?.x ? { width: scroll.x, minWidth: scroll.x } : undefined}>
       <colgroup>
+        {draggableRows && <col style={{ width: dragHandleColWidth }} />}
         {rowSelection && (
           <col style={{ width: rowSelection.columnWidth ?? 48 }} />
         )}
-        {columns.map((c, i) => (
-          <col key={c.key ?? String(c.dataIndex ?? i)} style={c.width ? { width: c.width } : undefined} />
+        {orderedColumns.map((c, i) => (
+          <col key={colKeyOf(c, i)} style={c.width ? { width: c.width } : undefined} />
         ))}
       </colgroup>
       {showHeader && (
         <thead className="au-table__thead">
           <tr>
+            {draggableRows && (
+              <th className="au-table__th au-table__th--drag" aria-label="拖拽列" />
+            )}
             {rowSelection && (
               <th className="au-table__th au-table__th--selection">
                 {selType === 'checkbox' && !rowSelection.hideSelectAll && (
@@ -271,14 +475,21 @@ function Table<T = any>({
                 {rowSelection.columnTitle}
               </th>
             )}
-            {columns.map((col, i) => {
-              const k = col.key ?? String(col.dataIndex ?? i);
+            {orderedColumns.map((col, i) => {
+              const k = colKeyOf(col, i);
               const isSorted = sortKey === k ? sortOrder : null;
+              const colDraggable = draggableColumns && col.draggable !== false;
+              const isDraggingThis = dragColKey === k;
+              const dropIndicator = dragOverCol?.key === k ? dragOverCol.pos : null;
               const thCls = [
                 'au-table__th',
                 col.align ? `au-table__cell--${col.align}` : '',
                 col.sorter ? 'has-sorter' : '',
                 isSorted ? 'is-sorted' : '',
+                colDraggable ? 'is-col-draggable' : '',
+                isDraggingThis ? 'is-dragging' : '',
+                dropIndicator === 'before' ? 'is-drop-before' : '',
+                dropIndicator === 'after' ? 'is-drop-after' : '',
                 col.className ?? '',
               ]
                 .filter(Boolean)
@@ -288,6 +499,11 @@ function Table<T = any>({
                   key={k}
                   className={thCls}
                   onClick={() => col.sorter && toggleSort(col)}
+                  draggable={colDraggable}
+                  onDragStart={colDraggable ? (e) => handleColDragStart(k, e) : undefined}
+                  onDragOver={colDraggable ? (e) => handleColDragOver(k, e) : undefined}
+                  onDrop={colDraggable ? (e) => handleColDrop(k, e) : undefined}
+                  onDragEnd={colDraggable ? handleColDragEnd : undefined}
                 >
                   <div className="au-table__th-inner">
                     <span className="au-table__th-title">{col.title}</span>
@@ -302,7 +518,14 @@ function Table<T = any>({
       <tbody className="au-table__tbody">
         {pagedData.length === 0 ? (
           <tr className="au-table__row au-table__row--empty">
-            <td colSpan={columns.length + (rowSelection ? 1 : 0)} className="au-table__cell">
+            <td
+              colSpan={
+                orderedColumns.length +
+                (rowSelection ? 1 : 0) +
+                (draggableRows ? 1 : 0)
+              }
+              className="au-table__cell"
+            >
               {empty ?? <Empty />}
             </td>
           </tr>
@@ -318,15 +541,53 @@ function Table<T = any>({
               typeof rowClassName === 'function'
                 ? rowClassName(record, i)
                 : rowClassName ?? '';
+            const isDragging = dragRowKey === key;
+            const dropIndicator = dragOverRow?.key === key ? dragOverRow.pos : null;
             const rowCls = [
               'au-table__row',
               selected ? 'is-selected' : '',
+              isDragging ? 'is-dragging' : '',
+              dropIndicator === 'before' ? 'is-drop-before' : '',
+              dropIndicator === 'after' ? 'is-drop-after' : '',
               extraCls,
             ]
               .filter(Boolean)
               .join(' ');
             return (
-              <tr key={key} className={rowCls} {...customAttrs}>
+              <tr
+                key={key}
+                className={rowCls}
+                {...customAttrs}
+                onDragOver={
+                  draggableRows
+                    ? (e) => {
+                        handleRowDragOver(key, e);
+                        customAttrs.onDragOver?.(e);
+                      }
+                    : customAttrs.onDragOver
+                }
+                onDrop={
+                  draggableRows
+                    ? (e) => {
+                        handleRowDrop(key, e);
+                        customAttrs.onDrop?.(e);
+                      }
+                    : customAttrs.onDrop
+                }
+              >
+                {draggableRows && (
+                  <td
+                    className="au-table__cell au-table__cell--drag"
+                    draggable
+                    onDragStart={(e) => handleRowDragStart(key, e)}
+                    onDragEnd={handleRowDragEnd}
+                    aria-label="拖动以重新排序"
+                  >
+                    <span className="au-table__drag-handle">
+                      <DragHandleIcon />
+                    </span>
+                  </td>
+                )}
                 {rowSelection && (
                   <td className="au-table__cell au-table__cell--selection">
                     {selType === 'radio' ? (
@@ -346,7 +607,7 @@ function Table<T = any>({
                     )}
                   </td>
                 )}
-                {columns.map((col, j) => {
+                {orderedColumns.map((col, j) => {
                   const v = getCellValue(record, col, i);
                   const content = col.render ? col.render(v, record, i) : (v as React.ReactNode);
                   const cellCls = [
@@ -358,7 +619,11 @@ function Table<T = any>({
                     .filter(Boolean)
                     .join(' ');
                   return (
-                    <td key={col.key ?? String(col.dataIndex ?? j)} className={cellCls} title={col.ellipsis && typeof content === 'string' ? (content as string) : undefined}>
+                    <td
+                      key={colKeyOf(col, j)}
+                      className={cellCls}
+                      title={col.ellipsis && typeof content === 'string' ? (content as string) : undefined}
+                    >
                       {content as React.ReactNode}
                     </td>
                   );

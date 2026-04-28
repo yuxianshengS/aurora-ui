@@ -45,6 +45,15 @@
   --au-code-inline: #c026d3;
   --au-pre-bg: #0f172a;
   --au-pre-text: #e2e8f0;
+
+  /* Z-index 层级 — portal/弹层一律走 token, 避免视觉 stacking 错乱 */
+  --au-z-affix: 10;          /* 吸顶元素 (Navbar / Table sticky thead) */
+  --au-z-popup: 1050;        /* Dropdown / Popconfirm / Select / DatePicker / TreeSelect 弹层 */
+  --au-z-modal: 1000;        /* Modal / Drawer 主体(底于 popup, 让 Modal 内 Tooltip 能盖) */
+  --au-z-modal-mask: 999;    /* Modal/Drawer 蒙层 (略低于 panel) */
+  --au-z-tooltip: 1100;      /* Tooltip — 必须高于 popup 才能盖 Dropdown 内的 Tooltip */
+  --au-z-spin: 1100;         /* 全屏 Spin */
+  --au-z-message: 1200;      /* Message / Notification — 永远在最顶 */
 }
 
 [data-theme="dark"] {

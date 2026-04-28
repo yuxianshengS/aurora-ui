@@ -76,7 +76,11 @@ const RowDoc: React.FC = () => {
       <DemoBlock
         title="对齐"
         description="align 控制垂直对齐, justifyItems 控制水平对齐。"
-        code={`<Row cols={3} gap={12} align="center">...</Row>`}
+        code={`<Row cols={3} gap={12} align="center">
+  <Cell>短</Cell>
+  <div style={{ padding: '20px 14px' }}>内容多<br />两行</div>
+  <Cell>短</Cell>
+</Row>`}
       >
         <Row cols={3} gap={12} align="center" style={{ background: 'var(--au-bg-mute)', padding: 8, borderRadius: 6 }}>
           <Cell>短</Cell>

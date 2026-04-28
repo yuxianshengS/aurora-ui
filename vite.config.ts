@@ -14,7 +14,15 @@ export default defineConfig(({ mode }) => {
       plugins: [
         react(),
         dts({
-          include: ['src/components/**/*', 'src/lib.ts'],
+          // lib.ts 里 re-export 了 hooks 和 locale, 必须把这两个目录也纳进来
+          // 否则 dist/lib.d.ts 会缺类型 (引用不到 useTheme / useFocusTrap / Locale 等)
+          include: [
+            'src/components/**/*',
+            'src/hooks/**/*',
+            'src/locale/**/*',
+            'src/utils/**/*',
+            'src/lib.ts',
+          ],
           exclude: ['**/*.test.*', '**/*.stories.*'],
           outDir: 'dist',
           insertTypesEntry: true,
@@ -33,14 +41,11 @@ export default defineConfig(({ mode }) => {
         },
         rollupOptions: {
           // 这些依赖不打进包, 让用户项目里自己装 (peer)
-          // 用正则覆盖 'echarts/core' / 'echarts/components' 等子路径
           external: [
             'react',
             'react/jsx-runtime',
             'react-dom',
             'react-dom/client',
-            /^echarts(\/.*)?$/,
-            /^echarts-gl(\/.*)?$/,
             'html2canvas',
             'jspdf',
           ],
@@ -48,7 +53,6 @@ export default defineConfig(({ mode }) => {
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
-              echarts: 'echarts',
             },
             assetFileNames: (assetInfo) => {
               if (assetInfo.name && assetInfo.name.endsWith('.css')) {
@@ -78,9 +82,6 @@ export default defineConfig(({ mode }) => {
           // 把大的 vendor 拆开, 避免首屏加载所有可视化/PDF 依赖
           manualChunks: (id) => {
             if (id.includes('node_modules')) {
-              if (id.includes('echarts-gl')) return 'vendor-echarts-gl';
-              if (id.includes('echarts') || id.includes('zrender'))
-                return 'vendor-echarts';
               if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('purify'))
                 return 'vendor-pdf';
               if (id.includes('react-dom')) return 'vendor-react-dom';

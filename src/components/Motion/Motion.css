@@ -1,0 +1,55 @@
+/* ===== Reveal ===== */
+.au-reveal {
+  display: block;
+}
+
+/* ===== Stagger =====
+   不强制 display, 让用户从 style prop 决定容器布局 (grid / flex / block 任意);
+   item 包装器是 display: block, 在 grid/flex 父级下会自动成为子项参与布局。
+   旧版 .au-stagger 用 display: contents 会让用户无法在 Stagger 上做 grid/flex 布局 — 反向选择 */
+.au-stagger__item {
+  display: block;
+}
+
+/* ===== Tilt ===== */
+.au-tilt {
+  --au-tilt-mx: 50%;
+  --au-tilt-my: 50%;
+  position: relative;
+  display: inline-block;
+}
+.au-tilt__inner {
+  transform-style: preserve-3d;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: inherit;
+}
+.au-tilt:hover .au-tilt__inner {
+  transition: transform 0.06s linear;
+}
+.au-tilt__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  background: radial-gradient(
+    320px circle at var(--au-tilt-mx) var(--au-tilt-my),
+    rgba(255, 255, 255, 0.18),
+    transparent 55%
+  );
+  mix-blend-mode: overlay;
+}
+.au-tilt:hover .au-tilt__sheen {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au-reveal,
+  .au-stagger__item {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .au-tilt__inner { transition: none; }
+}

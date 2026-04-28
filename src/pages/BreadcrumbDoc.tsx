@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, message } from '../components';
+import { Breadcrumb, Icon, message } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
@@ -40,14 +40,14 @@ const BreadcrumbDoc: React.FC = () => {
         title="带图标"
         description="item.icon 放在文字前。"
         code={`<Breadcrumb items={[
-  { title: '首页', icon: '🏠', href: '/' },
+  { title: '首页', icon: <Icon name="home" />, href: '/' },
   { title: '组件', href: '/components' },
   { title: 'Breadcrumb' },
 ]} />`}
       >
         <Breadcrumb
           items={[
-            { title: '首页', icon: <span>🏠</span>, href: '#' },
+            { title: '首页', icon: <Icon name="home" />, href: '#' },
             { title: '组件', href: '#' },
             { title: 'Breadcrumb' },
           ]}

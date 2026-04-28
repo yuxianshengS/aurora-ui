@@ -165,8 +165,33 @@ const Menu: React.FC<MenuProps> = ({
           className={cls}
           role="menuitem"
           aria-disabled={leaf.disabled || undefined}
+          tabIndex={leaf.disabled ? -1 : 0}
           style={mode === 'inline' ? { paddingLeft: 16 + depth * 20 } : undefined}
           onClick={() => pickLeaf(leaf)}
+          onKeyDown={(e) => {
+            if (leaf.disabled) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              pickLeaf(leaf);
+              return;
+            }
+            // 上下方向键在同级菜单项之间移焦点
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              const currentLi = e.currentTarget as HTMLLIElement;
+              const list = currentLi.parentElement;
+              if (!list) return;
+              const focusable = Array.from(
+                list.querySelectorAll<HTMLElement>(':scope > [role="menuitem"][tabindex="0"]'),
+              );
+              const i = focusable.indexOf(currentLi);
+              if (i < 0) return;
+              const next = e.key === 'ArrowDown'
+                ? focusable[(i + 1) % focusable.length]
+                : focusable[(i - 1 + focusable.length) % focusable.length];
+              next?.focus();
+            }
+          }}
         >
           {leaf.icon && <span className="au-menu__icon">{leaf.icon}</span>}
           <span className="au-menu__label">{leaf.label}</span>

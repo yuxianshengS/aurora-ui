@@ -58,57 +58,63 @@ const builtinIcon = (t: AlertType, hasTitle: boolean): React.ReactNode => {
   );
 };
 
-const Alert: React.FC<AlertProps> = ({
-  type = 'info',
-  title,
-  description,
-  showIcon,
-  icon,
-  closable,
-  closeText,
-  action,
-  banner,
-  className = '',
-  style,
-  onClose,
-}) => {
-  const [closed, setClosed] = useState(false);
-  if (closed) return null;
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
+  (
+    {
+      type = 'info',
+      title,
+      description,
+      showIcon,
+      icon,
+      closable,
+      closeText,
+      action,
+      banner,
+      className = '',
+      style,
+      onClose,
+    },
+    ref,
+  ) => {
+    const [closed, setClosed] = useState(false);
+    if (closed) return null;
 
-  const hasTitle = title != null && description != null;
-  const actualShowIcon = showIcon ?? (!!banner || !!description);
-  const iconNode = icon ?? builtinIcon(type, hasTitle);
+    const hasTitle = title != null && description != null;
+    const actualShowIcon = showIcon ?? (!!banner || !!description);
+    const iconNode = icon ?? builtinIcon(type, hasTitle);
 
-  const handleClose = (e: React.MouseEvent) => {
-    onClose?.(e);
-    if (!e.isDefaultPrevented()) setClosed(true);
-  };
+    const handleClose = (e: React.MouseEvent) => {
+      onClose?.(e);
+      if (!e.isDefaultPrevented()) setClosed(true);
+    };
 
-  const cls = [
-    'au-alert',
-    `au-alert--${type}`,
-    hasTitle ? 'has-title' : '',
-    banner ? 'is-banner' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const cls = [
+      'au-alert',
+      `au-alert--${type}`,
+      hasTitle ? 'has-title' : '',
+      banner ? 'is-banner' : '',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  return (
-    <div role="alert" className={cls} style={style}>
-      {actualShowIcon && iconNode && <span className="au-alert__icon">{iconNode}</span>}
-      <div className="au-alert__content">
-        {title && <div className="au-alert__title">{title}</div>}
-        {description && <div className="au-alert__desc">{description}</div>}
+    return (
+      <div ref={ref} role="alert" className={cls} style={style}>
+        {actualShowIcon && iconNode && <span className="au-alert__icon">{iconNode}</span>}
+        <div className="au-alert__content">
+          {title && <div className="au-alert__title">{title}</div>}
+          {description && <div className="au-alert__desc">{description}</div>}
+        </div>
+        {action && <div className="au-alert__action">{action}</div>}
+        {closable && (
+          <button type="button" className="au-alert__close" onClick={handleClose} aria-label="关闭">
+            {closeText ?? <CloseIcon />}
+          </button>
+        )}
       </div>
-      {action && <div className="au-alert__action">{action}</div>}
-      {closable && (
-        <button type="button" className="au-alert__close" onClick={handleClose} aria-label="关闭">
-          {closeText ?? <CloseIcon />}
-        </button>
-      )}
-    </div>
-  );
-};
+    );
+  },
+);
+Alert.displayName = 'Alert';
 
 export default Alert;

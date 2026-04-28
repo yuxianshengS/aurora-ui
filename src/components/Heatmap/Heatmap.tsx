@@ -275,4 +275,5 @@ const Heatmap: React.FC<HeatmapProps> = ({
   );
 };
 
-export default Heatmap;
+// memo: 365 天的 cell 数组在父组件每次渲染时都重新生成代价不菲, 用 memo 拦
+export default React.memo(Heatmap);

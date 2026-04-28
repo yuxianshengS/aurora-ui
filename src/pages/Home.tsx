@@ -15,15 +15,39 @@ import {
 } from '../components';
 import './Home.css';
 
+/* 滚动揭示 — 一次性 fade-up,unobserve 后零开销 */
+const useScrollReveal = () => {
+  useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>('.home-reveal');
+    if (els.length === 0) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-revealed');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+};
+
 const Home: React.FC = () => {
+  useScrollReveal();
   return (
     <div className="home">
-      {/* ===== Hero ===== */}
-      <AuroraBg preset="aurora" intensity={0.65} blur={110} className="home-hero">
+      {/* ===== Hero — 干净有自信, 不堆特效 ===== */}
+      <AuroraBg preset="aurora" intensity={0.55} blur={120} className="home-hero">
+        {/* 中央放大的网格 — 透视感 + mask 渐隐, 只有静态 CSS, 0 运行时 */}
+        <div className="home-hero__grid" aria-hidden />
         <div className="home-hero__inner">
           <div className="home-hero__tag">
             <span className="home-hero__tag-dot" />
-            v0.3.0 · 极光特效已上线
+            v0.7.0 · 极光特效已上线
           </div>
           <h1 className="home-hero__title">
             <GradientText
@@ -31,9 +55,9 @@ const Home: React.FC = () => {
               preset="aurora"
               animate
               duration={6}
-              size={72}
-              weight={800}
-              style={{ display: 'block', lineHeight: 1.1 }}
+              size={80}
+              weight={900}
+              style={{ display: 'block', lineHeight: 1.05, letterSpacing: '-0.02em' }}
             >
               为中后台而生
             </GradientText>
@@ -45,7 +69,7 @@ const Home: React.FC = () => {
             让每一个看板都自带光感, 而不是再多一个 antd 克隆.
           </p>
           <div className="home-hero__cta">
-            <Link to="/docs/getting-started">
+            <Link to="/docs/getting-started" className="home-hero__cta-primary">
               <Button type="primary" size="large">
                 开始使用 →
               </Button>
@@ -55,30 +79,12 @@ const Home: React.FC = () => {
             </Link>
           </div>
           <HeroInstallPill />
-
           <HomeStats />
         </div>
       </AuroraBg>
 
-      {/* ===== 招牌组件墙 ===== */}
-      <section className="home-section">
-        <div className="home-section__head">
-          <Tag color="primary">独家</Tag>
-          <h2 className="home-section__title">极光特效组件</h2>
-          <p className="home-section__sub">
-            别人没有的, 才是 Aurora 的招牌. 拖几个进项目, 看板从此有光.
-          </p>
-        </div>
-        <div className="home-showcase">
-          <ShowcaseAurora />
-          <ShowcaseGradientText />
-          <ShowcaseGlowCard />
-          <ShowcaseNumberRoll />
-        </div>
-      </section>
-
       {/* ===== Connector 关系图专栏 ===== */}
-      <section className="home-section home-connector">
+      <section className="home-section home-connector home-reveal">
         <div className="home-section__head">
           <Tag color="purple">主题能力</Tag>
           <h2 className="home-section__title">用 Connector 画任何关系图</h2>
@@ -136,12 +142,12 @@ const Home: React.FC = () => {
       </section>
 
       {/* ===== KPI 看板示意 ===== */}
-      <section className="home-section">
+      <section className="home-section home-reveal">
         <div className="home-section__head">
           <Tag color="success">看板就绪</Tag>
           <h2 className="home-section__title">3 分钟搭出一个看板</h2>
           <p className="home-section__sub">
-            KpiCard / Sparkline / Bar3D / Heatmap / Funnel ... 60+ 组件全套, 不用再东拼西凑.
+            KpiCard / Sparkline / Heatmap / Funnel / Gauge ... 60+ 组件全套, 不用再东拼西凑.
           </p>
         </div>
         <div className="home-kpi-grid">
@@ -177,7 +183,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* ===== 特性 6 张卡 ===== */}
-      <section className="home-section">
+      <section className="home-section home-reveal">
         <div className="home-section__head">
           <Tag>能力</Tag>
           <h2 className="home-section__title">为什么选 AuroraUI</h2>
@@ -199,7 +205,7 @@ const Home: React.FC = () => {
             glowColor="#22d3ee"
             icon="charts-bar"
             title="数据看板齐"
-            body="KpiCard / Sparkline / Bar3D / Heatmap / Funnel / Gauge 一套到底."
+            body="KpiCard / Sparkline / Heatmap / Funnel / Gauge 一套到底."
           />
           <FeatureCard
             glowColor="#10b981"
@@ -223,7 +229,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* ===== 代码面板 (反差: 深色 IDE 风) ===== */}
-      <section className="home-code">
+      <section className="home-code home-reveal">
         <div className="home-code__inner">
           <div className="home-code__left">
             <h2 className="home-code__title">写起来就像看上去一样轻</h2>
@@ -273,117 +279,29 @@ const Home: React.FC = () => {
   );
 };
 
-const HomeStats: React.FC = () => {
-  // 给在线用户数加个轻微抖动, 让它"活着"
-  const [users, setUsers] = useState(1284560);
-  useEffect(() => {
-    const id = setInterval(() => {
-      setUsers((p) => p + Math.floor(Math.random() * 30));
-    }, 2000);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <div className="home-hero__stats">
-      <div className="home-hero__stat">
-        <NumberRoll value={60} size={32} weight={700} suffix="+" color="white" />
-        <span>组件</span>
-      </div>
-      <div className="home-hero__stat">
-        <NumberRoll value={users} size={32} weight={700} color="white" />
-        <span>用户在线</span>
-      </div>
-      <div className="home-hero__stat">
-        <NumberRoll value={99.9} precision={1} size={32} weight={700} suffix="%" color="white" />
-        <span>类型覆盖</span>
-      </div>
-      <div className="home-hero__stat">
-        <NumberRoll value={6} size={32} weight={700} color="white" />
-        <span>整段模板</span>
-      </div>
+const HomeStats: React.FC = () => (
+  <div className="home-hero__stats">
+    <div className="home-hero__stat">
+      <NumberRoll value={60} size={36} weight={800} suffix="+" color="white" />
+      <span>组件</span>
     </div>
-  );
-};
-
-const ShowcaseAurora: React.FC = () => (
-  <Link to="/docs/aurora-bg" className="home-showcase__item">
-    <AuroraBg preset="aurora" style={{ height: 220, borderRadius: 12 }} />
-    <div className="home-showcase__caption">
-      <strong>AuroraBg</strong>
-      <span>极光背景, 5 套预设</span>
+    <div className="home-hero__stat-divider" aria-hidden />
+    <div className="home-hero__stat">
+      <NumberRoll value={6} size={36} weight={800} color="white" />
+      <span>整段模板</span>
     </div>
-  </Link>
+    <div className="home-hero__stat-divider" aria-hidden />
+    <div className="home-hero__stat">
+      <NumberRoll value={99.9} precision={1} size={36} weight={800} suffix="%" color="white" />
+      <span>类型覆盖</span>
+    </div>
+    <div className="home-hero__stat-divider" aria-hidden />
+    <div className="home-hero__stat">
+      <NumberRoll value={0} size={36} weight={800} color="white" />
+      <span>运行时依赖</span>
+    </div>
+  </div>
 );
-
-const ShowcaseGradientText: React.FC = () => (
-  <Link to="/docs/gradient-text" className="home-showcase__item">
-    <div className="home-showcase__centered">
-      <GradientText preset="sunset" size={36} weight={800}>
-        Sunset
-      </GradientText>
-      <GradientText preset="ocean" size={36} weight={800}>
-        Ocean
-      </GradientText>
-      <GradientText preset="cosmic" size={36} weight={800}>
-        Cosmic
-      </GradientText>
-    </div>
-    <div className="home-showcase__caption">
-      <strong>GradientText</strong>
-      <span>渐变流动文字, 6 种预设</span>
-    </div>
-  </Link>
-);
-
-const ShowcaseGlowCard: React.FC = () => (
-  <Link to="/docs/glow-card" className="home-showcase__item">
-    <div className="home-showcase__glow-row">
-      <GlowCard
-        glowColor="#a855f7"
-        intensity={0.7}
-        padding={16}
-        radius={12}
-        style={{ flex: 1, fontSize: 13 }}
-      >
-        <strong>悬停看光晕 →</strong>
-      </GlowCard>
-      <GlowCard
-        glowColor="#22d3ee"
-        intensity={0.7}
-        padding={16}
-        radius={12}
-        style={{ flex: 1, fontSize: 13 }}
-      >
-        <strong>← 鼠标在哪光在哪</strong>
-      </GlowCard>
-    </div>
-    <div className="home-showcase__caption">
-      <strong>GlowCard</strong>
-      <span>鼠标跟随发光 + 旋转描边</span>
-    </div>
-  </Link>
-);
-
-const ShowcaseNumberRoll: React.FC = () => {
-  const [n, setN] = useState(1284560);
-  useEffect(() => {
-    const id = setInterval(
-      () => setN(Math.floor(Math.random() * 9000000) + 1000000),
-      2500,
-    );
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <Link to="/docs/number-roll" className="home-showcase__item">
-      <div className="home-showcase__centered">
-        <NumberRoll value={n} size={48} weight={800} color="var(--au-primary)" />
-      </div>
-      <div className="home-showcase__caption">
-        <strong>NumberRoll</strong>
-        <span>翻牌器式数字滚动</span>
-      </div>
-    </Link>
-  );
-};
 
 /* ===== 手写 JSX 语法高亮: token 原子 ===== */
 type Tk = (s: React.ReactNode) => React.ReactElement;

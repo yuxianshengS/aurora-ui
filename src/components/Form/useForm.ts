@@ -106,6 +106,8 @@ export class FormStore {
   private values: Record<string, unknown> = {};
   private initial: Record<string, unknown> = {};
   private errors: Record<string, string[]> = {};
+  /** 用户已经"动过"的字段名集合 (用于 isFieldTouched / isFieldsTouched / 显示 dirty 标记) */
+  private touched: Set<string> = new Set();
   private entities: FieldEntity[] = [];
   private callbacks: { onValuesChange?: (changed: Record<string, unknown>, all: Record<string, unknown>) => void } = {};
 
@@ -142,6 +144,7 @@ export class FormStore {
     const prev = this.values[name];
     this.values[name] = value;
     if (prev !== value) {
+      this.touched.add(name);
       this.callbacks.onValuesChange?.({ [name]: value }, this.getFieldsValue());
     }
     this.notify(name);
@@ -149,8 +152,51 @@ export class FormStore {
 
   setFieldsValue = (vals: Record<string, unknown>) => {
     Object.assign(this.values, vals);
+    Object.keys(vals).forEach((k) => this.touched.add(k));
     this.callbacks.onValuesChange?.({ ...vals }, this.getFieldsValue());
     Object.keys(vals).forEach((k) => this.notify(k));
+  };
+
+  /** 用户是否动过该字段(包括清空) */
+  isFieldTouched = (name: string): boolean => this.touched.has(name);
+  /** 表单整体是否被改过; 传 names 时只检查这些字段 (allTouched=true 表示必须全部都动过) */
+  isFieldsTouched = (names?: string[], allTouched = false): boolean => {
+    if (!names) return this.touched.size > 0;
+    if (allTouched) return names.every((n) => this.touched.has(n));
+    return names.some((n) => this.touched.has(n));
+  };
+
+  /**
+   * 批量回写字段 — 适合服务端校验失败把多字段错误一次塞回, 或恢复"草稿"快照
+   * 每项可传 value / errors / touched 任一组合
+   */
+  setFields = (
+    fields: Array<{
+      name: string;
+      value?: unknown;
+      errors?: string[];
+      touched?: boolean;
+    }>,
+  ) => {
+    const changedValues: Record<string, unknown> = {};
+    fields.forEach(({ name, value, errors, touched }) => {
+      if (value !== undefined && this.values[name] !== value) {
+        this.values[name] = value;
+        changedValues[name] = value;
+      }
+      if (errors) {
+        if (errors.length) this.errors[name] = errors;
+        else delete this.errors[name];
+      }
+      if (touched != null) {
+        if (touched) this.touched.add(name);
+        else this.touched.delete(name);
+      }
+      this.notify(name);
+    });
+    if (Object.keys(changedValues).length) {
+      this.callbacks.onValuesChange?.(changedValues, this.getFieldsValue());
+    }
   };
 
   getFieldError = (name: string): string[] => this.errors[name] ?? [];
@@ -205,6 +251,7 @@ export class FormStore {
     targetNames.forEach((n) => {
       this.values[n] = this.initial[n];
       delete this.errors[n];
+      this.touched.delete(n);
       this.notify(n);
     });
   };
@@ -229,6 +276,9 @@ export interface FormInstance {
   setFieldsValue: FormStore['setFieldsValue'];
   getFieldError: FormStore['getFieldError'];
   getFieldsError: FormStore['getFieldsError'];
+  isFieldTouched: FormStore['isFieldTouched'];
+  isFieldsTouched: FormStore['isFieldsTouched'];
+  setFields: FormStore['setFields'];
   validateFields: FormStore['validateFields'];
   resetFields: FormStore['resetFields'];
   submit: FormStore['submit'];
@@ -247,6 +297,9 @@ export const useForm = (): [FormInstance] => {
       setFieldsValue: store.setFieldsValue,
       getFieldError: store.getFieldError,
       getFieldsError: store.getFieldsError,
+      isFieldTouched: store.isFieldTouched,
+      isFieldsTouched: store.isFieldsTouched,
+      setFields: store.setFields,
       validateFields: store.validateFields,
       resetFields: store.resetFields,
       submit: store.submit,

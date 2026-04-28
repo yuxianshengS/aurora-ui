@@ -1,0 +1,99 @@
+.au-mentions {
+  display: inline-block;
+  width: 100%;
+}
+.au-mentions__textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--au-border);
+  border-radius: 6px;
+  background: var(--au-bg);
+  color: var(--au-text-1);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: 0;
+  transition: border-color 0.15s var(--au-ease), box-shadow 0.15s var(--au-ease);
+}
+.au-mentions__textarea:focus {
+  border-color: var(--au-primary);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-mentions__textarea:disabled {
+  background: var(--au-bg-mute);
+  cursor: not-allowed;
+}
+
+.au-mentions__popup {
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.12);
+  min-width: 220px;
+  z-index: var(--au-z-popup, 1050);
+  overflow: auto;
+  padding: 4px;
+  animation: au-mentions-pop 0.14s var(--au-ease);
+}
+@keyframes au-mentions-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.au-mentions__list { list-style: none; padding: 0; margin: 0; }
+
+.au-mentions__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.au-mentions__item.is-active:not(.is-disabled) {
+  background: var(--au-primary-soft);
+}
+.au-mentions__item.is-disabled {
+  color: var(--au-text-3);
+  cursor: not-allowed;
+}
+
+.au-mentions__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--au-bg-mute);
+  color: var(--au-text-2);
+  font-size: 12px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.au-mentions__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.au-mentions__text { flex: 1; min-width: 0; }
+.au-mentions__label {
+  font-size: 13px;
+  color: var(--au-text-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.au-mentions__prefix {
+  color: var(--au-primary);
+  font-weight: 600;
+}
+.au-mentions__desc {
+  font-size: 11.5px;
+  color: var(--au-text-3);
+  margin-top: 2px;
+}
+
+.au-mentions__empty {
+  padding: 10px 12px;
+  color: var(--au-text-3);
+  font-size: 13px;
+}

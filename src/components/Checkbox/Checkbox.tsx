@@ -32,79 +32,86 @@ export interface CheckboxProps {
   style?: React.CSSProperties;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({
-  value,
-  checked,
-  defaultChecked = false,
-  indeterminate,
-  disabled,
-  autoFocus,
-  children,
-  onChange,
-  className = '',
-  style,
-}) => {
-  const group = useContext(GroupContext);
-  const inGroup = !!group;
-  const isControlled = checked !== undefined;
-  const [inner, setInner] = useState(defaultChecked);
+const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+  (
+    {
+      value,
+      checked,
+      defaultChecked = false,
+      indeterminate,
+      disabled,
+      autoFocus,
+      children,
+      onChange,
+      className = '',
+      style,
+    },
+    ref,
+  ) => {
+    const group = useContext(GroupContext);
+    const inGroup = !!group;
+    const isControlled = checked !== undefined;
+    const [inner, setInner] = useState(defaultChecked);
 
-  const groupChecked = inGroup && value !== undefined ? group!.value?.includes(value) : undefined;
-  const current = inGroup ? !!groupChecked : isControlled ? !!checked : inner;
-  const isDisabled = disabled || (inGroup && group!.disabled);
-  const size = (inGroup && group!.size) || 'medium';
+    const groupChecked = inGroup && value !== undefined ? group!.value?.includes(value) : undefined;
+    const current = inGroup ? !!groupChecked : isControlled ? !!checked : inner;
+    const isDisabled = disabled || (inGroup && group!.disabled);
+    const size = (inGroup && group!.size) || 'medium';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isDisabled) return;
-    const next = e.target.checked;
-    if (inGroup && value !== undefined) {
-      group!.onToggle?.(value, next);
-    } else {
-      if (!isControlled) setInner(next);
-    }
-    onChange?.(next, e);
-  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (isDisabled) return;
+      const next = e.target.checked;
+      if (inGroup && value !== undefined) {
+        group!.onToggle?.(value, next);
+      } else {
+        if (!isControlled) setInner(next);
+      }
+      onChange?.(next, e);
+    };
 
-  const cls = [
-    'au-checkbox',
-    `au-checkbox--${size}`,
-    current ? 'is-checked' : '',
-    indeterminate ? 'is-indeterminate' : '',
-    isDisabled ? 'is-disabled' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const cls = [
+      'au-checkbox',
+      `au-checkbox--${size}`,
+      current ? 'is-checked' : '',
+      indeterminate ? 'is-indeterminate' : '',
+      isDisabled ? 'is-disabled' : '',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  return (
-    <label className={cls} style={style}>
-      <input
-        type="checkbox"
-        className="au-checkbox__input"
-        checked={current}
-        disabled={isDisabled}
-        autoFocus={autoFocus}
-        onChange={handleChange}
-      />
-      <span className="au-checkbox__box" aria-hidden>
-        {!indeterminate && current && (
-          <svg viewBox="0 0 16 16" className="au-checkbox__tick">
-            <path
-              d="M3.5 8.2l3 3L12.5 5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-        {indeterminate && <span className="au-checkbox__dash" />}
-      </span>
-      {children != null && <span className="au-checkbox__label">{children}</span>}
-    </label>
-  );
-};
+    return (
+      <label className={cls} style={style}>
+        <input
+          ref={ref}
+          type="checkbox"
+          className="au-checkbox__input"
+          checked={current}
+          disabled={isDisabled}
+          autoFocus={autoFocus}
+          onChange={handleChange}
+        />
+        <span className="au-checkbox__box" aria-hidden>
+          {!indeterminate && current && (
+            <svg viewBox="0 0 16 16" className="au-checkbox__tick">
+              <path
+                d="M3.5 8.2l3 3L12.5 5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+          {indeterminate && <span className="au-checkbox__dash" />}
+        </span>
+        {children != null && <span className="au-checkbox__label">{children}</span>}
+      </label>
+    );
+  },
+);
+Checkbox.displayName = 'Checkbox';
 
 export interface CheckboxGroupProps {
   value?: CheckboxValue[];
@@ -171,7 +178,7 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   );
 };
 
-type CheckboxComponent = React.FC<CheckboxProps> & { Group: typeof CheckboxGroup };
+type CheckboxComponent = typeof Checkbox & { Group: typeof CheckboxGroup };
 const CheckboxWithGroup = Checkbox as CheckboxComponent;
 CheckboxWithGroup.Group = CheckboxGroup;
 

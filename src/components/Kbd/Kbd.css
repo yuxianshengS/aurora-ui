@@ -1,0 +1,98 @@
+.au-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--au-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-weight: 500;
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.au-kbd--small  { min-width: 18px; height: 18px; padding: 0 5px; font-size: 11px; border-radius: 4px; }
+.au-kbd--medium { min-width: 22px; height: 22px; padding: 0 6px; font-size: 12px; border-radius: 5px; }
+.au-kbd--large  { min-width: 28px; height: 28px; padding: 0 8px; font-size: 14px; border-radius: 6px; }
+
+/* default — 灰键帽, 立体内阴影 */
+.au-kbd--default {
+  color: var(--au-text-2);
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  box-shadow:
+    inset 0 -1.5px 0 var(--au-border-strong, var(--au-border)),
+    0 1px 1px rgba(0, 0, 0, 0.04);
+}
+[data-theme='dark'] .au-kbd--default {
+  background: var(--au-bg-mute);
+  color: var(--au-text-1);
+}
+
+/* glass — backdrop-filter 玻璃感, 适合极光底 */
+.au-kbd--glass {
+  color: var(--au-text-1);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+}
+[data-theme='dark'] .au-kbd--glass {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* aurora — 极光渐变描边 + 渐变文字 */
+.au-kbd--aurora {
+  background: var(--au-bg);
+  color: transparent;
+  background-clip: padding-box;
+  position: relative;
+  border: 1px solid transparent;
+  -webkit-background-clip: padding-box;
+}
+.au-kbd--aurora::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #22d3ee, #a855f7, #ec4899);
+}
+.au-kbd--aurora {
+  background-image:
+    linear-gradient(var(--au-bg), var(--au-bg)),
+    linear-gradient(135deg, #22d3ee, #a855f7, #ec4899);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+.au-kbd--aurora > * {
+  background: linear-gradient(135deg, #22d3ee, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.au-kbd--aurora {
+  /* fallback: 当 children 是文字字面量时, 用 ::after 不行 — 直接给一个非透明色 */
+  color: #a855f7;
+}
+
+/* group: 多键 + 分隔符 */
+.au-kbd-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  vertical-align: baseline;
+}
+.au-kbd-sep {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  color: var(--au-text-3);
+}

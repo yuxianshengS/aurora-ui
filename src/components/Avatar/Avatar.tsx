@@ -27,81 +27,84 @@ const sizeToPx = (s: AvatarSize): number => {
   return 32;
 };
 
-const Avatar: React.FC<AvatarProps> & { Group: typeof AvatarGroup } = ({
-  src,
-  srcSet,
-  alt,
-  icon,
-  shape = 'circle',
-  size = 'medium',
-  color,
-  background,
-  gap = 4,
-  children,
-  onError,
-  className = '',
-  style,
-}) => {
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    setFailed(false);
-  }, [src]);
+const AvatarBase = React.forwardRef<HTMLSpanElement, AvatarProps>(
+  (
+    {
+      src,
+      srcSet,
+      alt,
+      icon,
+      shape = 'circle',
+      size = 'medium',
+      color,
+      background,
+      gap = 4,
+      children,
+      onError,
+      className = '',
+      style,
+    },
+    ref,
+  ) => {
+    const [failed, setFailed] = useState(false);
+    useEffect(() => {
+      setFailed(false);
+    }, [src]);
 
-  const px = sizeToPx(size);
-  const mergedStyle: React.CSSProperties = {
-    width: px,
-    height: px,
-    lineHeight: `${px}px`,
-    fontSize: Math.max(12, Math.floor(px / 2.4)),
-    ...(color ? { color } : {}),
-    ...(background ? { background } : {}),
-    ...style,
-  };
+    const px = sizeToPx(size);
+    const mergedStyle: React.CSSProperties = {
+      width: px,
+      height: px,
+      lineHeight: `${px}px`,
+      fontSize: Math.max(12, Math.floor(px / 2.4)),
+      ...(color ? { color } : {}),
+      ...(background ? { background } : {}),
+      ...style,
+    };
 
-  const cls = [
-    'au-avatar',
-    `au-avatar--${shape}`,
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const cls = ['au-avatar', `au-avatar--${shape}`, className].filter(Boolean).join(' ');
 
-  const showImg = src && !failed;
-  const handleError = () => {
-    const ret = onError?.();
-    if (ret !== false) setFailed(true);
-  };
+    const showImg = src && !failed;
+    const handleError = () => {
+      const ret = onError?.();
+      if (ret !== false) setFailed(true);
+    };
 
-  let inner: React.ReactNode;
-  if (showImg) {
-    inner = <img src={src} srcSet={srcSet} alt={alt} onError={handleError} draggable={false} />;
-  } else if (icon) {
-    inner = <span className="au-avatar__icon">{icon}</span>;
-  } else if (typeof children === 'string') {
-    const len = children.length;
-    const maxW = px - gap * 2;
-    const scale = len > 1 ? Math.min(1, maxW / (len * Math.floor(px / 2.4) * 0.62)) : 1;
-    inner = (
-      <span
-        className="au-avatar__text"
-        style={{
-          transform: scale < 1 ? `scale(${scale})` : undefined,
-          transformOrigin: 'center center',
-        }}
-      >
-        {children}
+    let inner: React.ReactNode;
+    if (showImg) {
+      inner = <img src={src} srcSet={srcSet} alt={alt} onError={handleError} draggable={false} loading="lazy" decoding="async" />;
+    } else if (icon) {
+      inner = <span className="au-avatar__icon">{icon}</span>;
+    } else if (typeof children === 'string') {
+      const len = children.length;
+      const maxW = px - gap * 2;
+      const scale = len > 1 ? Math.min(1, maxW / (len * Math.floor(px / 2.4) * 0.62)) : 1;
+      inner = (
+        <span
+          className="au-avatar__text"
+          style={{
+            transform: scale < 1 ? `scale(${scale})` : undefined,
+            transformOrigin: 'center center',
+          }}
+        >
+          {children}
+        </span>
+      );
+    } else {
+      inner = children;
+    }
+
+    return (
+      <span ref={ref} className={cls} style={mergedStyle}>
+        {inner}
       </span>
     );
-  } else {
-    inner = children;
-  }
+  },
+);
+AvatarBase.displayName = 'Avatar';
 
-  return (
-    <span className={cls} style={mergedStyle}>
-      {inner}
-    </span>
-  );
-};
+type AvatarType = typeof AvatarBase & { Group: typeof AvatarGroup };
+const Avatar = AvatarBase as AvatarType;
 
 export interface AvatarGroupProps {
   maxCount?: number;

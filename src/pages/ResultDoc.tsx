@@ -11,7 +11,18 @@ const ResultDoc: React.FC = () => {
 
       <h2>代码演示</h2>
 
-      <DemoBlock title="成功" code={`<Result status="success" title="提交成功" />`}>
+      <DemoBlock
+        title="成功"
+        code={`<Result
+  status="success"
+  title="提交成功"
+  subTitle="订单 #2026-0419 已提交, 预计 24 小时内审批完成"
+  extra={[
+    <Button key="ok" type="primary">查看订单</Button>,
+    <Button key="back">返回首页</Button>,
+  ]}
+/>`}
+      >
         <Result
           status="success"
           title="提交成功"
@@ -20,15 +31,28 @@ const ResultDoc: React.FC = () => {
         />
       </DemoBlock>
 
-      <DemoBlock title="失败" code={`<Result status="error" title="提交失败" />`}>
+      <DemoBlock
+        title="失败"
+        code={`<Result status="error" title="提交失败" subTitle="网络异常, 请稍后重试" />`}
+      >
         <Result status="error" title="提交失败" subTitle="网络异常, 请稍后重试" />
       </DemoBlock>
 
-      <DemoBlock title="404" code={`<Result status="404" />`}>
+      <DemoBlock
+        title="404"
+        code={`<Result
+  status="404"
+  subTitle="抱歉, 你访问的页面不存在"
+  extra={<Button type="primary">返回首页</Button>}
+/>`}
+      >
         <Result status="404" subTitle="抱歉, 你访问的页面不存在" extra={<Button type="primary">返回首页</Button>} />
       </DemoBlock>
 
-      <DemoBlock title="403" code={`<Result status="403" />`}>
+      <DemoBlock
+        title="403"
+        code={`<Result status="403" subTitle="抱歉, 你没有权限访问此页面" />`}
+      >
         <Result status="403" subTitle="抱歉, 你没有权限访问此页面" />
       </DemoBlock>
 

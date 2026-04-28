@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Pagination.css';
 
 export type PaginationSize = 'small' | 'default';
@@ -89,6 +89,16 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const [jumpText, setJumpText] = useState('');
   const [openSize, setOpenSize] = useState(false);
+  // 用 ref 持有 sizer 关闭定时器, 卸载时清掉避免 setState on unmounted
+  const sizerCloseTimer = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (sizerCloseTimer.current != null) {
+        window.clearTimeout(sizerCloseTimer.current);
+      }
+    },
+    [],
+  );
 
   if (hideOnSinglePage && totalPages <= 1) return null;
 
@@ -255,7 +265,10 @@ const Pagination: React.FC<PaginationProps> = ({
             className="au-pg__sizer-btn"
             disabled={disabled}
             onClick={() => setOpenSize((v) => !v)}
-            onBlur={() => setTimeout(() => setOpenSize(false), 150)}
+            onBlur={() => {
+              if (sizerCloseTimer.current != null) window.clearTimeout(sizerCloseTimer.current);
+              sizerCloseTimer.current = window.setTimeout(() => setOpenSize(false), 150);
+            }}
           >
             {pageSize} 条/页
             <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden>

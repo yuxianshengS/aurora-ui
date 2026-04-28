@@ -1,0 +1,148 @@
+.au-fab-root {
+  position: fixed;
+  z-index: var(--au-z-affix, 10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+/* inline 模式 — 脱离 fixed, doc 预览 / 工具栏 / 内嵌位置用 */
+.au-fab-root--inline {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  z-index: auto;
+  vertical-align: middle;
+}
+.au-fab-root--inline .au-fab__tooltip {
+  /* inline 时让 tooltip 显示在按钮下方而不是左侧 */
+  right: auto;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translate(-50%, 4px);
+}
+.au-fab-root--inline .au-fab:hover .au-fab__tooltip {
+  transform: translate(-50%, 0);
+}
+.au-fab-root--top-right,
+.au-fab-root--top-left {
+  /* 子按钮在主按钮下方 */
+  flex-direction: column-reverse;
+}
+
+.au-fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+  color: #fff;
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s var(--au-ease), box-shadow 0.18s var(--au-ease);
+}
+.au-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+.au-fab:active {
+  transform: translateY(0);
+}
+
+.au-fab--circle { border-radius: 50%; }
+.au-fab--square { border-radius: 14px; }
+
+/* variants */
+.au-fab--default {
+  background: var(--au-bg);
+  color: var(--au-text-1);
+  border: 1px solid var(--au-border);
+}
+.au-fab--primary {
+  background: var(--au-primary);
+}
+.au-fab--aurora {
+  background: linear-gradient(135deg, #22d3ee, #a855f7, #ec4899);
+  background-size: 180% 100%;
+  animation: au-fab-flow 8s linear infinite;
+}
+.au-fab--aurora::before {
+  /* 外发光 */
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.55;
+  z-index: -1;
+}
+@keyframes au-fab-flow {
+  to { background-position: 180% 0; }
+}
+
+/* speed dial 子按钮 */
+.au-fab--action {
+  background: var(--au-bg);
+  color: var(--au-primary);
+  border: 1px solid var(--au-border);
+  opacity: 0;
+  transform: translateY(8px) scale(0.85);
+  pointer-events: none;
+  transition:
+    opacity 0.18s var(--au-ease),
+    transform 0.18s var(--au-ease),
+    box-shadow 0.18s var(--au-ease);
+  border-radius: 50%;
+}
+.au-fab-root.is-open .au-fab--action {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* 图标旋转 */
+.au-fab__icon {
+  display: inline-flex;
+  transition: transform 0.22s var(--au-ease);
+}
+.au-fab__icon.is-rotated {
+  transform: rotate(45deg);
+}
+
+/* tooltip — hover 时从右侧/左侧滑出 */
+.au-fab__tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  white-space: nowrap;
+  padding: 4px 10px;
+  background: rgba(31, 35, 45, 0.92);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--au-ease), transform 0.18s var(--au-ease);
+}
+.au-fab-root--bottom-left .au-fab__tooltip,
+.au-fab-root--top-left .au-fab__tooltip {
+  /* tooltip 在右边 */
+  right: auto;
+  left: calc(100% + 12px);
+  transform: translateY(-50%) translateX(-4px);
+}
+.au-fab:hover .au-fab__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au-fab--aurora { animation: none; }
+  .au-fab,
+  .au-fab--action,
+  .au-fab__icon,
+  .au-fab__tooltip { transition: none; }
+}

@@ -176,7 +176,7 @@
   box-shadow: var(--au-shadow);
   padding: 4px;
   overflow: auto;
-  z-index: 1000;
+  z-index: var(--au-z-popup, 1050);
   animation: au-select-in 0.14s var(--au-ease);
 }
 @keyframes au-select-in {

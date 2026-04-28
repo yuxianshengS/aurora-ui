@@ -154,7 +154,7 @@
   padding: 4px;
   margin: 0;
   list-style: none;
-  z-index: 100;
+  z-index: var(--au-z-popup, 1050);
   animation: au-pg-pop 0.14s var(--au-ease);
 }
 @keyframes au-pg-pop {

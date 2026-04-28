@@ -1,5 +1,5 @@
 .au-popconfirm {
-  z-index: 1050;
+  z-index: var(--au-z-popup, 1050);
   animation: au-pop-in 0.16s var(--au-ease);
 }
 

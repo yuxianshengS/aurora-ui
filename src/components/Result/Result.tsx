@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocale } from '../ConfigProvider/ConfigProvider';
 import './Result.css';
 
 export type ResultStatus = 'success' | 'error' | 'info' | 'warning' | '404' | '403' | '500';
@@ -48,16 +49,6 @@ const ICONS: Record<ResultStatus, React.ReactNode> = {
   '500': <span style={{ fontSize: 80, fontWeight: 700, letterSpacing: -2 }}>500</span>,
 };
 
-const DEFAULT_TITLE: Record<ResultStatus, string> = {
-  success: '操作成功',
-  error: '操作失败',
-  info: '提示',
-  warning: '警告',
-  '404': '页面不存在',
-  '403': '无权访问',
-  '500': '服务器错误',
-};
-
 const Result: React.FC<ResultProps> = ({
   status = 'info',
   title,
@@ -68,11 +59,12 @@ const Result: React.FC<ResultProps> = ({
   className = '',
   style,
 }) => {
+  const locale = useLocale();
   const cls = ['au-result', `au-result--${status}`, className].filter(Boolean).join(' ');
   return (
     <div className={cls} style={style}>
       <div className="au-result__icon">{icon ?? ICONS[status]}</div>
-      <div className="au-result__title">{title ?? DEFAULT_TITLE[status]}</div>
+      <div className="au-result__title">{title ?? locale.Result[status]}</div>
       {subTitle && <div className="au-result__subtitle">{subTitle}</div>}
       {children && <div className="au-result__content">{children}</div>}
       {extra && <div className="au-result__extra">{extra}</div>}

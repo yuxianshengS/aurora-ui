@@ -83,16 +83,37 @@
   text-overflow: ellipsis;
 }
 
-/* show-line */
-.au-tree--line .au-tree__children {
-  position: relative;
-}
-.au-tree--line .au-tree__children::before {
+/* show-line — 标准的 L/T 连接线: 每个非根节点画一根「上→中」的竖线 + 一根指向 caret 的横线;
+   :last-child 时竖线在自身行的中点截断, 形成 L 拐角; 否则竖线穿过整行延伸到下一个兄弟, 形成 T。 */
+.au-tree--line .au-tree__node { position: relative; }
+.au-tree--line .au-tree__node::before,
+.au-tree--line .au-tree__node::after {
   content: '';
   position: absolute;
-  left: 14px;
+  background: var(--au-border-strong, var(--au-border));
+  pointer-events: none;
+}
+/* 横线: 从父级 caret 列伸到当前 caret 左侧 */
+.au-tree--line .au-tree__node::before {
+  left: calc((var(--au-tree-depth, 0) - 1) * 18px + 15px);
+  top: 14px;
+  width: 12px;
+  height: 1px;
+}
+/* 竖线: 从当前节点顶部一路向下穿过 (含其展开的子树) */
+.au-tree--line .au-tree__node::after {
+  left: calc((var(--au-tree-depth, 0) - 1) * 18px + 15px);
   top: 0;
-  bottom: 14px;
+  bottom: 0;
   width: 1px;
-  background: var(--au-border);
+}
+/* 末位兄弟: 竖线只保留到行中点, 配合横线形成 L 拐角 */
+.au-tree--line .au-tree__node:last-child::after {
+  bottom: auto;
+  height: 14px;
+}
+/* 根级 (depth 0) 不画任何连接线 */
+.au-tree--line > .au-tree__node::before,
+.au-tree--line > .au-tree__node::after {
+  display: none;
 }

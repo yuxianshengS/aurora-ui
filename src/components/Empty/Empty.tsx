@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocale } from '../ConfigProvider/ConfigProvider';
 import './Empty.css';
 
 export interface EmptyProps {
@@ -56,17 +57,19 @@ const DefaultImage: React.FC = () => (
 const Empty: React.FC<EmptyProps> = ({
   image,
   imageStyle,
-  description = '暂无数据',
+  description,
   children,
   className = '',
   style,
 }) => {
+  const locale = useLocale();
   const imageNode =
     typeof image === 'string' ? (
-      <img src={image} alt="empty" style={imageStyle} />
+      <img src={image} alt="empty" style={imageStyle} loading="lazy" decoding="async" />
     ) : (
       image ?? <DefaultImage />
     );
+  const desc = description ?? locale.Empty.description;
 
   return (
     <div className={['au-empty', className].filter(Boolean).join(' ')} style={style}>
@@ -74,7 +77,7 @@ const Empty: React.FC<EmptyProps> = ({
         {imageNode}
       </div>
       {description !== false && (
-        <div className="au-empty__desc">{description}</div>
+        <div className="au-empty__desc">{desc}</div>
       )}
       {children && <div className="au-empty__footer">{children}</div>}
     </div>

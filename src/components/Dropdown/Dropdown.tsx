@@ -71,6 +71,13 @@ const Dropdown: React.FC<DropdownProps> = ({
     width: 0,
   });
   const hoverTimer = useRef<number | null>(null);
+  // 卸载时清掉 hoverTimer 防止 setState on unmounted
+  useEffect(
+    () => () => {
+      if (hoverTimer.current != null) window.clearTimeout(hoverTimer.current);
+    },
+    [],
+  );
 
   const setOpen = useCallback(
     (v: boolean) => {

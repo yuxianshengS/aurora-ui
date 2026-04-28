@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import './PdfDownload.css';
+
+// 动态加载 — 进入页面不必为 600KB+ 的 html2canvas/jspdf 付钱,只在用户点击时拉
+const loadDeps = () =>
+  Promise.all([import('html2canvas'), import('jspdf')]).then(
+    ([h2c, jspdf]) => ({ html2canvas: h2c.default, jsPDF: jspdf.jsPDF }),
+  );
 
 export type PdfOrientation = 'portrait' | 'landscape';
 export type PdfFormat = 'a4' | 'a3' | 'letter';
@@ -66,6 +70,7 @@ const PdfDownload: React.FC<PdfDownloadProps> = ({
     setLoading(true);
     onBefore?.();
     try {
+      const { html2canvas, jsPDF } = await loadDeps();
       const canvas = await html2canvas(target, {
         scale,
         useCORS: true,

@@ -34,7 +34,7 @@ const SkeletonDoc: React.FC = () => {
   </Skeleton>
 </Card>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
           <Button onClick={() => setLoading((v) => !v)}>切换 loading</Button>
           <Card>
             <Skeleton avatar loading={loading}>

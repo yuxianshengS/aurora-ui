@@ -17,7 +17,9 @@ const GaugeDoc: React.FC = () => {
       <DemoBlock
         title="基础用法"
         description="传 value + max 即可。"
-        code={`<Gauge value={78} label="完成率" suffix="%" />`}
+        code={`<Gauge value={78} label="完成率" suffix="%" />
+<Gauge value={45} label="CPU"   suffix="%" />
+<Gauge value={92} label="健康度" suffix="分" color="var(--au-success)" />`}
       >
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
           <Gauge value={78} label="完成率" suffix="%" />

@@ -129,7 +129,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
             .filter(Boolean)
             .join(' ');
           const avatar = it.user?.avatar ? (
-            <img src={it.user.avatar} alt={it.user.name ?? ''} className="au-activity-feed__avatar" />
+            <img src={it.user.avatar} alt={it.user.name ?? ''} className="au-activity-feed__avatar" loading="lazy" decoding="async" />
           ) : it.icon ? (
             <span className={`au-activity-feed__icon au-activity-feed__icon--${t}`}>{it.icon}</span>
           ) : (

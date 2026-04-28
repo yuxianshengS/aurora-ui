@@ -163,4 +163,5 @@ const Sparkline: React.FC<SparklineProps> = ({
   );
 };
 
-export default Sparkline;
+// memo: 父组件再渲染只要 props 引用没变就跳过重算 path/scale, 适合大量 KpiCard / 表格行内迷你图
+export default React.memo(Sparkline);

@@ -2,6 +2,9 @@
   background: var(--au-bg);
   border-radius: var(--au-radius);
   overflow: hidden;
+  /* 父级若是 flex/grid 容器, 自身会被 shrink-to-content; 显式撑满父级宽度 */
+  width: 100%;
+  box-sizing: border-box;
   transition: box-shadow 0.2s var(--au-ease),
     transform 0.2s var(--au-ease);
 }
@@ -11,6 +14,14 @@
 .au-card--hoverable:hover {
   box-shadow: var(--au-shadow);
   transform: translateY(-2px);
+}
+/* 可点击的卡片(传了 onClick): cursor + 焦点环 */
+.au-card--interactive {
+  cursor: pointer;
+}
+.au-card--interactive:focus-visible {
+  outline: 2px solid var(--au-primary);
+  outline-offset: 2px;
 }
 
 .au-card__head {

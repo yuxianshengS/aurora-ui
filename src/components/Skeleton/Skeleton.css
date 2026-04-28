@@ -1,11 +1,16 @@
 .au-skeleton {
+  /* 用 text-1 的半透明叠加,对任何容器背景 (bg / bg-soft / bg-mute / Card) 都有稳定对比度 */
+  --au-skeleton-base: color-mix(in srgb, var(--au-text-1) 10%, transparent);
+  --au-skeleton-highlight: color-mix(in srgb, var(--au-text-1) 22%, transparent);
   display: flex;
+  /* 父级若是 flex/grid 容器, 自身会被 shrink-to-content; 显式撑满父级宽度 */
+  width: 100%;
   gap: 16px;
   align-items: flex-start;
 }
 .au-skeleton__avatar {
   flex-shrink: 0;
-  background: var(--au-bg-mute);
+  background: var(--au-skeleton-base);
 }
 .au-skeleton__body {
   flex: 1;
@@ -18,12 +23,12 @@
   width: 38%;
   height: 16px;
   border-radius: 4px;
-  background: var(--au-bg-mute);
+  background: var(--au-skeleton-base);
 }
 .au-skeleton__row {
   height: 12px;
   border-radius: 4px;
-  background: var(--au-bg-mute);
+  background: var(--au-skeleton-base);
 }
 
 .au-skeleton.is-active .au-skeleton__avatar,
@@ -31,9 +36,9 @@
 .au-skeleton.is-active .au-skeleton__row {
   background: linear-gradient(
     90deg,
-    var(--au-bg-mute) 25%,
-    color-mix(in srgb, var(--au-bg-mute) 60%, var(--au-bg)) 50%,
-    var(--au-bg-mute) 75%
+    var(--au-skeleton-base) 25%,
+    var(--au-skeleton-highlight) 50%,
+    var(--au-skeleton-base) 75%
   );
   background-size: 400% 100%;
   animation: au-skeleton-shimmer 1.4s ease-in-out infinite;

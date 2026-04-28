@@ -1,7 +1,26 @@
 import React from 'react';
-import { Avatar } from '../components';
+import { Avatar, Icon } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
+
+// 内联 SVG dataURL 避免依赖 i.pravatar.cc 外链 — 断网/CDN 抖动也能跑
+const seedAvatar = (seed: number, hue: number) => {
+  const initials = ['YX', 'ZL', 'LM', 'WH', 'CR'][seed % 5];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <defs><linearGradient id="g${seed}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="hsl(${hue}, 70%, 60%)"/>
+      <stop offset="100%" stop-color="hsl(${(hue + 50) % 360}, 70%, 45%)"/>
+    </linearGradient></defs>
+    <rect width="80" height="80" fill="url(#g${seed})"/>
+    <text x="40" y="50" text-anchor="middle" fill="white" font-family="system-ui" font-size="28" font-weight="600">${initials}</text>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+const A1 = seedAvatar(0, 220);
+const A2 = seedAvatar(1, 280);
+const A3 = seedAvatar(2, 160);
+const A4 = seedAvatar(3, 30);
+const A5 = seedAvatar(4, 340);
 
 const AvatarDoc: React.FC = () => {
   return (
@@ -14,18 +33,18 @@ const AvatarDoc: React.FC = () => {
       <DemoBlock
         title="基础用法"
         description="三种尺寸 × 两种形状; size 也可传具体像素数。"
-        code={`<Avatar size="small"  src="https://i.pravatar.cc/80?u=1" />
-<Avatar size="medium" src="https://i.pravatar.cc/80?u=2" />
-<Avatar size="large"  src="https://i.pravatar.cc/80?u=3" />
-<Avatar size={56}     src="https://i.pravatar.cc/80?u=4" />
-<Avatar shape="square" size="large" src="https://i.pravatar.cc/80?u=5" />`}
+        code={`<Avatar size="small"  src="/avatar1.png" />
+<Avatar size="medium" src="/avatar2.png" />
+<Avatar size="large"  src="/avatar3.png" />
+<Avatar size={56}     src="/avatar4.png" />
+<Avatar shape="square" size="large" src="/avatar5.png" />`}
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <Avatar size="small" src="https://i.pravatar.cc/80?u=1" />
-          <Avatar size="medium" src="https://i.pravatar.cc/80?u=2" />
-          <Avatar size="large" src="https://i.pravatar.cc/80?u=3" />
-          <Avatar size={56} src="https://i.pravatar.cc/80?u=4" />
-          <Avatar shape="square" size="large" src="https://i.pravatar.cc/80?u=5" />
+          <Avatar size="small" src={A1} />
+          <Avatar size="medium" src={A2} />
+          <Avatar size="large" src={A3} />
+          <Avatar size={56} src={A4} />
+          <Avatar shape="square" size="large" src={A5} />
         </div>
       </DemoBlock>
 
@@ -37,7 +56,7 @@ const AvatarDoc: React.FC = () => {
 <Avatar>USER</Avatar>
 <Avatar background="var(--au-primary)" color="#fff">Y</Avatar>
 <Avatar background="var(--au-success)" color="#fff">Me</Avatar>
-<Avatar icon={<span>😀</span>} />`}
+<Avatar icon={<Icon name="customer" />} />`}
       >
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <Avatar>U</Avatar>
@@ -47,7 +66,7 @@ const AvatarDoc: React.FC = () => {
           <Avatar background="var(--au-success)" color="#fff">
             Me
           </Avatar>
-          <Avatar icon={<span>😀</span>} />
+          <Avatar icon={<Icon name="customer" />} />
         </div>
       </DemoBlock>
 
@@ -55,11 +74,11 @@ const AvatarDoc: React.FC = () => {
         title="自动回退"
         description="图片加载失败时自动显示 children 文字 / 图标。"
         code={`<Avatar src="https://example.com/non-existent.png">FB</Avatar>
-<Avatar src="https://example.com/non-existent.png" icon={<span>🙂</span>} />`}
+<Avatar src="https://example.com/non-existent.png" icon={<Icon name="customer" />} />`}
       >
         <div style={{ display: 'flex', gap: 12 }}>
           <Avatar src="https://example.com/non-existent.png">FB</Avatar>
-          <Avatar src="https://example.com/non-existent.png" icon={<span>🙂</span>} />
+          <Avatar src="https://example.com/non-existent.png" icon={<Icon name="customer" />} />
         </div>
       </DemoBlock>
 
@@ -68,17 +87,17 @@ const AvatarDoc: React.FC = () => {
         description="Avatar.Group 自动堆叠; maxCount 折叠多余,以 +N 展示。"
         code={`{/* 默认 */}
 <Avatar.Group>
-  <Avatar src="https://i.pravatar.cc/80?u=11" />
-  <Avatar src="https://i.pravatar.cc/80?u=12" />
+  <Avatar src="/avatar1.png" />
+  <Avatar src="/avatar2.png" />
   <Avatar background="var(--au-success)" color="#fff">K</Avatar>
   <Avatar background="var(--au-warning)" color="#fff">L</Avatar>
 </Avatar.Group>
 
 {/* 大号 + maxCount 折叠 */}
 <Avatar.Group maxCount={3} size="large">
-  <Avatar src="https://i.pravatar.cc/80?u=21" />
-  <Avatar src="https://i.pravatar.cc/80?u=22" />
-  <Avatar src="https://i.pravatar.cc/80?u=23" />
+  <Avatar src="/avatar3.png" />
+  <Avatar src="/avatar4.png" />
+  <Avatar src="/avatar5.png" />
   <Avatar>D</Avatar>
   <Avatar>E</Avatar>
   <Avatar>F</Avatar>
@@ -93,15 +112,15 @@ const AvatarDoc: React.FC = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Avatar.Group>
-            <Avatar src="https://i.pravatar.cc/80?u=11" />
-            <Avatar src="https://i.pravatar.cc/80?u=12" />
+            <Avatar src={A1} />
+            <Avatar src={A2} />
             <Avatar background="var(--au-success)" color="#fff">K</Avatar>
             <Avatar background="var(--au-warning)" color="#fff">L</Avatar>
           </Avatar.Group>
           <Avatar.Group maxCount={3} size="large">
-            <Avatar src="https://i.pravatar.cc/80?u=21" />
-            <Avatar src="https://i.pravatar.cc/80?u=22" />
-            <Avatar src="https://i.pravatar.cc/80?u=23" />
+            <Avatar src={A3} />
+            <Avatar src={A4} />
+            <Avatar src={A5} />
             <Avatar>D</Avatar>
             <Avatar>E</Avatar>
             <Avatar>F</Avatar>

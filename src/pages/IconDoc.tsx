@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon, Input, message } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
@@ -51,9 +51,11 @@ const IconDoc: React.FC = () => {
       <DemoBlock
         title="颜色"
         description="color 支持任意 CSS 颜色;不传时继承父级 color。"
-        code={`<Icon name="help-fill" color="#0ea5e9" size={28} />
-<Icon name="help-fill" color="#f97316" size={28} />
-<Icon name="help-fill" color="var(--au-primary)" size={28} />`}
+        code={`<Icon name="help-fill" color="#0ea5e9"            size={28} />
+<Icon name="help-fill" color="#f97316"            size={28} />
+<Icon name="help-fill" color="#16a34a"            size={28} />
+<Icon name="help-fill" color="#db2777"            size={28} />
+<Icon name="help-fill" color="var(--au-primary)"  size={28} />`}
       >
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
           <Icon name="help-fill" color="#0ea5e9" size={28} />
@@ -102,13 +104,43 @@ const IconDoc: React.FC = () => {
   );
 };
 
+// 首屏只渲染前 STEP 个图标,滚动到底部前再追加 — 546 个 button DOM 节点对慢机不友好
+const STEP = 120;
+
 const IconGallery: React.FC = () => {
   const [keyword, setKeyword] = useState('');
+  const [visible, setVisible] = useState(STEP);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return iconfontNames;
     return iconfontNames.filter((n) => n.toLowerCase().includes(q));
   }, [keyword]);
+
+  // 关键词变了重置回首屏
+  useEffect(() => {
+    setVisible(STEP);
+    scrollerRef.current?.scrollTo({ top: 0 });
+  }, [keyword]);
+
+  // IntersectionObserver: 哨兵进入可视区就再渲染一批
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    const root = scrollerRef.current;
+    if (!sentinel || !root) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisible((v) => Math.min(v + STEP, filtered.length));
+        }
+      },
+      { root, rootMargin: '200px 0px' },
+    );
+    io.observe(sentinel);
+    return () => io.disconnect();
+  }, [filtered.length]);
 
   const copy = async (name: string) => {
     const snippet = `<Icon name="${name}" />`;
@@ -120,6 +152,9 @@ const IconGallery: React.FC = () => {
     }
   };
 
+  const slice = filtered.slice(0, visible);
+  const hasMore = visible < filtered.length;
+
   return (
     <div>
       <div style={{ marginBottom: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -130,10 +165,11 @@ const IconGallery: React.FC = () => {
           style={{ maxWidth: 360 }}
         />
         <span style={{ color: 'var(--au-text-3)', fontSize: 13 }}>
-          共 {filtered.length} / {iconfontNames.length}
+          已渲染 {slice.length} / {filtered.length}{filtered.length !== iconfontNames.length && ` (共 ${iconfontNames.length})`}
         </span>
       </div>
       <div
+        ref={scrollerRef}
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
@@ -146,7 +182,7 @@ const IconGallery: React.FC = () => {
           background: 'var(--au-bg-soft)',
         }}
       >
-        {filtered.map((name) => (
+        {slice.map((name) => (
           <button
             key={name}
             type="button"
@@ -189,6 +225,13 @@ const IconGallery: React.FC = () => {
             </span>
           </button>
         ))}
+        {hasMore && (
+          <div
+            ref={sentinelRef}
+            style={{ gridColumn: '1 / -1', height: 1 }}
+            aria-hidden
+          />
+        )}
         {filtered.length === 0 && (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 40, color: 'var(--au-text-3)' }}>
             没有匹配的图标

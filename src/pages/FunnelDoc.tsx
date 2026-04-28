@@ -87,11 +87,15 @@ const FunnelDoc: React.FC = () => {
       <DemoBlock
         title="自定义颜色"
         description="单步可传 color 覆盖自动渐变。"
-        code={`[
-  { label: '访问', value: 10000, color: '#3b82f6' },
-  { label: '点击', value: 4200, color: '#06b6d4' },
-  ...
-]`}
+        code={`<Funnel
+  width={420}
+  data={[
+    { label: '访问', value: 10000, color: '#3b82f6' },
+    { label: '点击', value: 4200,  color: '#06b6d4' },
+    { label: '下单', value: 1850,  color: '#10b981' },
+    { label: '支付', value: 480,   color: '#f59e0b' },
+  ]}
+/>`}
       >
         <Funnel
           width={420}

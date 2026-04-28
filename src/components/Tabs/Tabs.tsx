@@ -109,6 +109,27 @@ const Tabs: React.FC<TabsProps> = ({
     onChange?.(key);
   };
 
+  // 键盘导航: ArrowLeft/Right(水平) 或 ArrowUp/Down(垂直) 切换, Home/End 跳首尾
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const enabled = items.filter((i) => !i.disabled);
+    if (enabled.length === 0) return;
+    const idx = enabled.findIndex((i) => i.key === activeKey);
+    const prevKey = horizontal ? 'ArrowLeft' : 'ArrowUp';
+    const nextKey = horizontal ? 'ArrowRight' : 'ArrowDown';
+    let target = -1;
+    if (e.key === prevKey) target = idx <= 0 ? enabled.length - 1 : idx - 1;
+    else if (e.key === nextKey) target = idx >= enabled.length - 1 ? 0 : idx + 1;
+    else if (e.key === 'Home') target = 0;
+    else if (e.key === 'End') target = enabled.length - 1;
+    else return;
+    e.preventDefault();
+    const k = enabled[target].key;
+    pick(k);
+    // 把焦点移到新激活 tab(WAI-ARIA Tabs pattern)
+    const bar = barRef.current;
+    bar?.querySelector<HTMLElement>(`[data-key="${k}"]`)?.focus();
+  };
+
   const cls = [
     'au-tabs',
     `au-tabs--${type}`,
@@ -140,9 +161,11 @@ const Tabs: React.FC<TabsProps> = ({
               data-key={it.key}
               aria-selected={isActive}
               aria-disabled={it.disabled || undefined}
+              tabIndex={isActive ? 0 : -1}
               className={tabCls}
               disabled={it.disabled}
               onClick={() => !it.disabled && pick(it.key)}
+              onKeyDown={handleKeyDown}
             >
               {it.icon && <span className="au-tabs__tab-icon">{it.icon}</span>}
               <span className="au-tabs__tab-label">{it.label}</span>

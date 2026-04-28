@@ -38,6 +38,12 @@
 .au-tag--magenta  { --au-tag-color: #ec4899; }
 .au-tag--cyan     { --au-tag-color: #14b8a6; }
 
+/* 暗模式下亮度提一档(原色在深底上看着会闷) */
+[data-theme="dark"] .au-tag--info     { --au-tag-color: #22d3ee; }
+[data-theme="dark"] .au-tag--purple   { --au-tag-color: #a78bfa; }
+[data-theme="dark"] .au-tag--magenta  { --au-tag-color: #f472b6; }
+[data-theme="dark"] .au-tag--cyan     { --au-tag-color: #2dd4bf; }
+
 .au-tag__icon {
   display: inline-flex;
   align-items: center;

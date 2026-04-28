@@ -61,7 +61,9 @@ const GridDoc: React.FC = () => {
       <DemoBlock
         title="行间距独立"
         description="rowGap 单独控制行间距, gap 不传时 rowGap 跟随。"
-        code={`<Grid cols={4} gap={8} rowGap={20}>...</Grid>`}
+        code={`<Grid cols={4} gap={8} rowGap={20}>
+  {Array.from({ length: 8 }).map((_, i) => <div>cell {i + 1}</div>)}
+</Grid>`}
       >
         <Grid cols={4} gap={8} rowGap={20}>
           {Array.from({ length: 8 }).map((_, i) => (
@@ -73,7 +75,11 @@ const GridDoc: React.FC = () => {
       <DemoBlock
         title="行最小高度"
         description="rowMinHeight 让每行至少这么高 (内容少也撑住), 适合 KPI 行高度对齐。"
-        code={`<Grid cols={3} gap={12} rowMinHeight={120}>...</Grid>`}
+        code={`<Grid cols={3} gap={12} rowMinHeight={100}>
+  <div>短</div>
+  <div>这格内容稍长一些, 占两三行</div>
+  <div>短</div>
+</Grid>`}
       >
         <Grid cols={3} gap={12} rowMinHeight={100}>
           <Cell>短</Cell>

@@ -1,6 +1,7 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { confirm, info, success, error, warning } from './confirm';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import './Modal.css';
 
 export interface ModalProps {
@@ -95,6 +96,8 @@ const Modal: React.FC<ModalProps> & {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
   const locked = useRef(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, mounted && visible);
 
   useEffect(() => {
     if (open) {
@@ -168,8 +171,10 @@ const Modal: React.FC<ModalProps> & {
         if (e.target === e.currentTarget && maskClosable) onCancel?.();
       }}>
         <div
+          ref={panelRef}
           role="dialog"
           aria-modal="true"
+          tabIndex={-1}
           className="au-modal__panel"
           style={{ width }}
           onClick={(e) => e.stopPropagation()}

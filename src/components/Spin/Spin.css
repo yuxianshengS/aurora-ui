@@ -81,7 +81,7 @@
 .au-spin-fullscreen {
   position: fixed;
   inset: 0;
-  z-index: 1100;
+  z-index: var(--au-z-spin, 1100);
   display: flex;
   align-items: center;
   justify-content: center;

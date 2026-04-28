@@ -19,7 +19,7 @@
 **Aurora UI** 是一套追求"极光感视觉 + 看板专精"的 React 组件库。和 antd/element 不一样的地方:
 
 - 🌌 **极光招牌** — `AuroraBg` / `GradientText` / `GlowCard` / `NumberRoll` 等独家组件, 默认就有 dribbble 级质感
-- 📊 **中后台优先** — `KpiCard` / `Sparkline` / `Bar3D` / `Heatmap` / `Gauge` / `Funnel` 等看板组件全套, 不是又一个 antd 克隆
+- 📊 **中后台优先** — `KpiCard` / `Sparkline` / `Heatmap` / `Gauge` / `Funnel` 等看板组件全套, 不是又一个 antd 克隆
 - 🧩 **拖拽搭建器** — 60+ 组件全部可拖, 整段 Section 模板一键展开, 导出 JSX 直接 commit
 - ⚡ **零额外依赖** — 没有 ThemeProvider, 没有 SDK, 一行 import 就用; CSS 变量驱动主题, 改一个变量改全套
 
@@ -86,7 +86,7 @@ export default function App() {
 **Input** · **InputNumber** · **Select** · **Radio** · **Checkbox** · **Switch** · **Slider** · **DatePicker** · **Upload** · **TreeSelect**
 
 ### 📊 数据展示 / 可视化
-**Table** · **Tree** · **Tabs** · **Pagination** · **Description** · **Statistic** · **Progress** · **KpiCard** · **Sparkline** · **Bar3D** · **Heatmap** · **Funnel** · **Gauge** · **DayTimeline** · **Timeline** · **ActivityFeed** · **Wallet**
+**Table** (含行/列拖拽) · **Tree** · **Tabs** · **Pagination** · **Description** · **Statistic** · **Progress** · **KpiCard** · **Sparkline** · **Heatmap** · **Funnel** · **Gauge** · **DayTimeline** · **Timeline** · **ActivityFeed** · **Wallet**
 
 ### 🧱 布局
 **Layout** · **Grid** · **Row** · **Flex** · **Space** · **Divider** · **Split** · **Card**

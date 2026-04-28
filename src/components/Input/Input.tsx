@@ -20,64 +20,71 @@ export interface InputProps
   label?: React.ReactNode;
 }
 
-const InputBase: React.FC<InputProps> = ({
-  size = 'medium',
-  prefix,
-  suffix,
-  error,
-  variant = 'outlined',
-  activeColor,
-  hoverColor,
-  label,
-  className = '',
-  disabled,
-  style,
-  placeholder,
-  ...rest
-}) => {
-  const innerPlaceholder =
-    variant === 'floating' ? (placeholder ?? ' ') : placeholder;
-  const wrapperClasses = [
-    'au-input',
-    `au-input--${variant}`,
-    `au-input--${size}`,
-    error ? 'is-error' : '',
-    disabled ? 'is-disabled' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+const InputBase = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      size = 'medium',
+      prefix,
+      suffix,
+      error,
+      variant = 'outlined',
+      activeColor,
+      hoverColor,
+      label,
+      className = '',
+      disabled,
+      style,
+      placeholder,
+      ...rest
+    },
+    ref,
+  ) => {
+    const innerPlaceholder =
+      variant === 'floating' ? (placeholder ?? ' ') : placeholder;
+    const wrapperClasses = [
+      'au-input',
+      `au-input--${variant}`,
+      `au-input--${size}`,
+      error ? 'is-error' : '',
+      disabled ? 'is-disabled' : '',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  const mergedStyle: React.CSSProperties | undefined =
-    activeColor || hoverColor
-      ? ({
-          ...(activeColor ? { ['--au-input-active' as string]: activeColor } : {}),
-          ...(hoverColor ? { ['--au-input-hover-bg' as string]: hoverColor } : {}),
-          ...style,
-        } as React.CSSProperties)
-      : style;
+    const mergedStyle: React.CSSProperties | undefined =
+      activeColor || hoverColor
+        ? ({
+            ...(activeColor ? { ['--au-input-active' as string]: activeColor } : {}),
+            ...(hoverColor ? { ['--au-input-hover-bg' as string]: hoverColor } : {}),
+            ...style,
+          } as React.CSSProperties)
+        : style;
 
-  return (
-    <span className={wrapperClasses} style={mergedStyle}>
-      {prefix && variant !== 'floating' && (
-        <span className="au-input__affix">{prefix}</span>
-      )}
-      <input
-        className="au-input__inner"
-        disabled={disabled}
-        placeholder={innerPlaceholder}
-        {...rest}
-      />
-      {variant === 'floating' && label != null && (
-        <span className="au-input__floating-label">{label}</span>
-      )}
-      {suffix && variant !== 'floating' && (
-        <span className="au-input__affix">{suffix}</span>
-      )}
-      {variant === 'underline' && <span className="au-input__border" aria-hidden />}
-    </span>
-  );
-};
+    return (
+      <span className={wrapperClasses} style={mergedStyle}>
+        {prefix && variant !== 'floating' && (
+          <span className="au-input__affix">{prefix}</span>
+        )}
+        <input
+          ref={ref}
+          className="au-input__inner"
+          disabled={disabled}
+          placeholder={innerPlaceholder}
+          {...rest}
+        />
+        {variant === 'floating' && label != null && (
+          <span className="au-input__floating-label">{label}</span>
+        )}
+        {suffix && variant !== 'floating' && (
+          <span className="au-input__affix">{suffix}</span>
+        )}
+        {variant === 'underline' && <span className="au-input__border" aria-hidden />}
+      </span>
+    );
+  },
+);
+InputBase.displayName = 'Input';
 
 const Input = Object.assign(InputBase, { TextArea });
 

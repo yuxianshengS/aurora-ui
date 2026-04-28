@@ -26,11 +26,14 @@ const AuroraBgDoc: React.FC = () => {
       <DemoBlock
         title="作为内容容器"
         description="children 会渲染在极光层之上。Hero 区招牌写法。"
-        code={`<AuroraBg style={{ height: 320, borderRadius: 16 }}>
+        code={`<AuroraBg style={{ height: 320, borderRadius: 16, display: 'flex', alignItems: 'center' }}>
   <div style={{ padding: 48, color: 'white' }}>
-    <h2 style={{ fontSize: 36 }}>欢迎来到 Aurora 看板</h2>
-    <p>极光感的中后台 UI 库 + 可视化搭建器</p>
-    <Button type="primary">立即开始</Button>
+    <h2 style={{ fontSize: 36, fontWeight: 700 }}>欢迎来到 Aurora 看板</h2>
+    <p style={{ opacity: 0.9 }}>极光感的中后台 UI 库 + 可视化搭建器</p>
+    <Space style={{ marginTop: 20 }}>
+      <Button type="primary">立即开始</Button>
+      <Button>查看文档</Button>
+    </Space>
   </div>
 </AuroraBg>`}
       >
@@ -82,9 +85,13 @@ const AuroraBgDoc: React.FC = () => {
       <DemoBlock
         title="卡片底纹"
         description="卡片局部用极光做底, 标题与按钮叠在上层。"
-        code={`<Card style={{ overflow: 'hidden' }}>
+        code={`<Card style={{ overflow: 'hidden', position: 'relative' }}>
   <AuroraBg preset="forest" intensity={0.5} style={{ position: 'absolute', inset: 0 }} />
-  ...内容...
+  <div style={{ position: 'relative', padding: 24 }}>
+    <h3>本月活跃用户</h3>
+    <div style={{ fontSize: 48, fontWeight: 700 }}>1,284,560</div>
+    <div>较上月 +12.4%</div>
+  </div>
 </Card>`}
       >
         <div style={{ overflow: 'hidden', position: 'relative', minHeight: 180, borderRadius: 12, border: '1px solid var(--au-border)' }}>

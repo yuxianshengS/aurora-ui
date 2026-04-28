@@ -38,11 +38,12 @@ const HeatmapDoc: React.FC = () => {
       <DemoBlock
         title="基础用法 (过去一年)"
         description="只传 data 即可; 默认起止为最近一年。"
-        code={`<Heatmap
+        code={`// data: 每项 { date: 'YYYY-MM-DD', value: number }
+<Heatmap
   data={[
     { date: '2025-04-12', value: 4 },
     { date: '2025-04-15', value: 7 },
-    ...
+    { date: '2026-01-08', value: 12 },
   ]}
 />`}
       >

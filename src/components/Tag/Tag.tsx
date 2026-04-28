@@ -39,62 +39,68 @@ const CloseIcon: React.FC = () => (
   </svg>
 );
 
-const Tag: React.FC<TagProps> = ({
-  color,
-  bordered = true,
-  closable,
-  icon,
-  children,
-  onClose,
-  className = '',
-  style,
-  ...rest
-}) => {
-  const [closed, setClosed] = useState(false);
-  if (closed) return null;
+const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
+  (
+    {
+      color,
+      bordered = true,
+      closable,
+      icon,
+      children,
+      onClose,
+      className = '',
+      style,
+      ...rest
+    },
+    ref,
+  ) => {
+    const [closed, setClosed] = useState(false);
+    if (closed) return null;
 
-  const isPreset = color && presets.has(color as TagPreset);
-  const presetCls = isPreset ? `au-tag--${color}` : '';
+    const isPreset = color && presets.has(color as TagPreset);
+    const presetCls = isPreset ? `au-tag--${color}` : '';
 
-  const customStyle: React.CSSProperties | undefined =
-    color && !isPreset
-      ? ({
-          ['--au-tag-color' as string]: color,
-          ...style,
-        } as React.CSSProperties)
-      : style;
+    const customStyle: React.CSSProperties | undefined =
+      color && !isPreset
+        ? ({
+            ['--au-tag-color' as string]: color,
+            ...style,
+          } as React.CSSProperties)
+        : style;
 
-  const cls = [
-    'au-tag',
-    presetCls,
-    bordered ? 'is-bordered' : 'is-solid',
-    color && !isPreset ? 'au-tag--custom' : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+    const cls = [
+      'au-tag',
+      presetCls,
+      bordered ? 'is-bordered' : 'is-solid',
+      color && !isPreset ? 'au-tag--custom' : '',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-  const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
-    onClose?.(e);
-    if (!e.isDefaultPrevented()) setClosed(true);
-  };
+    const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
+      onClose?.(e);
+      if (!e.isDefaultPrevented()) setClosed(true);
+    };
 
-  return (
-    <span className={cls} style={customStyle} {...rest}>
-      {icon && <span className="au-tag__icon">{icon}</span>}
-      <span className="au-tag__label">{children}</span>
-      {closable && (
-        <button
-          type="button"
-          className="au-tag__close"
-          onClick={handleClose}
-          aria-label="关闭"
-        >
-          <CloseIcon />
-        </button>
-      )}
-    </span>
-  );
-};
+    return (
+      <span ref={ref} className={cls} style={customStyle} {...rest}>
+        {icon && <span className="au-tag__icon">{icon}</span>}
+        <span className="au-tag__label">{children}</span>
+        {closable && (
+          <button
+            type="button"
+            className="au-tag__close"
+            onClick={handleClose}
+            aria-label="关闭"
+          >
+            <CloseIcon />
+          </button>
+        )}
+      </span>
+    );
+  },
+);
+Tag.displayName = 'Tag';
 
 export default Tag;

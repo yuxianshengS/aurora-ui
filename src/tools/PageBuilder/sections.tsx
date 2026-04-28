@@ -211,7 +211,7 @@ const featuresSection = (): SectionNode => {
     type: 'Grid',
     props: { mode: 'fixed', cols: 3, gap: 16 },
     slots: {
-      'cell-0': [feature('charts-bar', '数据可视化', '内置 Bar3D / Sparkline / Gauge 等可视化组件, 看板搭得快.')],
+      'cell-0': [feature('charts-bar', '数据可视化', '内置 Sparkline / Gauge / Heatmap / Funnel 等可视化组件, 看板搭得快.')],
       'cell-1': [feature('click', '拖拽搭建', '可视化页面搭建器, 不写代码也能产出 JSX, 一键导出.')],
       'cell-2': [feature('scenes', '极光质感', 'AuroraBg / GlowCard / GradientText 招牌组件, 视觉直接拉档.')],
     },

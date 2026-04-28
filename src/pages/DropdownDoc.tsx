@@ -1,15 +1,15 @@
 import React from 'react';
-import { Dropdown, message } from '../components';
+import { Dropdown, Icon, message } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
 const DropdownDoc: React.FC = () => {
   const commonItems = [
-    { key: 'edit', label: '编辑', icon: <span>✏️</span> },
-    { key: 'copy', label: '复制链接', icon: <span>🔗</span> },
-    { key: 'share', label: '分享', icon: <span>📤</span> },
+    { key: 'edit', label: '编辑', icon: <Icon name="edit" /> },
+    { key: 'copy', label: '复制链接', icon: <Icon name="link" /> },
+    { key: 'share', label: '分享', icon: <Icon name="share" /> },
     { type: 'divider' as const },
-    { key: 'delete', label: '删除', icon: <span>🗑</span>, danger: true },
+    { key: 'delete', label: '删除', icon: <Icon name="delete" />, danger: true },
   ];
 
   return (
@@ -114,10 +114,10 @@ const DropdownDoc: React.FC = () => {
   placement="bottomRight"
   menu={{
     items: [
-      { key: 'profile', label: '个人资料', icon: '👤' },
-      { key: 'settings', label: '设置', icon: '⚙️' },
+      { key: 'profile', label: '个人资料', icon: <Icon name="customer" /> },
+      { key: 'settings', label: '设置', icon: <Icon name="settings" /> },
       { type: 'divider' },
-      { key: 'logout', label: '退出登录', icon: '🚪', danger: true },
+      { key: 'logout', label: '退出登录', icon: <Icon name="return" />, danger: true },
     ],
   }}
 >
@@ -128,10 +128,10 @@ const DropdownDoc: React.FC = () => {
           placement="bottomRight"
           menu={{
             items: [
-              { key: 'profile', label: '个人资料', icon: <span>👤</span> },
-              { key: 'settings', label: '设置', icon: <span>⚙️</span> },
+              { key: 'profile', label: '个人资料', icon: <Icon name="customer" /> },
+              { key: 'settings', label: '设置', icon: <Icon name="settings" /> },
               { type: 'divider' },
-              { key: 'logout', label: '退出登录', icon: <span>🚪</span>, danger: true },
+              { key: 'logout', label: '退出登录', icon: <Icon name="return" />, danger: true },
             ],
             onClick: ({ key }) => message.info(`选择: ${key}`),
           }}

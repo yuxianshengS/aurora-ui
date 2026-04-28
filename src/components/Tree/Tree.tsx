@@ -150,7 +150,12 @@ const Tree: React.FC<TreeProps> = ({
       .filter(Boolean)
       .join(' ');
     return (
-      <li key={node.key} className="au-tree__node">
+      <li
+        key={node.key}
+        className="au-tree__node"
+        // depth 暴露给 CSS, 用于按层级精确定位 showLine 的 L/T 连接线
+        style={{ ['--au-tree-depth' as never]: depth } as React.CSSProperties}
+      >
         <div className={itemCls} style={{ paddingLeft: depth * 18 + 6 }}>
           {hasChildren ? (
             <button

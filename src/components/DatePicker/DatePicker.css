@@ -91,7 +91,7 @@
   /* popup is portaled to body — must redeclare vars that the grid relies on */
   --au-dp-cell: 34px;
   --au-dp-gap: 2px;
-  z-index: 1000;
+  z-index: var(--au-z-popup, 1050);
   background: var(--au-bg);
   border: 1px solid var(--au-border);
   border-radius: var(--au-radius);

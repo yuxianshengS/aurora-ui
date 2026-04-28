@@ -45,25 +45,28 @@ const toArray = (v: SliderValue | undefined, fallback: [number, number]): [numbe
   return [fallback[0], v];
 };
 
-const Slider: React.FC<SliderProps> = ({
-  value,
-  defaultValue,
-  min = 0,
-  max = 100,
-  step = 1,
-  range,
-  marks,
-  disabled,
-  vertical,
-  reverse,
-  showTooltip = 'hover',
-  tooltipFormatter,
-  tooltipPlacement,
-  onChange,
-  onChangeComplete,
-  className = '',
-  style,
-}) => {
+const Slider = React.forwardRef<HTMLDivElement, SliderProps>((
+  {
+    value,
+    defaultValue,
+    min = 0,
+    max = 100,
+    step = 1,
+    range,
+    marks,
+    disabled,
+    vertical,
+    reverse,
+    showTooltip = 'hover',
+    tooltipFormatter,
+    tooltipPlacement,
+    onChange,
+    onChangeComplete,
+    className = '',
+    style,
+  },
+  ref,
+) => {
   const isControlled = value !== undefined;
   const baseDefault: [number, number] = useMemo(() => {
     if (range) {
@@ -144,6 +147,10 @@ const Slider: React.FC<SliderProps> = ({
     draggingRef.current = true;
     emit([live[0], live[1]], false);
 
+    // 拖动期间禁用 body 文本选中, 鼠标快速划过不会蓝选页面
+    const prevUserSelect = document.body.style.userSelect;
+    document.body.style.userSelect = 'none';
+
     const move = (ev: PointerEvent) => {
       const nv = valueFromPointer(ev.clientX, ev.clientY);
       if (range) live[handle] = nv;
@@ -154,6 +161,7 @@ const Slider: React.FC<SliderProps> = ({
       draggingRef.current = false;
       setActiveHandle(null);
       emit([live[0], live[1]], true);
+      document.body.style.userSelect = prevUserSelect;
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
     };
@@ -272,6 +280,7 @@ const Slider: React.FC<SliderProps> = ({
 
   return (
     <div
+      ref={ref}
       className={wrapperCls}
       style={style}
       onMouseEnter={() => setHovering(true)}
@@ -326,6 +335,7 @@ const Slider: React.FC<SliderProps> = ({
       )}
     </div>
   );
-};
+});
+Slider.displayName = 'Slider';
 
 export default Slider;

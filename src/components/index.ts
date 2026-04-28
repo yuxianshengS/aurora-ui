@@ -14,6 +14,39 @@ export { default as Wallet } from './Wallet';
 export type { WalletProps, WalletCard } from './Wallet';
 export { default as Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipPlacement } from './Tooltip';
+export { default as Tour } from './Tour';
+export type { TourProps, TourStep, TourPlacement, TourTargetGetter } from './Tour';
+export { default as ConfigProvider, useLocale, useConfig } from './ConfigProvider';
+export type { ConfigProviderProps } from './ConfigProvider';
+export { default as CommandPalette } from './CommandPalette';
+export type { CommandPaletteProps, CommandItem } from './CommandPalette';
+export { Reveal, Stagger, Tilt } from './Motion';
+export type { RevealProps, RevealDirection, StaggerProps, TiltProps } from './Motion';
+
+// 极光特效 — 视觉招牌 (跟 AuroraBg / GradientText / GlowCard 同一档)
+export { default as AuroraCursor } from './AuroraCursor';
+export type { AuroraCursorProps } from './AuroraCursor';
+export { default as Confetti } from './Confetti';
+export type { ConfettiProps, ConfettiOptions, ConfettiHandle } from './Confetti';
+
+// 个性化原语
+export { default as Watermark } from './Watermark';
+export type { WatermarkProps } from './Watermark';
+export { default as Kbd } from './Kbd';
+export type { KbdProps } from './Kbd';
+export { default as FloatButton } from './FloatButton';
+export type { FloatButtonProps, FloatButtonPosition, FloatButtonAction } from './FloatButton';
+export { default as Rate } from './Rate';
+export type { RateProps } from './Rate';
+// 通用基础补缺
+export { default as ColorPicker } from './ColorPicker';
+export type { ColorPickerProps } from './ColorPicker';
+export { default as AutoComplete } from './AutoComplete';
+export type { AutoCompleteProps, AutoCompleteOption } from './AutoComplete';
+export { default as Mentions } from './Mentions';
+export type { MentionsProps, MentionItem } from './Mentions';
+export { default as Anchor } from './Anchor';
+export type { AnchorProps, AnchorLink } from './Anchor';
 export { default as DatePicker } from './DatePicker';
 export type { DatePickerProps, PickerMode } from './DatePicker';
 export { default as Timeline } from './Timeline';
@@ -27,8 +60,6 @@ export type {
   DayTimelineStatusColors,
   DayTimelineChangePayload,
 } from './DayTimeline';
-export { default as Bar3D } from './Bar3D';
-export type { Bar3DProps, Bar3DShading, Bar3DTheme } from './Bar3D';
 export { default as Flex } from './Flex';
 export type { FlexProps, FlexDirection, FlexJustify, FlexAlign } from './Flex';
 export { default as Text } from './Text';

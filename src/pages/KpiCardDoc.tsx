@@ -1,5 +1,5 @@
 import React from 'react';
-import { KpiCard } from '../components';
+import { KpiCard, Icon } from '../components';
 import DemoBlock from '../site-components/DemoBlock';
 import ApiTable from '../site-components/ApiTable';
 
@@ -22,7 +22,10 @@ const KpiCardDoc: React.FC = () => {
       <DemoBlock
         title="基础用法"
         description="最少传 title + value。delta 传数值自动算方向,默认 '涨 = 好'。"
-        code={`<KpiCard title="月收入" prefix="¥" value={128500} delta={{ value: 12.5 }} />`}
+        code={`<KpiCard title="月收入"     prefix="¥" value={128500} delta={{ value: 12.5 }} />
+<KpiCard title="日活跃用户"          value={12492}  delta={{ value: 3.2 }} />
+<KpiCard title="订单转化率"          value={4.8} suffix="%" precision={1} delta={{ value: -0.7 }} />
+<KpiCard title="平均响应时间"        value={182} suffix="ms" delta={{ value: -8.5, mode: 'positive-down' }} />`}
       >
         <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
           <KpiCard title="月收入" prefix="¥" value={128500} delta={{ value: 12.5 }} />
@@ -35,14 +38,23 @@ const KpiCardDoc: React.FC = () => {
       <DemoBlock
         title="带趋势图"
         description="trend 让卡片底部出现 Sparkline (共用 color)。"
-        code={`<KpiCard
-  title="GMV"
-  prefix="¥"
-  value={2384910}
-  delta={{ value: 8.4 }}
-  trend={{ data: [...], type: 'area' }}
-  status="success"
-/>`}
+        code={`const trendUp   = [3, 4, 2, 5, 7, 6, 9, 8, 11, 13, 12, 15];
+const trendDown = [15, 13, 14, 11, 12, 9, 10, 7, 6, 4, 5, 3];
+const trendFlat = [8, 9, 7, 8, 9, 8, 9, 8, 9, 8, 9, 8];
+
+<KpiCard title="GMV" prefix="¥" value={2384910}
+         delta={{ value: 8.4 }}
+         trend={{ data: trendUp, type: 'area' }}
+         status="success" />
+
+<KpiCard title="新增用户" value={3421}
+         delta={{ value: -2.1 }}
+         trend={{ data: trendDown, type: 'line' }}
+         status="danger" />
+
+<KpiCard title="客单价" prefix="¥" value={268}
+         delta={{ value: 0, direction: 'flat' }}
+         trend={{ data: trendFlat, type: 'bar' }} />`}
       >
         <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
           <KpiCard
@@ -73,13 +85,15 @@ const KpiCardDoc: React.FC = () => {
       <DemoBlock
         title="成本 / 流失率指标"
         description={`跌为好的指标 (mode='positive-down') 会把 "下跌" 标绿、"上涨" 标红。`}
-        code={`// 跌是好事
-<KpiCard
-  title="用户流失率"
-  value={1.8}
-  suffix="%"
-  delta={{ value: -0.4, mode: 'positive-down' }}
-/>`}
+        code={`// mode: 'positive-down' = 跌是好事, 自动反转配色
+<KpiCard title="用户流失率" value={1.8}  suffix="%"
+         delta={{ value: -0.4, mode: 'positive-down' }} />
+
+<KpiCard title="平均响应时间" value={182} suffix="ms"
+         delta={{ value: 8.5,  mode: 'positive-down' }} />
+
+<KpiCard title="获客成本" prefix="¥" value={42.8} precision={1}
+         delta={{ value: -6.3, mode: 'positive-down' }} />`}
       >
         <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
           <KpiCard
@@ -107,27 +121,29 @@ const KpiCardDoc: React.FC = () => {
       <DemoBlock
         title="状态色条 + 图标"
         description="status 在左侧加一条状态色条, icon 放右上角。"
-        code={`<KpiCard
-  title="订单"
-  value={1284}
-  status="primary"
-  icon={<span>📦</span>}
-/>`}
+        code={`<KpiCard title="订单"   value={1284} status="primary" icon={<Icon name="order" />} />
+<KpiCard title="完成"   value={1092} status="success" icon={<Icon name="success" />} />
+<KpiCard title="待处理" value={128}  status="warning" icon={<Icon name="time" />} />
+<KpiCard title="异常"   value={64}   status="danger"  icon={<Icon name="trade-alert" />} />`}
       >
         <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          <KpiCard title="订单" value={1284} status="primary" icon={<span>📦</span>} />
-          <KpiCard title="完成" value={1092} status="success" icon={<span>✅</span>} />
-          <KpiCard title="待处理" value={128} status="warning" icon={<span>⏳</span>} />
-          <KpiCard title="异常" value={64} status="danger" icon={<span>🚨</span>} />
+          <KpiCard title="订单" value={1284} status="primary" icon={<Icon name="order" />} />
+          <KpiCard title="完成" value={1092} status="success" icon={<Icon name="success" />} />
+          <KpiCard title="待处理" value={128} status="warning" icon={<Icon name="time" />} />
+          <KpiCard title="异常" value={64} status="danger" icon={<Icon name="trade-alert" />} />
         </div>
       </DemoBlock>
 
       <DemoBlock
         title="可点击 / 加载态 / 尺寸"
         description="onClick 让卡片可点击; loading 显示骨架屏。"
-        code={`<KpiCard loading title="..." />
-<KpiCard size="small" ... />
-<KpiCard onClick={...} ... />`}
+        code={`<KpiCard title="加载中" value={0} loading />
+<KpiCard size="small" title="小号" value={42}  delta={{ value: 3.1 }} />
+<KpiCard size="large" title="大号" value={888} delta={{ value: 12.4 }} />
+<KpiCard title="可点击" value={1024}
+         onClick={() => router.push('/detail')}
+         trend={{ data: trendUp }}
+         delta={{ value: 5.2 }} />`}
       >
         <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
           <KpiCard title="加载中" value={0} loading />

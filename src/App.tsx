@@ -17,7 +17,6 @@ const TooltipDoc = lazy(() => import('./pages/TooltipDoc'));
 const DatePickerDoc = lazy(() => import('./pages/DatePickerDoc'));
 const TimelineDoc = lazy(() => import('./pages/TimelineDoc'));
 const DayTimelineDoc = lazy(() => import('./pages/DayTimelineDoc'));
-const Bar3DDoc = lazy(() => import('./pages/Bar3DDoc'));
 const SplitDoc = lazy(() => import('./pages/SplitDoc'));
 const TypewriterDoc = lazy(() => import('./pages/TypewriterDoc'));
 const FlipDoc = lazy(() => import('./pages/FlipDoc'));
@@ -35,6 +34,16 @@ const DrawerDoc = lazy(() => import('./pages/DrawerDoc'));
 const MessageDoc = lazy(() => import('./pages/MessageDoc'));
 const NotificationDoc = lazy(() => import('./pages/NotificationDoc'));
 const PopconfirmDoc = lazy(() => import('./pages/PopconfirmDoc'));
+const TourDoc = lazy(() => import('./pages/TourDoc'));
+const CommandPaletteDoc = lazy(() => import('./pages/CommandPaletteDoc'));
+const MotionDoc = lazy(() => import('./pages/MotionDoc'));
+const ThemeStudio = lazy(() => import('./pages/ThemeStudio'));
+const ConfettiDoc = lazy(() => import('./pages/ConfettiDoc'));
+const AuroraCursorDoc = lazy(() => import('./pages/AuroraCursorDoc'));
+const WatermarkDoc = lazy(() => import('./pages/WatermarkDoc'));
+const KbdDoc = lazy(() => import('./pages/KbdDoc'));
+const FloatButtonDoc = lazy(() => import('./pages/FloatButtonDoc'));
+const RateDoc = lazy(() => import('./pages/RateDoc'));
 const AlertDoc = lazy(() => import('./pages/AlertDoc'));
 const SpinDoc = lazy(() => import('./pages/SpinDoc'));
 const TagDoc = lazy(() => import('./pages/TagDoc'));
@@ -133,7 +142,6 @@ const AppRoutes: React.FC = () => (
         <Route path="date-picker" element={<DatePickerDoc />} />
         <Route path="timeline" element={<TimelineDoc />} />
         <Route path="day-timeline" element={<DayTimelineDoc />} />
-        <Route path="bar3d" element={<Bar3DDoc />} />
         <Route path="split" element={<SplitDoc />} />
         <Route path="typewriter" element={<TypewriterDoc />} />
         <Route path="flip" element={<FlipDoc />} />
@@ -151,6 +159,16 @@ const AppRoutes: React.FC = () => (
         <Route path="message" element={<MessageDoc />} />
         <Route path="notification" element={<NotificationDoc />} />
         <Route path="popconfirm" element={<PopconfirmDoc />} />
+        <Route path="tour" element={<TourDoc />} />
+        <Route path="command-palette" element={<CommandPaletteDoc />} />
+        <Route path="motion" element={<MotionDoc />} />
+        <Route path="theme-studio" element={<ThemeStudio />} />
+        <Route path="confetti" element={<ConfettiDoc />} />
+        <Route path="aurora-cursor" element={<AuroraCursorDoc />} />
+        <Route path="watermark" element={<WatermarkDoc />} />
+        <Route path="kbd" element={<KbdDoc />} />
+        <Route path="float-button" element={<FloatButtonDoc />} />
+        <Route path="rate" element={<RateDoc />} />
         <Route path="alert" element={<AlertDoc />} />
         <Route path="spin" element={<SpinDoc />} />
         <Route path="tag" element={<TagDoc />} />

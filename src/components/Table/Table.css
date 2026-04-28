@@ -47,7 +47,7 @@
 .au-table.is-sticky .au-table__thead .au-table__th {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: var(--au-z-affix, 10);
 }
 .au-table__th.has-sorter {
   cursor: pointer;
@@ -162,4 +162,80 @@
 }
 .au-table__pagination:has(+ .au-table__scroll) {
   padding: 0 0 12px;
+}
+
+/* ===== 拖拽: 行 ===== */
+.au-table__th--drag,
+.au-table__cell--drag {
+  width: 36px;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--au-text-3);
+}
+.au-table__drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: grab;
+  opacity: 0.55;
+  transition: opacity 0.15s var(--au-ease), background 0.15s var(--au-ease), color 0.15s var(--au-ease);
+}
+.au-table__row:hover .au-table__drag-handle {
+  opacity: 1;
+}
+.au-table__drag-handle:hover {
+  background: var(--au-bg-mute);
+  color: var(--au-primary);
+}
+.au-table__drag-handle:active {
+  cursor: grabbing;
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+}
+.au-table__drag-icon {
+  display: block;
+}
+
+/* 拖拽中的行: 半透明 + 灰背景 */
+.au-table__tbody .au-table__row.is-dragging {
+  opacity: 0.45;
+  background: var(--au-bg-mute) !important;
+}
+
+/* drop 指示线 — 利用 box-shadow 而非 border, 避免影响布局 */
+.au-table__tbody .au-table__row.is-drop-before > .au-table__cell {
+  box-shadow: inset 0 2px 0 0 var(--au-primary);
+}
+.au-table__tbody .au-table__row.is-drop-after > .au-table__cell {
+  box-shadow: inset 0 -2px 0 0 var(--au-primary);
+}
+
+/* ===== 拖拽: 列 ===== */
+.au-table__th.is-col-draggable {
+  cursor: grab;
+}
+.au-table__th.is-col-draggable:active {
+  cursor: grabbing;
+}
+.au-table__th.is-col-draggable.has-sorter {
+  /* 排序列在拖拽模式下仍可拖, 鼠标走 grab */
+  cursor: grab;
+}
+.au-table__th.is-dragging {
+  opacity: 0.5;
+}
+/* 列拖拽时的 drop 指示线 — 用 box-shadow 在左/右画 2px 主色线 */
+.au-table__th.is-drop-before {
+  box-shadow: inset 2px 0 0 0 var(--au-primary);
+}
+.au-table__th.is-drop-after {
+  box-shadow: inset -2px 0 0 0 var(--au-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au-table__drag-handle { transition: none; }
 }
