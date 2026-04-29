@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-04-29
+
+### 修复
+- **部署后陈旧 chunk 404 自动恢复** — 监听 Vite 派发的 `vite:preloadError` 事件,懒加载路由 chunk hash 失效时自动 `window.location.reload()` 拉取新 `index.html`,用户无需手动刷新. 加 sessionStorage 10s 节流防死循环
+
 ## [0.8.0] - 2026-04-29
 
 ### 新增 — PageBuilder 拖拽搭建器大改
