@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../../components/Modal';
 import Input from '../../components/Input';
+import Icon from '../../components/Icon';
+import { iconfontNames } from '../../data/iconfontNames';
 import {
   REGISTRY,
   CATEGORIES,
@@ -160,6 +162,38 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
   const [dropIndicator, setDropIndicator] = useState<{ key: string; index: number } | null>(null);
   const [paletteQuery, setPaletteQuery] = useState('');
   const [collapsedCats, setCollapsedCats] = useState<Set<BlockCategory>>(new Set());
+  // 全屏 + 侧栏折叠状态 — 折叠状态写 localStorage 持久化, 下次打开记住
+  const [fullscreen, setFullscreen] = useState(false);
+  const [paletteCollapsed, setPaletteCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('aurora-pb-palette-collapsed') === '1';
+  });
+  const [propsCollapsed, setPropsCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('aurora-pb-props-collapsed') === '1';
+  });
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('aurora-pb-palette-collapsed', paletteCollapsed ? '1' : '0');
+  }, [paletteCollapsed]);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('aurora-pb-props-collapsed', propsCollapsed ? '1' : '0');
+  }, [propsCollapsed]);
+  // 全屏: Esc 退出 + 锁背景滚动
+  useEffect(() => {
+    if (!fullscreen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFullscreen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [fullscreen]);
 
   const palette = useMemo(
     () => (hideTypes ? REGISTRY.filter((r) => !hideTypes.includes(r.type)) : REGISTRY),
@@ -192,22 +226,107 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     });
   };
 
+  /* ---------- 历史栈 (Undo / Redo) ---------- */
+  const [past, setPast] = useState<BlockConfig[][]>([]);
+  const [future, setFuture] = useState<BlockConfig[][]>([]);
+  const HISTORY_LIMIT = 50;
+  // updateProp 节流: 连续输入合并为一条历史
+  const updateThrottleRef = useRef<number | null>(null);
+
   const emit = useCallback(
     (next: BlockConfig[]) => {
+      setPast((p) => {
+        const np = [...p, blocks];
+        return np.length > HISTORY_LIMIT ? np.slice(np.length - HISTORY_LIMIT) : np;
+      });
+      setFuture([]);
       setBlocks(next);
       onChange?.(next);
     },
-    [onChange],
+    [blocks, onChange],
   );
+
+  const undo = useCallback(() => {
+    if (past.length === 0) return;
+    const prev = past[past.length - 1];
+    setPast((p) => p.slice(0, -1));
+    setFuture((f) => [...f, blocks]);
+    setBlocks(prev);
+    onChange?.(prev);
+  }, [past, blocks, onChange]);
+
+  const redo = useCallback(() => {
+    if (future.length === 0) return;
+    const nxt = future[future.length - 1];
+    setFuture((f) => f.slice(0, -1));
+    setPast((p) => [...p, blocks]);
+    setBlocks(nxt);
+    onChange?.(nxt);
+  }, [future, blocks, onChange]);
 
   const selected = selectedId ? findBlockById(blocks, selectedId) : null;
   const selectedSchema = selected ? getSchema(selected.type) : null;
+
+  // 选中块的祖先路径 [root, ..., parent, selected] — 用于属性面板顶部面包屑
+  const selectedPath = useMemo<BlockConfig[]>(() => {
+    if (!selectedId) return [];
+    const walk = (arr: BlockConfig[], stack: BlockConfig[]): BlockConfig[] | null => {
+      for (const b of arr) {
+        const next = [...stack, b];
+        if (b.id === selectedId) return next;
+        if (b.slots) {
+          for (const children of Object.values(b.slots)) {
+            const found = walk(children, next);
+            if (found) return found;
+          }
+        }
+      }
+      return null;
+    };
+    return walk(blocks, []) ?? [];
+  }, [blocks, selectedId]);
 
   /* ---------- drag/drop ---------- */
 
   const setDataTransfer = (e: React.DragEvent, payload: DragPayload) => {
     e.dataTransfer.setData('application/x-au-block', JSON.stringify(payload));
+    // 把"被拖块"的 type 通过自定义 MIME 暴露 — dragover 阶段拿不到 getData,
+    // 但 dataTransfer.types 永远可读. 用它做白名单实时校验, 让禁止图标在悬停时即时反馈.
+    if (payload.kind === 'new' && payload.type) {
+      e.dataTransfer.setData(`application/x-au-block-type-${payload.type.toLowerCase()}`, '');
+    } else if (payload.kind === 'move' && payload.id) {
+      const blk = findBlockById(blocks, payload.id);
+      if (blk) {
+        e.dataTransfer.setData(`application/x-au-block-type-${blk.type.toLowerCase()}`, '');
+      }
+    } else if (payload.kind === 'section') {
+      // section 是预设整段, 走 root, 标记为 section
+      e.dataTransfer.setData('application/x-au-block-kind-section', '');
+    }
     e.dataTransfer.effectAllowed = 'copyMove';
+  };
+
+  /** dragover 阶段读"被拖类型" — 只能从 dataTransfer.types 反推 (浏览器隔离 getData) */
+  const peekDraggedType = (e: React.DragEvent): string | null => {
+    for (const t of e.dataTransfer.types) {
+      const m = t.match(/^application\/x-au-block-type-(.+)$/);
+      if (m) {
+        // 大小写恢复: 找到 REGISTRY 里 toLowerCase() 匹配的真实 type
+        const lower = m[1];
+        const hit = REGISTRY.find((r) => r.type.toLowerCase() === lower);
+        return hit ? hit.type : lower;
+      }
+    }
+    return null;
+  };
+
+  /** 父容器是否允许接受这个被拖块 — 没限制 / section 整段一律放行 */
+  const isDropAllowedInto = (parentType: string | null, draggedType: string | null): boolean => {
+    if (!parentType) return true;
+    const parentSchema = getSchema(parentType);
+    if (!parentSchema?.allowedChildTypes) return true;
+    if (!draggedType) return true; // 拿不到 type (跨标签页等) — 不挡
+    return parentSchema.allowedChildTypes.includes(draggedType);
   };
   const readPayload = (e: React.DragEvent): DragPayload | null => {
     const raw = e.dataTransfer.getData('application/x-au-block');
@@ -241,6 +360,16 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         return;
       }
     }
+    // 白名单: 这里"放在 parentId 旁边" → 父级是 parentId 所在层 (即 parentId 的父),
+    // 由于 onDragOverBlock 调用时传的 parentId 已经是"邻居共享的父", 直接用它做容器
+    const draggedType = peekDraggedType(e);
+    if (!isDropAllowedInto(parentId, draggedType)) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'none';
+      setDropIndicator(null);
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
@@ -260,6 +389,15 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     slotName: string,
     childrenLen: number,
   ) => {
+    // 白名单校验 — 父容器不允许此类型时禁止指针 + 不画 indicator
+    const draggedType = peekDraggedType(e);
+    if (!isDropAllowedInto(parentId, draggedType)) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'none';
+      setDropIndicator(null);
+      return;
+    }
     e.preventDefault();
     // 阻止事件冒泡到上层 slot/block, 避免多层 dragover 互相覆盖导致闪烁
     e.stopPropagation();
@@ -289,6 +427,17 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     e.stopPropagation();
     const payload = readPayload(e);
     if (!payload) {
+      setDropIndicator(null);
+      return;
+    }
+    // 兜底白名单校验 — dragover 已经挡过, 这里防止边缘 case (跨标签页, 老浏览器)
+    const draggedType =
+      payload.kind === 'new'
+        ? payload.type ?? null
+        : payload.kind === 'move' && payload.id
+        ? findBlockById(blocks, payload.id)?.type ?? null
+        : null;
+    if (!isDropAllowedInto(parentId, draggedType)) {
       setDropIndicator(null);
       return;
     }
@@ -411,13 +560,88 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
 
   const updateProp = (key: string, value: unknown) => {
     if (!selected) return;
-    emit(updateBlockProps(blocks, selected.id, { ...selected.props, [key]: value }));
+    // 连续输入 (e.g. 文本框打字) 节流入栈 — 500ms 内的多次修改合并为一条历史
+    if (updateThrottleRef.current === null) {
+      setPast((p) => {
+        const np = [...p, blocks];
+        return np.length > HISTORY_LIMIT ? np.slice(np.length - HISTORY_LIMIT) : np;
+      });
+      setFuture([]);
+    } else {
+      window.clearTimeout(updateThrottleRef.current);
+    }
+    updateThrottleRef.current = window.setTimeout(() => {
+      updateThrottleRef.current = null;
+    }, 500);
+    const next = updateBlockProps(blocks, selected.id, { ...selected.props, [key]: value });
+    setBlocks(next);
+    onChange?.(next);
   };
 
   const clearAll = () => {
     emit([]);
     setSelectedId(null);
   };
+
+  /* ---------- 全局键盘快捷键 ---------- */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // 表单输入聚焦时跳过 — 让用户能正常 Backspace 改字段值
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (
+          tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          tag === 'SELECT' ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+      }
+      const meta = e.metaKey || e.ctrlKey;
+
+      // Undo / Redo (Cmd+Z / Cmd+Shift+Z / Cmd+Y)
+      if (meta && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+      if (meta && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      // Cmd+D 复制选中
+      if (meta && e.key.toLowerCase() === 'd' && selectedId) {
+        e.preventDefault();
+        duplicateBlock(selectedId);
+        return;
+      }
+
+      if (!selectedId) return;
+
+      // Delete / Backspace 删
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        deleteBlock(selectedId);
+      } else if (e.key === 'Escape') {
+        // ESC: 选父级, 没父级就取消选中
+        const loc = findBlockLocation(blocks, selectedId);
+        if (loc?.parentId) setSelectedId(loc.parentId);
+        else setSelectedId(null);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        moveBlock(selectedId, -1);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        moveBlock(selectedId, 1);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo, selectedId, blocks]);
 
   /* ---------- copy ---------- */
 
@@ -445,6 +669,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     slotName: string,
     index: number,
     orientation: 'vertical' | 'horizontal',
+    parentInline = false,
   ): React.ReactNode => {
     const schema = getSchema(b.type);
     if (!schema) return null;
@@ -457,6 +682,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
       'au-pb__block',
       isSel ? 'is-selected' : '',
       schema.isContainer ? 'is-container' : '',
+      parentInline ? 'is-inline-child' : '',
     ]
       .filter(Boolean)
       .join(' ');
@@ -466,14 +692,30 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
       const base = applyMetaToProps(filterProps(b.props));
       return schema.transformProps ? schema.transformProps(base) : base;
     })();
+    const PreviewWrap = parentInline ? 'span' : 'div';
     const containerNode = schema.isContainer ? (
       <Node {...buildContainerProps(b, schema, renderBlock, preview)} />
     ) : (
-      <div className="au-pb__block-preview" style={schema.previewWrapperStyle}>
+      <PreviewWrap
+        className={[
+          'au-pb__block-preview',
+          parentInline ? 'au-pb__block-preview--inline' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={schema.previewWrapperStyle}
+      >
         <Node {...leafProps}>{b.props.children as React.ReactNode}</Node>
-      </div>
+      </PreviewWrap>
     );
 
+    const Outer = parentInline ? 'span' : 'div';
+    // _align: 'center' | 'right' → 给块外壳加 textAlign, 让里面 inline-block 的组件 (Button 等) 水平对齐
+    const align = b.props._align;
+    const wrapperAlignStyle: React.CSSProperties | undefined =
+      align === 'center' || align === 'right'
+        ? { textAlign: align as 'center' | 'right' }
+        : undefined;
     return (
       <React.Fragment key={b.id}>
         {showBefore && (
@@ -486,9 +728,10 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
               .join(' ')}
           />
         )}
-        <div
+        <Outer
           className={cls}
           data-type={b.type}
+          style={wrapperAlignStyle}
           draggable={!preview}
           onDragStart={(e) => {
             e.stopPropagation();
@@ -502,23 +745,30 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
             setSelectedId(b.id);
           }}
         >
-          {!preview && (
-            <div className="au-pb__block-toolbar" title={schema.label}>
-              <div className="au-pb__block-actions">
-                <button type="button" title="上移" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }}>↑</button>
-                <button type="button" title="下移" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }}>↓</button>
-                <button type="button" title="复制" onClick={(e) => { e.stopPropagation(); duplicateBlock(b.id); }}>⎘</button>
-                <button type="button" title="删除" className="is-danger" onClick={(e) => { e.stopPropagation(); deleteBlock(b.id); }}>✕</button>
-              </div>
-            </div>
-          )}
+          {!preview && (() => {
+            const Bar = parentInline ? 'span' : 'div';
+            return (
+              <Bar className="au-pb__block-toolbar" title={schema.label}>
+                <Bar className="au-pb__block-actions">
+                  <button type="button" title="上移" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }}>↑</button>
+                  <button type="button" title="下移" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }}>↓</button>
+                  <button type="button" title="复制" onClick={(e) => { e.stopPropagation(); duplicateBlock(b.id); }}>⎘</button>
+                  <button type="button" title="删除" className="is-danger" onClick={(e) => { e.stopPropagation(); deleteBlock(b.id); }}>✕</button>
+                </Bar>
+              </Bar>
+            );
+          })()}
           <BlockErrorBoundary type={b.type}>{containerNode}</BlockErrorBoundary>
-        </div>
+        </Outer>
       </React.Fragment>
     );
   };
 
-  /** slot wrapper — 根画布或任何容器的插槽都走这个,接住 drop 事件 */
+  /** slot wrapper — 根画布或任何容器的插槽都走这个,接住 drop 事件
+   *
+   * options.inline:    使用 inline-flex 布局 (Button/Tag/Badge 等行内容器)
+   * options.fallback:  inline 容器空 slot 时显示的回退文案 (props.children 字符串)
+   */
   const renderSlot = (
     parentId: string | null,
     slotName: string,
@@ -526,17 +776,22 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     children: BlockConfig[],
     orientation: 'vertical' | 'horizontal',
     extraClassName = '',
+    options: { inline?: boolean; fallback?: string; customEmpty?: React.ReactNode } = {},
   ): React.ReactNode => {
     const isEmpty = children.length === 0;
     const prefix = `${parentId ?? 'root'}|${slotName}|`;
     const showTail =
       dropIndicator?.key === `${prefix}${children.length}` && !preview && !isEmpty;
+    const Wrapper = options.inline ? 'span' : 'div';
+    const hasFallback = !!(options.inline && isEmpty && options.fallback);
     return (
-      <div
+      <Wrapper
         className={[
           'au-pb__slot',
           orientation === 'horizontal' ? 'au-pb__slot--row' : '',
+          options.inline ? 'au-pb__slot--inline' : '',
           isEmpty ? 'is-empty' : '',
+          hasFallback ? 'has-fallback' : '',
           preview ? 'is-preview' : '',
           extraClassName,
         ]
@@ -546,13 +801,20 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         onDragLeave={onSlotLeave}
         onDrop={(e) => handleDrop(e, parentId, slotName)}
       >
-        {isEmpty && !preview && (
+        {isEmpty && options.inline && options.fallback ? (
+          // inline 容器: 空 slot 用 fallback 字符串当占位; 预览模式仅显示文字, 编辑模式有虚线
+          <span className="au-pb__inline-fallback">{options.fallback}</span>
+        ) : isEmpty && options.inline && !preview ? (
+          <span className="au-pb__inline-empty">+ 拖入</span>
+        ) : isEmpty && !preview && options.customEmpty ? (
+          options.customEmpty
+        ) : isEmpty && !preview ? (
           <div className="au-pb__slot-empty">
             拖组件{slotLabel ? ` 到「${slotLabel}」` : '到此'}
           </div>
-        )}
+        ) : null}
         {children.map((c, i) =>
-          renderBlock(c, parentId, slotName, i, orientation),
+          renderBlock(c, parentId, slotName, i, orientation, !!options.inline),
         )}
         {showTail && (
           <div
@@ -564,7 +826,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
               .join(' ')}
           />
         )}
-      </div>
+      </Wrapper>
     );
   };
 
@@ -628,6 +890,29 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
       return props;
     }
 
+    // inline 容器 (Button / Tag / Badge): 单 default slot 用 inline-flex 渲染
+    // 空 slot + childrenWhenEmpty='string' + props.children 字符串 → 用字符串当 fallback 预览
+    if (schema.slotLayout === 'inline') {
+      const slotChildren = b.slots?.default ?? [];
+      const fallback =
+        slotChildren.length === 0 &&
+        schema.childrenWhenEmpty === 'string' &&
+        typeof b.props.children === 'string' &&
+        b.props.children
+          ? (b.props.children as string)
+          : undefined;
+      props.children = renderSlot(
+        b.id,
+        'default',
+        schema.slotLabels?.default,
+        slotChildren,
+        'horizontal',
+        '',
+        { inline: true, fallback },
+      );
+      return props;
+    }
+
     // 其他单 slot 容器 (Row / Flex / 默认)
     if (slotNames.length === 1 && slotNames[0] === 'default') {
       const children = b.slots?.default ?? [];
@@ -659,7 +944,16 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
 
   return (
     <div
-      className={['au-pb', preview ? 'is-preview' : '', className].filter(Boolean).join(' ')}
+      className={[
+        'au-pb',
+        preview ? 'is-preview' : '',
+        fullscreen ? 'is-fullscreen' : '',
+        paletteCollapsed ? 'is-palette-collapsed' : '',
+        propsCollapsed ? 'is-props-collapsed' : '',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={style}
     >
       <div className="au-pb__toolbar">
@@ -671,6 +965,32 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
           </span>
         </div>
         <div className="au-pb__toolbar-right">
+          <button
+            type="button"
+            className="au-btn au-btn--default au-btn--small"
+            title="撤销 (Cmd/Ctrl+Z)"
+            onClick={undo}
+            disabled={past.length === 0}
+          >
+            ↶
+          </button>
+          <button
+            type="button"
+            className="au-btn au-btn--default au-btn--small"
+            title="重做 (Cmd/Ctrl+Shift+Z)"
+            onClick={redo}
+            disabled={future.length === 0}
+          >
+            ↷
+          </button>
+          <button
+            type="button"
+            className="au-btn au-btn--default au-btn--small"
+            title={fullscreen ? '退出全屏 (Esc)' : '进入全屏 — 让画布占满整个窗口'}
+            onClick={() => setFullscreen((v) => !v)}
+          >
+            {fullscreen ? '⛶ 退出全屏' : '⛶ 全屏'}
+          </button>
           <button
             type="button"
             className="au-btn au-btn--default au-btn--small"
@@ -728,13 +1048,33 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
       </div>
 
       <div className="au-pb__main">
-        {!preview && (
+        {!preview && paletteCollapsed && (
+          <button
+            type="button"
+            className="au-pb__rail au-pb__rail--left"
+            title="展开组件库"
+            style={midHeight ? { height: midHeight } : undefined}
+            onClick={() => setPaletteCollapsed(false)}
+          >
+            <span className="au-pb__rail-arrow">»</span>
+            <span className="au-pb__rail-label">组件库</span>
+          </button>
+        )}
+        {!preview && !paletteCollapsed && (
           <aside
             className="au-pb__palette"
             style={midHeight ? { height: midHeight, maxHeight: midHeight, minHeight: 0 } : undefined}
           >
             <div className="au-pb__section-title">
-              组件库 <span className="au-pb__count-mini">{palette.length}</span>
+              <span>组件库 <span className="au-pb__count-mini">{palette.length}</span></span>
+              <button
+                type="button"
+                className="au-pb__panel-collapse"
+                title="收起组件库"
+                onClick={() => setPaletteCollapsed(true)}
+              >
+                «
+              </button>
             </div>
             <input
               type="text"
@@ -843,9 +1183,42 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
               ]
                 .filter(Boolean)
                 .join(' ')}
-              style={{ minHeight: minCanvasHeight }}
+              style={fullscreen ? undefined : { minHeight: minCanvasHeight }}
             >
-              {renderSlot(null, 'default', undefined, blocks, 'vertical', 'au-pb__slot--root')}
+              {renderSlot(null, 'default', undefined, blocks, 'vertical', 'au-pb__slot--root', {
+                customEmpty: (
+                  <div className="au-pb__guide">
+                    <div className="au-pb__guide-title">从这里开始 ✨</div>
+                    <div className="au-pb__guide-sub">
+                      把左侧组件拖到画布,或一键插入整段模板
+                    </div>
+                    <div className="au-pb__guide-sections">
+                      {SECTION_TEMPLATES.map((tpl) => (
+                        <button
+                          key={tpl.key}
+                          type="button"
+                          className="au-pb__guide-section"
+                          title={tpl.description}
+                          onClick={() => {
+                            const tree = materializeSection(tpl.build(), uid);
+                            emit(insertBlock(blocks, tree, null, 'default', 0));
+                            setSelectedId(tree.id);
+                          }}
+                        >
+                          <span className="au-pb__guide-section-icon">{tpl.icon}</span>
+                          <span className="au-pb__guide-section-label">{tpl.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="au-pb__guide-shortcuts">
+                      快捷键: <kbd>⌘Z</kbd> 撤销 ·{' '}
+                      <kbd>Del</kbd> 删除 ·{' '}
+                      <kbd>⌘D</kbd> 复制 ·{' '}
+                      <kbd>Esc</kbd> 选父级
+                    </div>
+                  </div>
+                ),
+              })}
             </div>
           </div>
 
@@ -873,12 +1246,34 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
           )}
         </div>
 
-        {!preview && (
+        {!preview && propsCollapsed && (
+          <button
+            type="button"
+            className="au-pb__rail au-pb__rail--right"
+            title="展开属性面板"
+            style={midHeight ? { height: midHeight } : undefined}
+            onClick={() => setPropsCollapsed(false)}
+          >
+            <span className="au-pb__rail-arrow">«</span>
+            <span className="au-pb__rail-label">属性</span>
+          </button>
+        )}
+        {!preview && !propsCollapsed && (
           <aside
             className="au-pb__props"
             style={midHeight ? { height: midHeight, maxHeight: midHeight, minHeight: 0 } : undefined}
           >
-            <div className="au-pb__section-title">属性</div>
+            <div className="au-pb__section-title">
+              <span>属性</span>
+              <button
+                type="button"
+                className="au-pb__panel-collapse"
+                title="收起属性面板"
+                onClick={() => setPropsCollapsed(true)}
+              >
+                »
+              </button>
+            </div>
             {!selected ? (
               <div className="au-pb__props-empty">
                 <div style={{ fontSize: 13.5, marginBottom: 6 }}>未选中任何组件</div>
@@ -892,6 +1287,8 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
                 schema={selectedSchema}
                 value={selected.props}
                 onChange={updateProp}
+                path={selectedPath}
+                onSelectAncestor={setSelectedId}
               />
             ) : null}
           </aside>
@@ -1061,15 +1458,42 @@ const PropertyPanel: React.FC<{
   schema: BlockSchema;
   value: Record<string, unknown>;
   onChange: (key: string, v: unknown) => void;
-}> = ({ schema, value, onChange }) => {
+  path?: BlockConfig[];
+  onSelectAncestor?: (id: string) => void;
+}> = ({ schema, value, onChange, path, onSelectAncestor }) => {
   const visibleFields = schema.fields.filter(
     (f) => !f.visibleWhen || f.visibleWhen(value),
   );
   // FormItem.* 块已经用自己的 _width / _label 等元数据, 不追加通用 meta
   const hasOwnMeta = schema.type.startsWith('FormItem.') || schema.type === 'Menu' || schema.type === 'Layout';
   const [metaOpen, setMetaOpen] = useState(false);
+  // 路径里至少要 2 层才有意义 (根本身就是当前块时不显示)
+  const ancestors = path && path.length > 1 ? path.slice(0, -1) : [];
   return (
     <div className="au-pb__form">
+      {ancestors.length > 0 && onSelectAncestor && (
+        <div className="au-pb__breadcrumb" title="点击层级跳到对应父块">
+          {ancestors.map((b, i) => {
+            const sch = getSchema(b.type);
+            return (
+              <React.Fragment key={b.id}>
+                <button
+                  type="button"
+                  className="au-pb__breadcrumb-item"
+                  onClick={() => onSelectAncestor(b.id)}
+                >
+                  {sch?.label?.split(' ')[0] ?? b.type}
+                </button>
+                <span className="au-pb__breadcrumb-sep">›</span>
+                {i === ancestors.length - 1 && null}
+              </React.Fragment>
+            );
+          })}
+          <span className="au-pb__breadcrumb-current">
+            {schema.label?.split(' ')[0] ?? schema.type}
+          </span>
+        </div>
+      )}
       <div className="au-pb__form-head">
         <span className="au-pb__form-icon">{schema.icon}</span>
         <span className="au-pb__form-title">{schema.label}</span>
@@ -1215,7 +1639,92 @@ const FieldControl: React.FC<{
       );
     case 'json':
       return <JsonField value={value} onChange={onChange} />;
+    case 'icon':
+      return <IconField value={value} onChange={onChange} />;
   }
+};
+
+/** 图标选择器 — 当前选中的 icon 预览 + 展开后的网格 + 搜索框
+ *  值是 iconfont name 字符串. 直接从 src/data/iconfontNames.ts 读全集. */
+const IconField: React.FC<{
+  value: unknown;
+  onChange: (v: unknown) => void;
+}> = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const current = typeof value === 'string' ? value : '';
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return iconfontNames;
+    return iconfontNames.filter((n) => n.toLowerCase().includes(q));
+  }, [query]);
+
+  return (
+    <div className="au-pb__iconfield">
+      <button
+        type="button"
+        className="au-pb__iconfield-trigger"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className="au-pb__iconfield-preview">
+          {current ? <Icon name={current} size={18} /> : <span style={{ opacity: 0.5 }}>—</span>}
+        </span>
+        <span className="au-pb__iconfield-name">{current || '点击选择图标'}</span>
+        <span className="au-pb__iconfield-caret">{open ? '▴' : '▾'}</span>
+      </button>
+      {current && (
+        <input
+          className="au-pb__input"
+          type="text"
+          value={current}
+          placeholder="或直接输入图标 name"
+          onChange={(e) => onChange(e.target.value)}
+          style={{ marginTop: 6 }}
+        />
+      )}
+      {open && (
+        <div className="au-pb__iconfield-panel">
+          <input
+            type="text"
+            className="au-pb__iconfield-search"
+            placeholder={`搜索 ${iconfontNames.length} 个图标…`}
+            value={query}
+            autoFocus
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className="au-pb__iconfield-grid">
+            {filtered.length === 0 ? (
+              <div className="au-pb__iconfield-empty">无匹配图标</div>
+            ) : (
+              filtered.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  className={[
+                    'au-pb__iconfield-item',
+                    name === current ? 'is-selected' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  title={name}
+                  onClick={() => {
+                    onChange(name);
+                    setOpen(false);
+                  }}
+                >
+                  <Icon name={name} size={18} />
+                </button>
+              ))
+            )}
+          </div>
+          <div className="au-pb__iconfield-meta">
+            {filtered.length} / {iconfontNames.length}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 /** JSON 字段编辑器 — 本地维护文本状态, 合法时才提交 onChange */

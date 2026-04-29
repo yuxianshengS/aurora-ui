@@ -4,6 +4,41 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-29
+
+### 新增 — PageBuilder 拖拽搭建器大改
+
+- **行内容器嵌套** — `Button` / `Tag` / `Badge` 升级为行内容器,可拖入 `Icon` / `Text` / `GradientText` / `NumberRoll` / `PulseDot` / `Tag` / `Badge` / `Avatar` / `ScrambleText` / `Typewriter` 等行内组件自由组合
+- **白名单 + 视觉布局** — `BlockSchema` 新增 `inline` / `slotLayout: 'inline' | 'block'` / `allowedChildTypes` / `childrenWhenEmpty`; dragstart 用自定义 MIME 暴露被拖类型,父级 `allowedChildTypes` 不匹配时实时禁止拖入(避免把 Layout 拖进 Tag 这种错配)
+- **全屏模式** — 工具栏 `⛶` 按钮一键进入,`position: fixed` 占满 viewport,Esc 退出
+- **侧栏可折叠** — 组件库 / 属性面板各自独立折叠,折叠后变 36px 窄条,状态写 localStorage 持久化
+- **Undo / Redo** — 历史栈深度 50,工具栏 `↶ ↷` 按钮,`Cmd/Ctrl+Z` / `Cmd/Ctrl+Shift+Z` / `Cmd+Y` 快捷键,文本输入 500ms 节流合并为单条历史
+- **键盘快捷键** — `Delete` / `Backspace` 删, `Cmd+D` 复制, `Esc` 选父级 (链式向上), `↑` / `↓` 同 slot 上下移动; 输入框聚焦时自动跳过
+- **属性面板面包屑** — 顶部显示 `Layout › Card › Form › 当前块`,点任意层级直接跳到对应父块,深嵌套救星
+- **空画布引导** — `blocks.length === 0` 时显示完整引导:整段模板九宫格一键插入 + 快捷键提示卡
+- **可视化图标选择器** — 新增 `FieldType: 'icon'`,Icon 组件的 `name` 字段渲染网格 + 搜索,540+ 个 iconfont 图标点选,告别记图标名
+- **`_align` 水平对齐 meta** — 通用元字段,选 `居中` / `右` 即给块外壳加 `text-align`,Copy JSX 输出自动包 `<div style={{ textAlign }}>`
+- **工具条只在选中时显示** — 改回块内右上角(避免边界裁切),仅 `is-selected` 时出现(避免 click-to-select 误触按钮);深嵌套时父级让位给子级
+
+### 改进 — PageBuilder
+
+- BuilderWorkspace 页面瘦身:删除底部 tips 卡片,head 紧凑成单行,page padding 减半
+- 画布顶部加 24px 留白(仅编辑态),给行内子块的工具条留位置
+- inline 容器空 slot 在有 `_quickText` fallback 时不再显示虚线占位,文字直接当 button content 渲染,hover 才提示可拖入
+- 折叠状态规则加 `:not(.is-preview)`,预览模式下侧栏列宽不再保留,画布独占整宽
+- canvas-wrap 内容(包括代码视图)在全屏模式下画布不再强制 820 最低高度,让 main flex 正确分配空间
+
+### 修复 — PageBuilder
+
+- Button / Tag / Badge 在搭建器内不再多 4px 偏移(`au-pb__block-preview` 移除 padding,所有块从同一基线对齐)
+- inline-child 工具条被 `opacity` / `display` 双策略冲突导致看不见的问题(改为复用基础 opacity 切换)
+- inline-child 工具条颜色硬编码导致主题错乱(改为继承基础 `var(--au-text-1) / var(--au-bg)`)
+- `:has(:hover)` 嵌套规则避免父子工具条角上挤一堆
+
+### 改动 — Menu
+
+- `.au-menu` 默认 `padding: 4px 0` → `padding: 0`,菜单不再自带上下留白,第一项与容器边对齐;需要呼吸感由父层控制(轻微视觉变更,非 API 破坏)
+
 ### 新增 — 国际化基础
 - **`<ConfigProvider>` 组件** + `useLocale()` / `useConfig()` hook — 全局注入 locale 包 + 主色
 - `Locale` 接口涵盖 8 类组件文案(Pagination / Tour / Modal / Result / Empty / Table / Upload / Common)

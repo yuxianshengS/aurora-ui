@@ -66,11 +66,327 @@
 .au-pb.is-preview .au-pb__main {
   grid-template-columns: 1fr;
 }
+/* 折叠状态: 把对应侧栏列宽收缩成 36px 窄条
+   :not(.is-preview) 是关键 — 预览模式下不该再保留侧栏列宽 (那时 1fr 应该独占) */
+.au-pb.is-palette-collapsed:not(.is-preview) .au-pb__main {
+  grid-template-columns: 36px minmax(0, 1fr) 280px;
+}
+.au-pb.is-props-collapsed:not(.is-preview) .au-pb__main {
+  grid-template-columns: 200px minmax(0, 1fr) 36px;
+}
+.au-pb.is-palette-collapsed.is-props-collapsed:not(.is-preview) .au-pb__main {
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+}
 
 @media (max-width: 1000px) {
   .au-pb__main {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==== 全屏模式: builder 直接占满整个 viewport, 给画布最大空间 ==== */
+.au-pb.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--au-bg);
+  display: flex;
+  flex-direction: column;
+}
+.au-pb.is-fullscreen .au-pb__main {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ==== 折叠后的窄条 (rail) — 鼠标 hover 高亮, 点击展开回原侧栏 ==== */
+.au-pb__rail {
+  width: 36px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg);
+  border-radius: var(--au-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 0;
+  gap: 12px;
+  cursor: pointer;
+  color: var(--au-text-3);
+  transition: color 0.15s var(--au-ease), border-color 0.15s var(--au-ease);
+}
+.au-pb__rail:hover {
+  color: var(--au-primary);
+  border-color: color-mix(in srgb, var(--au-primary) 50%, var(--au-border));
+}
+.au-pb__rail-arrow {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+.au-pb__rail-label {
+  /* 文字纵向排列 — 仅展示, 点击仍由整个 rail 接管 */
+  writing-mode: vertical-rl;
+  letter-spacing: 0.15em;
+  font-size: 12px;
+}
+
+/* ==== 空画布引导 (blocks.length === 0 时画布显示) ==== */
+.au-pb__guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 48px 24px;
+  text-align: center;
+  pointer-events: none; /* 子按钮单独 auto, 让主体区域穿透 drop */
+}
+.au-pb__guide > * {
+  pointer-events: auto;
+}
+.au-pb__guide-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--au-text-1);
+  letter-spacing: -0.01em;
+}
+.au-pb__guide-sub {
+  color: var(--au-text-3);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.au-pb__guide-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  width: min(640px, 100%);
+  margin-top: 4px;
+}
+.au-pb__guide-section {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg);
+  border-radius: var(--au-radius);
+  cursor: pointer;
+  color: var(--au-text-2);
+  font: inherit;
+  font-size: 12.5px;
+  transition: all 0.15s var(--au-ease);
+}
+.au-pb__guide-section:hover {
+  border-color: var(--au-primary);
+  color: var(--au-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.au-pb__guide-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--au-primary);
+}
+.au-pb__guide-section-label {
+  font-weight: 500;
+}
+.au-pb__guide-shortcuts {
+  margin-top: 12px;
+  color: var(--au-text-3);
+  font-size: 11.5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+.au-pb__guide-shortcuts kbd {
+  padding: 1px 6px;
+  background: var(--au-bg-mute);
+  border: 1px solid var(--au-border);
+  border-radius: 3px;
+  font-family: var(--au-mono);
+  font-size: 10.5px;
+  color: var(--au-text-2);
+}
+
+/* ==== 属性面板顶部面包屑 (祖先路径快速跳转) ==== */
+.au-pb__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 6px;
+  margin-bottom: 8px;
+  background: var(--au-bg-soft);
+  border-radius: var(--au-radius-sm);
+  font-size: 11.5px;
+}
+.au-pb__breadcrumb-item {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--au-text-2);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font: inherit;
+  transition: all 0.12s var(--au-ease);
+}
+.au-pb__breadcrumb-item:hover {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+}
+.au-pb__breadcrumb-sep {
+  color: var(--au-text-3);
+  font-size: 11px;
+  user-select: none;
+}
+.au-pb__breadcrumb-current {
+  color: var(--au-primary);
+  font-weight: 600;
+  padding: 2px 4px;
+}
+
+/* ==== 图标选择器 (FieldType: 'icon') ==== */
+.au-pb__iconfield {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.au-pb__iconfield-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg-soft);
+  border-radius: var(--au-radius-sm);
+  padding: 0 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--au-text-1);
+  transition: border-color 0.15s var(--au-ease);
+}
+.au-pb__iconfield-trigger:hover {
+  border-color: var(--au-primary);
+}
+.au-pb__iconfield-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--au-primary);
+}
+.au-pb__iconfield-name {
+  flex: 1;
+  text-align: left;
+  font-family: var(--au-mono);
+  font-size: 12px;
+  color: var(--au-text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.au-pb__iconfield-caret {
+  flex-shrink: 0;
+  color: var(--au-text-3);
+  font-size: 11px;
+}
+.au-pb__iconfield-panel {
+  margin-top: 6px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg);
+  border-radius: var(--au-radius-sm);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.au-pb__iconfield-search {
+  height: 28px;
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius-sm);
+  padding: 0 8px;
+  font: inherit;
+  font-size: 12.5px;
+  background: var(--au-bg-soft);
+  color: var(--au-text-1);
+  outline: none;
+}
+.au-pb__iconfield-search:focus {
+  border-color: var(--au-primary);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-pb__iconfield-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.au-pb__iconfield-item {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: var(--au-bg-soft);
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--au-text-2);
+  transition: all 0.12s var(--au-ease);
+  padding: 0;
+}
+.au-pb__iconfield-item:hover {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+  border-color: var(--au-primary);
+}
+.au-pb__iconfield-item.is-selected {
+  background: var(--au-primary);
+  color: #fff;
+  border-color: var(--au-primary);
+}
+.au-pb__iconfield-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--au-text-3);
+  font-size: 12px;
+  padding: 16px 0;
+}
+.au-pb__iconfield-meta {
+  text-align: right;
+  font-size: 11px;
+  color: var(--au-text-3);
+  padding: 0 2px;
+}
+
+/* 面板标题区右上角的折叠按钮 */
+.au-pb__panel-collapse {
+  border: 0;
+  background: transparent;
+  color: var(--au-text-3);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0;
+}
+.au-pb__panel-collapse:hover {
+  background: var(--au-bg-mute);
+  color: var(--au-primary);
 }
 
 /* ==== palette ==== */
@@ -93,6 +409,10 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .au-pb__palette-list {
@@ -511,6 +831,10 @@
   flex: 1;
   overflow: auto;
 }
+/* 顶部留白 — 给第一行块的"上方工具条"足够的空间, 避免被画布顶边裁掉 */
+.au-pb:not(.is-preview) .au-pb__canvas {
+  padding-top: 24px;
+}
 
 /* ==== slot (统一的 drop 区, root 画布 + 每个容器 slot 都用) ====
  * 关键约束: 非空 slot 不加 padding / gap, 让编辑态布局跟预览态 + Copy JSX 输出一致;
@@ -809,27 +1133,34 @@
 }
 
 .au-pb__block-toolbar {
-  /* 浮在块内部右上角 — 不再溢出到外面, 避免被 Grid cell / Mac frame 的 overflow: hidden 裁掉 */
+  /* 工具条贴在"块内右上角" — 防止边界(画布/Card/Layout 等容器)裁切.
+     只在 .is-selected 时显示, hover 不显示 — 这样 click-to-select 时不会误触按钮.
+     不限宽: 4 个按钮按内容自然展开, 块比工具条窄时向左溢出, 仍然能点中. */
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 22px;
+  gap: 0;
+  height: 20px;
   background: var(--au-text-1);
   color: var(--au-bg);
   border-radius: 4px;
-  padding: 0 4px 0 8px;
+  padding: 0 2px;
   font-size: 11px;
   opacity: 0;
   transition: opacity 0.15s var(--au-ease);
   pointer-events: none;
   z-index: 10;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  max-width: calc(100% - 8px);
+  white-space: nowrap;
+  max-width: none;
+  width: max-content;
 }
-.au-pb__block:hover > .au-pb__block-toolbar,
+/* 工具条只在选中时显示 — hover 不触发, 避免:
+   1) 鼠标移过去就出现按钮, 想点选中却点中按钮误删
+   2) 嵌套场景父子工具条互相遮挡
+   选中是用户的明确操作意图, 工具条出现也合理. */
 .au-pb__block.is-selected > .au-pb__block-toolbar {
   opacity: 1;
   pointer-events: auto;
@@ -842,7 +1173,7 @@
 
 .au-pb__block-actions {
   display: inline-flex;
-  gap: 2px;
+  gap: 0;
 }
 .au-pb__block-actions button {
   border: 0;
@@ -850,15 +1181,16 @@
   color: inherit;
   cursor: pointer;
   padding: 0;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
   border-radius: 3px;
   transition: background 0.12s var(--au-ease);
+  flex-shrink: 0;
 }
 .au-pb__block-actions button:hover {
   background: rgba(255, 255, 255, 0.15);
@@ -869,7 +1201,7 @@
 }
 
 .au-pb__block-preview {
-  padding: 4px;
+  padding: 0;
   width: 100%;
   min-width: 0;
 }
@@ -1406,3 +1738,108 @@ select.au-pb__input {
   color: var(--au-pre-text);
   background: transparent;
 }
+
+/* ==================================================================
+ * 行内容器 (Button / Tag / Badge): 让 slot + 子块都用 inline-flex
+ * 保证图标、文字、徽标在按钮里横向并排, 不像块级那样换行
+ * ================================================================== */
+
+/* inline slot: 容器内部的拖放区 */
+.au-pb__slot--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+  width: auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+/* inline 空 slot — 没有 fallback 文案时显示一个紧凑的虚线占位, 提示可拖入 */
+.au-pb__slot--inline.is-empty {
+  min-width: 28px;
+  min-height: 0;
+  padding: 0 4px;
+  outline: 1px dashed color-mix(in srgb, var(--au-primary) 40%, transparent);
+  outline-offset: 2px;
+  border-radius: 4px;
+  cursor: copy;
+}
+/* 有 fallback (用户填了"快速文案") — 文字直接当 Button 内容渲染, 视觉上看不见 slot 边界
+   悬停才提示可拖入. 这样 Button 默认看起来跟普通按钮一样 */
+.au-pb__slot--inline.is-empty.has-fallback {
+  min-width: 0;
+  padding: 0;
+  outline: 0;
+  cursor: text;
+}
+.au-pb__slot--inline.is-empty.has-fallback:hover {
+  outline: 1px dashed color-mix(in srgb, var(--au-primary) 50%, transparent);
+  outline-offset: 2px;
+  cursor: copy;
+}
+.au-pb__slot--inline.is-empty.is-preview,
+.au-pb.is-preview .au-pb__slot--inline.is-empty {
+  outline: 0;
+  padding: 0;
+  min-width: 0;
+}
+/* 预览模式: 即使 slot 本身被全局 .is-empty { display:none } 隐藏, fallback 也要露出来当真实 children */
+.au-pb.is-preview .au-pb__slot--inline.is-empty.has-fallback {
+  display: inline-flex;
+}
+
+/* 空 slot 占位文案 — fallback 是用户在属性面板填的"快速文案", 真实展示用户意图 */
+.au-pb__inline-fallback {
+  color: inherit;
+  font-size: inherit;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.au-pb__inline-empty {
+  color: var(--au-text-3);
+  font-size: 11px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* inline 子块: 在 Button 里嵌套的 Icon / Text / Badge 等, 保持 inline 不换行 */
+.au-pb__block.is-inline-child {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  outline-offset: -1px;
+}
+.au-pb__block.is-inline-child > .au-pb__block-toolbar {
+  /* 行内子块 (Button/Tag 里的 Icon 等): 工具条浮在块上方,
+     避免塞内部把图标盖住 / 撑开按钮行高. 颜色用基础规则的主题变量, 不再写死 */
+  top: auto;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 2px;
+  z-index: 20;
+}
+.au-pb__block.is-inline-child > .au-pb__block-preview,
+.au-pb__block-preview--inline {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  padding: 0;
+  margin: 0;
+}
+
+/* 行内 drop-line: 横向 slot 内画竖线已有 .au-pb__drop-line--v, 这里仅微调 inline 场景下的高度 */
+.au-pb__slot--inline > .au-pb__drop-line--v {
+  height: 1.4em;
+  align-self: center;
+}
+
+

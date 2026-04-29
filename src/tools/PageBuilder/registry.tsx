@@ -70,7 +70,9 @@ export type FieldType =
   | 'boolean'
   | 'select'
   | 'color'
-  | 'json';
+  | 'json'
+  /** 可视化图标选择器: 渲染网格 + 搜索, 点击选中. 值仍是 iconfont name 字符串 */
+  | 'icon';
 
 export type BlockCategory =
   | '通用'
@@ -110,6 +112,27 @@ export interface BlockSchema {
   previewWrapperStyle?: React.CSSProperties;
   /** 容器块 (可接受子块) */
   isContainer?: boolean;
+  /**
+   * 标记自身是"行内组件" — 可以被拖入 inline 容器(Button/Tag/Badge)的 default slot
+   * 例如 Icon / Text / Badge / PulseDot / GradientText / NumberRoll / Tag
+   */
+  inline?: boolean;
+  /**
+   * 容器 slot 的视觉布局: 'block' (默认, 块级换行) 或 'inline' (行内并排)
+   * Button / Tag / Badge 这类 inline 容器用 'inline'
+   */
+  slotLayout?: 'block' | 'inline';
+  /**
+   * 子块白名单 — 不传 = 不限. 传入后只允许拖入指定 type 的块
+   * 用于阻止"把 Layout 拖进 Tag"这种崩溃配置
+   */
+  allowedChildTypes?: string[];
+  /**
+   * inline 容器空 slot 的 fallback 行为:
+   * - 'string' (默认): 用 props.children 字符串当回退预览 (Button 的"快速文案")
+   * - 'none': 空就显示 "+" 占位
+   */
+  childrenWhenEmpty?: 'string' | 'none';
   /**
    * 容器块的具名插槽
    * - 静态数组: Layout 这种固定结构 ['header', 'sider', 'content', 'footer']
@@ -422,6 +445,59 @@ const serializeFormField = (innerTag: string) => (
   };
 };
 
+/**
+ * 行内子项白名单 — Button / Tag / Badge 这类 inline 容器允许拖入的子组件 type
+ * 与 BlockSchema.inline:true 标记保持一致, 想加新行内组件直接在两边都加
+ */
+const INLINE_CHILD_TYPES = [
+  'Icon',
+  'Text',
+  'GradientText',
+  'NumberRoll',
+  'PulseDot',
+  'Tag',
+  'Badge',
+  'Avatar',
+  'ScrambleText',
+  'Typewriter',
+];
+
+/**
+ * inline 容器通用 serialize 工厂 —
+ * - slot 有内容: 输出 <Tag attrs>\n  <Icon/>\n  ...\n</Tag>
+ * - slot 无内容 + 有 children 字符串: 输出 <Tag attrs>文案</Tag>
+ * - 都没有: <Tag attrs />
+ *
+ * attrFn 决定哪些 props 需要序列化 (跳过 default 值, 跳过 children)
+ */
+const makeInlineContainerSerialize = (
+  tag: string,
+  attrFn: (props: Record<string, unknown>) => string[],
+) => (
+  props: Record<string, unknown>,
+  slotJsx?: Record<string, string>,
+  indent: number = 2,
+): { jsx: string; imports: string[] } => {
+  const attrs = attrFn(props);
+  const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+  const slotBody = slotJsx?.default?.trim() ?? '';
+  if (slotBody) {
+    const outPad = pad(indent);
+    return {
+      jsx: `<${tag}${attrStr}>\n${slotJsx!.default}\n${outPad}</${tag}>`,
+      imports: [tag],
+    };
+  }
+  const childStr =
+    typeof props.children === 'string' && props.children !== ''
+      ? props.children
+      : '';
+  if (childStr) {
+    return { jsx: `<${tag}${attrStr}>${childStr}</${tag}>`, imports: [tag] };
+  }
+  return { jsx: `<${tag}${attrStr} />`, imports: [tag] };
+};
+
 export const REGISTRY: BlockSchema[] = [
   /* ---------- 极光特效 ---------- */
   {
@@ -514,6 +590,7 @@ export const REGISTRY: BlockSchema[] = [
   },
   {
     type: 'GradientText',
+    inline: true,
     label: 'GradientText 渐变文字',
     icon: <Ico n="editor-text" />,
     category: '极光特效',
@@ -581,6 +658,7 @@ export const REGISTRY: BlockSchema[] = [
   },
   {
     type: 'NumberRoll',
+    inline: true,
     label: 'NumberRoll 数字滚动',
     icon: <Ico n="calculator" />,
     category: '极光特效',
@@ -667,6 +745,7 @@ export const REGISTRY: BlockSchema[] = [
   },
   {
     type: 'PulseDot',
+    inline: true,
     label: 'PulseDot 脉冲点',
     icon: <Ico n="trade-alert" />,
     category: '极光特效',
@@ -744,6 +823,7 @@ export const REGISTRY: BlockSchema[] = [
   },
   {
     type: 'ScrambleText',
+    inline: true,
     label: 'ScrambleText 乱码文字',
     icon: <Ico n="editor-text" />,
     category: '极光特效',
@@ -784,6 +864,7 @@ export const REGISTRY: BlockSchema[] = [
   /* ---------- 通用 ---------- */
   {
     type: 'Text',
+    inline: true,
     label: 'Text 文本',
     icon: <Ico n="editor-text" />,
     category: '通用',
@@ -873,9 +954,15 @@ export const REGISTRY: BlockSchema[] = [
     icon: <Ico n="click" />,
     category: '通用',
     component: Button,
+    isContainer: true,
+    slots: ['default'],
+    slotLayout: 'inline',
+    allowedChildTypes: INLINE_CHILD_TYPES,
+    childrenWhenEmpty: 'string',
+    slotLabels: { default: '拖 Icon / Text 等行内组件' },
     defaultProps: { type: 'primary', size: 'medium', children: '点击我' },
     fields: [
-      { key: 'children', label: '文案', type: 'text', asChildren: true },
+      { key: 'children', label: '快速文案 (拖入子组件后失效)', type: 'text', asChildren: true },
       {
         key: 'type',
         label: '类型',
@@ -893,16 +980,26 @@ export const REGISTRY: BlockSchema[] = [
       { key: 'disabled', label: '禁用', type: 'boolean' },
       { key: 'loading', label: '加载', type: 'boolean' },
     ],
+    serialize: makeInlineContainerSerialize('Button', (props) => {
+      const attrs: string[] = [];
+      if (props.type && props.type !== 'default') attrs.push(`type="${props.type}"`);
+      if (props.size && props.size !== 'medium') attrs.push(`size="${props.size}"`);
+      if (props.block) attrs.push('block');
+      if (props.disabled) attrs.push('disabled');
+      if (props.loading) attrs.push('loading');
+      return attrs;
+    }),
   },
   {
     type: 'Icon',
+    inline: true,
     label: 'Icon 图标',
     icon: <Ico n="scenes" />,
     category: '通用',
     component: Icon,
     defaultProps: { name: 'heart', size: 24 },
     fields: [
-      { key: 'name', label: '图标 name', type: 'text', placeholder: 'lock / heart / ...' },
+      { key: 'name', label: '图标', type: 'icon' },
       { key: 'size', label: '尺寸 (px)', type: 'number', min: 12, max: 96 },
       { key: 'color', label: '颜色', type: 'color' },
       { key: 'spin', label: '旋转动画', type: 'boolean' },
@@ -1617,24 +1714,45 @@ export const REGISTRY: BlockSchema[] = [
   },
   {
     type: 'Tag',
+    inline: true,
     label: 'Tag 标签',
     icon: <Ico n="flag" />,
     category: '数据展示',
     component: Tag,
+    isContainer: true,
+    slots: ['default'],
+    slotLayout: 'inline',
+    allowedChildTypes: INLINE_CHILD_TYPES,
+    childrenWhenEmpty: 'string',
+    slotLabels: { default: '拖 Icon / PulseDot 等' },
     defaultProps: { color: 'primary', children: '标签' },
     fields: [
-      { key: 'children', label: '文案', type: 'text', asChildren: true },
+      { key: 'children', label: '快速文案 (拖入子组件后失效)', type: 'text', asChildren: true },
       { key: 'color', label: '颜色', type: 'select', options: tagColorOptions },
       { key: 'bordered', label: '边框 (false = 实心)', type: 'boolean' },
       { key: 'closable', label: '可关闭', type: 'boolean' },
     ],
+    serialize: makeInlineContainerSerialize('Tag', (props) => {
+      const attrs: string[] = [];
+      if (props.color && props.color !== 'default') attrs.push(`color="${props.color}"`);
+      if (props.bordered === false) attrs.push('bordered={false}');
+      if (props.closable) attrs.push('closable');
+      return attrs;
+    }),
   },
   {
     type: 'Badge',
+    inline: true,
     label: 'Badge 徽标',
     icon: <Ico n="remind" />,
     category: '数据展示',
     component: Badge,
+    isContainer: true,
+    slots: ['default'],
+    slotLayout: 'inline',
+    allowedChildTypes: INLINE_CHILD_TYPES,
+    childrenWhenEmpty: 'none',
+    slotLabels: { default: '把 Avatar / Icon 拖来加红点' },
     defaultProps: { count: 5 },
     previewWrapperStyle: { paddingRight: 12 },
     fields: [
@@ -1657,9 +1775,20 @@ export const REGISTRY: BlockSchema[] = [
       },
       { key: 'text', label: '状态文字', type: 'text' },
     ],
+    serialize: makeInlineContainerSerialize('Badge', (props) => {
+      const attrs: string[] = [];
+      if (typeof props.count === 'number') attrs.push(`count={${props.count}}`);
+      if (props.dot) attrs.push('dot');
+      if (props.showZero) attrs.push('showZero');
+      if (typeof props.color === 'string' && props.color) attrs.push(`color="${props.color}"`);
+      if (typeof props.status === 'string' && props.status) attrs.push(`status="${props.status}"`);
+      if (typeof props.text === 'string' && props.text) attrs.push(`text="${props.text}"`);
+      return attrs;
+    }),
   },
   {
     type: 'Avatar',
+    inline: true,
     label: 'Avatar 头像',
     icon: <Ico n="customer" />,
     category: '数据展示',
@@ -2950,6 +3079,7 @@ export const REGISTRY: BlockSchema[] = [
   /* ---------- 动效 ---------- */
   {
     type: 'Typewriter',
+    inline: true,
     label: 'Typewriter 打字机',
     icon: <Ico n="editor-text" />,
     category: '动效',
@@ -3235,6 +3365,17 @@ export const META_STYLE_FIELDS: FieldSchema[] = [
     max: 10,
     help: '在 Flex/Row 中占剩余空间的比例 (0=不伸展)',
   },
+  {
+    key: '_align',
+    label: '水平对齐',
+    type: 'select',
+    options: [
+      { label: '默认 (左)', value: '' },
+      { label: '居中', value: 'center' },
+      { label: '右对齐', value: 'right' },
+    ],
+    help: '在父容器内水平居中 / 右对齐 (例: Button 居中)',
+  },
 ];
 
 /**
@@ -3270,6 +3411,9 @@ export const extractMetaStyle = (
         break;
       case '_grow':
         add.flex = v;
+        break;
+      case '_align':
+        // 水平对齐由外层 wrapper (block 外壳 / 序列化时的 div) 消化, 不进组件 style 也不传给组件
         break;
       default:
         cleaned[k] = v;
@@ -3367,7 +3511,35 @@ export interface BlockConfig {
   slots?: Record<string, BlockConfig[]>;
 }
 
+/** 如果 _align = center / right, 把生成的 JSX 包一层 <div style={{textAlign}}> */
+const wrapForAlign = (
+  result: { jsx: string; imports: string[] },
+  align: unknown,
+  indent: number,
+): { jsx: string; imports: string[] } => {
+  if (align !== 'center' && align !== 'right') return result;
+  const outPad = pad(indent);
+  // 内层缩进 +1 (统一 2 空格), 让 <div> 包住后嵌套整齐
+  const inner = result.jsx
+    .split('\n')
+    .map((line) => '  ' + line)
+    .join('\n');
+  return {
+    jsx: `${outPad}<div style={{ textAlign: '${align}' }}>\n${inner}\n${outPad}</div>`,
+    imports: result.imports,
+  };
+};
+
 const renderBlockJsx = (
+  b: BlockConfig,
+  indent: number,
+  hoister?: Hoister,
+): { jsx: string; imports: string[] } => {
+  const result = renderBlockJsxInner(b, indent, hoister);
+  return wrapForAlign(result, b.props._align, indent);
+};
+
+const renderBlockJsxInner = (
   b: BlockConfig,
   indent: number,
   hoister?: Hoister,
