@@ -1,13 +1,22 @@
 .dash {
   --dash-sider-w: 220px;
   --dash-sider-w-collapsed: 64px;
-  --dash-sider-bg: #161d28;
-  --dash-sider-fg: #e5e7eb;
+  /* sider 跟主题切: 亮色态浅 sidebar 深字, 暗色态保留经典深 sidebar 白字 */
+  --dash-sider-bg: var(--au-bg-mute);
+  --dash-sider-fg: var(--au-text-1);
+  --dash-sider-fg-muted: var(--au-text-3);
+  --dash-sider-border: var(--au-border);
   display: flex;
   min-height: 100vh;
   background: var(--au-bg-soft);
   color: var(--au-text-1);
   font-size: 14px;
+}
+[data-theme="dark"] .dash {
+  --dash-sider-bg: #161d28;
+  --dash-sider-fg: #e5e7eb;
+  --dash-sider-fg-muted: rgba(229, 231, 235, 0.45);
+  --dash-sider-border: rgba(255, 255, 255, 0.06);
 }
 
 .dash--collapsed {
@@ -38,7 +47,7 @@
   gap: 10px;
   height: 56px;
   padding: 0 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--dash-sider-border);
   flex-shrink: 0;
 }
 .dash__brand-mark {
@@ -67,7 +76,7 @@
 .dash__collapse {
   border: 0;
   background: transparent;
-  color: rgba(229, 231, 235, 0.45);
+  color: var(--dash-sider-fg-muted);
   padding: 12px 18px;
   text-align: left;
   cursor: pointer;

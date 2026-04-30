@@ -9,15 +9,18 @@
   --au-warning: #f59e0b;
   --au-danger: #ef4444;
 
-  /* Neutrals */
-  --au-text-1: #1f2937;
-  --au-text-2: #4b5563;
-  --au-text-3: #9ca3af;
-  --au-border: #e5e7eb;
-  --au-border-strong: #d1d5db;
-  --au-bg: #ffffff;
-  --au-bg-soft: #f9fafb;
-  --au-bg-mute: #f3f4f6;
+  /* Neutrals — slate 系 (相比原 gray 系, 微冷, 不刺眼, 商务感更强) */
+  --au-text-1: #0f172a;        /* slate-900 — 比 gray-800 略深, 但因偏冷, 在白底上不那么咄咄逼人 */
+  --au-text-2: #475569;        /* slate-600 */
+  --au-text-3: #94a3b8;        /* slate-400 */
+  --au-border: #e2e8f0;        /* slate-200 */
+  --au-border-strong: #cbd5e1; /* slate-300 */
+
+  /* 双层背景体系 — 页面底色离白, 卡片纯白浮起, 自带"层次感"也不刺眼 */
+  --au-bg-base: #f6f8fa;       /* 页面/正文底色, 比 #fff 暗 ~3%, 卡片浮起后对比清晰 */
+  --au-bg: #ffffff;            /* 卡片 / Modal / Dropdown 等浮起元素 — 在 base 之上呈现纯白 */
+  --au-bg-soft: #f1f5f9;       /* slate-100 — 弱区域 (Doc 侧栏 / 表头) */
+  --au-bg-mute: #e2e8f0;       /* slate-200 — hover / 静默块, 跟 border 同色, 视觉收口 */
 
   /* Radius & shadow */
   --au-radius-sm: 6px;
@@ -28,7 +31,38 @@
   --au-shadow-lg: 0 20px 48px rgba(17, 24, 39, 0.14);
 
   /* Motion */
+  /* Duration — 一组标准时长, 让全库动效节奏统一 */
+  --au-motion-instant: 75ms;
+  --au-motion-fast: 150ms;
+  --au-motion-base: 250ms;
+  --au-motion-medium: 400ms;
+  --au-motion-slow: 600ms;
+  --au-motion-deliberate: 900ms;
+
+  /* Easing — 设计师常用 6 条 */
   --au-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --au-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --au-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --au-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --au-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --au-ease-bounce: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+  /* Popup motion — 全库 popup/弹层统一节奏 (Tooltip/Dropdown/Popconfirm/Select/DatePicker/Modal/Drawer)
+     用 transform-origin 由具体组件按朝向覆盖 (top center / bottom center / ...) */
+  --au-pop-duration: 180ms;
+  --au-pop-ease: var(--au-ease-out);
+  --au-pop-scale-from: 0.96;
+  --au-pop-translate: 4px;
+
+  /* 按下反馈 — 所有「可点」元素统一回弹幅度与时长 (Button/Switch/Tab/IconButton...) */
+  --au-press-scale: 0.97;
+  --au-press-duration: var(--au-motion-instant);
+
+  /* Focus ring — 全库可交互元素统一焦点环 */
+  --au-focus-ring: 0 0 0 3px var(--au-primary-soft);
+  --au-focus-ring-color: var(--au-primary);
+  --au-focus-ring-width: 2px;
+  --au-focus-ring-offset: 2px;
 
   /* Layout */
   --au-navbar-h: 60px;
@@ -43,8 +77,9 @@
   /* Navbar surface (used for sticky translucent bar) */
   --au-navbar-bg: rgba(255, 255, 255, 0.82);
   --au-code-inline: #c026d3;
-  --au-pre-bg: #0f172a;
-  --au-pre-text: #e2e8f0;
+  /* Pre 代码块: 跟主题切, 不再永远深色 */
+  --au-pre-bg: #f1f5f9;          /* 亮色: slate-100 离白底 */
+  --au-pre-text: #1a2332;        /* 亮色: 深字 */
 
   /* Z-index 层级 — portal/弹层一律走 token, 避免视觉 stacking 错乱 */
   --au-z-affix: 10;          /* 吸顶元素 (Navbar / Table sticky thead) */
@@ -71,6 +106,7 @@
   --au-text-3: #6b7280;
   --au-border: #2a2f3a;
   --au-border-strong: #3a414f;
+  --au-bg-base: #0a0d12;       /* 暗色态: 页面比卡片更暗, 制造卡片浮起的层次感 */
   --au-bg: #0f141b;
   --au-bg-soft: #151b24;
   --au-bg-mute: #1c2330;

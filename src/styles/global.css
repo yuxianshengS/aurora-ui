@@ -1,4 +1,7 @@
 @import "./variables.css";
+@import "./motion.css";
+@import "./focus.css";
+@import "./reduced-motion.css";
 
 * {
   box-sizing: border-box;
@@ -15,8 +18,10 @@ body,
 body {
   font-family: var(--au-font);
   color: var(--au-text-1);
-  background: var(--au-bg);
+  /* 用 base 而非 bg — 页面底色微微离白, 卡片用 --au-bg 纯白, 形成层次, 不刺眼 */
+  background: var(--au-bg-base);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   transition: background-color 0.2s var(--au-ease), color 0.2s var(--au-ease);
 }

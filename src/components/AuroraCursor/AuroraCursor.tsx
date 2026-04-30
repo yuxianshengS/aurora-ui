@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import './AuroraCursor.css';
 
 export interface AuroraCursorProps {
   /** 渐变色; 数组按顺序作为 stops; 默认极光主题 */
@@ -11,7 +12,10 @@ export interface AuroraCursorProps {
   fade?: number;
   /** 整体不透明度 */
   opacity?: number;
-  /** mix-blend-mode, 默认 'screen' 让暗底上更亮 */
+  /**
+   * mix-blend-mode 强制覆盖. 默认按主题自动切换:
+   * 暗色态用 'screen' (彩色变亮), 亮色态不混色 (避免 screen 在白底上抹白成不可见).
+   */
   blendMode?: React.CSSProperties['mixBlendMode'];
   /** 完全禁用 (移动端 / 用户偏好) */
   disabled?: boolean;
@@ -29,7 +33,7 @@ const AuroraCursor: React.FC<AuroraCursorProps> = ({
   thickness = 14,
   fade = 0.86,
   opacity = 0.85,
-  blendMode = 'screen',
+  blendMode,
   disabled,
   zIndex = 9999,
 }) => {
@@ -149,13 +153,15 @@ const AuroraCursor: React.FC<AuroraCursorProps> = ({
   return (
     <canvas
       ref={canvasRef}
+      className="au-aurora-cursor"
       aria-hidden
       style={{
         position: 'fixed',
         inset: 0,
         pointerEvents: 'none',
         zIndex,
-        mixBlendMode: blendMode,
+        // 用户显式传 blendMode 时走内联覆盖, 否则交给 CSS 按主题切
+        ...(blendMode ? { mixBlendMode: blendMode } : null),
       }}
     />
   );

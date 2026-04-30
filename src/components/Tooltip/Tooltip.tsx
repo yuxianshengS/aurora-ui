@@ -238,6 +238,7 @@ const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(
           {children}
         </span>
         {visible &&
+          typeof document !== 'undefined' &&
           createPortal(
             <div
               ref={bubbleRef}

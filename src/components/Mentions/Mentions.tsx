@@ -254,6 +254,7 @@ const Mentions: React.FC<MentionsProps> = ({
         spellCheck={false}
       />
       {picker.open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

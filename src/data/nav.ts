@@ -42,6 +42,7 @@ export const navGroups: NavGroup[] = [
       { title: 'Upload 文件上传', path: '/docs/upload' },
       { title: 'Tree 树形控件', path: '/docs/tree' },
       { title: 'TreeSelect 树形选择', path: '/docs/tree-select' },
+      { title: 'Cascader 级联选择', path: '/docs/cascader' },
     ],
   },
   {
@@ -61,6 +62,7 @@ export const navGroups: NavGroup[] = [
       { title: 'DayTimeline 时间刻度', path: '/docs/day-timeline' },
       { title: 'Statistic 数值', path: '/docs/statistic' },
       { title: 'Description 描述列表', path: '/docs/description' },
+      { title: 'JsonView JSON 展示', path: '/docs/json-view' },
     ],
   },
   {
@@ -112,7 +114,6 @@ export const navGroups: NavGroup[] = [
       { title: 'PulseDot 脉冲点', path: '/docs/pulse-dot' },
       { title: 'TickerTape 跑马灯', path: '/docs/ticker-tape' },
       { title: 'ScrambleText 乱码文字', path: '/docs/scramble-text' },
-      { title: 'Motion · Reveal/Stagger/Tilt', path: '/docs/motion' },
     ],
   },
   {

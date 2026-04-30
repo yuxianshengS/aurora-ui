@@ -183,6 +183,7 @@ const Popconfirm: React.FC<PopconfirmProps> = ({
     <>
       {trigger}
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

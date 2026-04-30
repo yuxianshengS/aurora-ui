@@ -13,13 +13,17 @@
   padding: 36px;
   margin-bottom: 8px;
 }
-.dp-banner__inner { color: white; }
+.dp-banner__inner { color: #0f172a; }     /* 亮色态: 深字 */
 .dp-banner__title { margin: 12px 0 8px; }
 .dp-banner__sub {
-  color: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
   font-size: 16px;
   margin: 0;
 }
+
+/* 暗色态: 文字翻白 */
+[data-theme='dark'] .dp-banner__inner { color: #fff; }
+[data-theme='dark'] .dp-banner__sub { color: rgba(255, 255, 255, 0.92); }
 
 /* === Section 通用 === */
 .dp-section {

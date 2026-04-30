@@ -62,6 +62,7 @@ import Result from '../../components/Result';
 import Upload from '../../components/Upload';
 import Tree from '../../components/Tree';
 import TreeSelect from '../../components/TreeSelect';
+import Cascader from '../../components/Cascader';
 
 export type FieldType =
   | 'text'
@@ -866,7 +867,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Text',
     inline: true,
     label: 'Text 文本',
-    icon: <Ico n="editor-text" />,
+    icon: <Ico n="wenben" />,
     category: '通用',
     component: Text,
     defaultProps: {
@@ -951,7 +952,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Button',
     label: 'Button 按钮',
-    icon: <Ico n="click" />,
+    icon: <Ico n="Stop-Button" />,
     category: '通用',
     component: Button,
     isContainer: true,
@@ -994,7 +995,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Icon',
     inline: true,
     label: 'Icon 图标',
-    icon: <Ico n="scenes" />,
+    icon: <Ico n="gongju" />,
     category: '通用',
     component: Icon,
     defaultProps: { name: 'heart', size: 24 },
@@ -1011,7 +1012,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Form',
     label: 'Form 表单容器',
-    icon: <Ico n="catalog" />,
+    icon: <Ico n="biaodanrongqi" />,
     category: '表单',
     component: Form,
     isContainer: true,
@@ -1069,7 +1070,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Input',
     label: '输入框',
-    icon: <Ico n="edit" />,
+    icon: <Ico n="shurukuang" />,
     category: '表单',
     component: makeFormFieldPreview(Input),
     defaultProps: {
@@ -1095,7 +1096,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.InputNumber',
     label: '数字输入',
-    icon: <Ico n="calculator" />,
+    icon: <Ico n="fuhao-shuzishurukuang" />,
     category: '表单',
     component: makeFormFieldPreview(InputNumber),
     defaultProps: {
@@ -1126,7 +1127,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Select',
     label: '选择器',
-    icon: <Ico n="list" />,
+    icon: <Ico n="select" />,
     category: '表单',
     component: makeFormFieldPreview(Select),
     defaultProps: {
@@ -1164,7 +1165,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Switch',
     label: '开关',
-    icon: <Ico n="change" />,
+    icon: <Ico n="gongyezujian-kaiguan" />,
     category: '表单',
     component: makeFormFieldPreview(Switch),
     defaultProps: {
@@ -1187,7 +1188,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Slider',
     label: '滑块',
-    icon: <Ico n="sorting" />,
+    icon: <Ico n="huakuai" />,
     category: '表单',
     component: makeFormFieldPreview(Slider),
     defaultProps: {
@@ -1246,7 +1247,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Radio',
     label: '单选组',
-    icon: <Ico n="selected" />,
+    icon: <Ico n="danxuanzu" />,
     category: '表单',
     component: makeFormFieldPreview(Radio.Group),
     defaultProps: {
@@ -1290,7 +1291,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'FormItem.Checkbox',
     label: '多选组',
-    icon: <Ico n="catalog-check" />,
+    icon: <Ico n="duoxuanzu" />,
     category: '表单',
     component: makeFormFieldPreview(Checkbox.Group),
     defaultProps: {
@@ -1332,7 +1333,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Input',
     label: 'Input 输入框',
-    icon: <Ico n="edit" />,
+    icon: <Ico n="shurukuang" />,
     category: '数据录入',
     component: Input,
     defaultProps: { placeholder: '请输入…', size: 'medium', variant: 'outlined' },
@@ -1357,7 +1358,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'InputNumber',
     label: 'InputNumber 数字输入',
-    icon: <Ico n="calculator" />,
+    icon: <Ico n="fuhao-shuzishurukuang" />,
     category: '数据录入',
     component: InputNumber,
     defaultProps: { defaultValue: 1, size: 'medium' },
@@ -1386,7 +1387,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Select',
     label: 'Select 选择器',
-    icon: <Ico n="list" />,
+    icon: <Ico n="select" />,
     category: '数据录入',
     component: Select,
     defaultProps: {
@@ -1416,7 +1417,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Radio',
     label: 'Radio 单选 (单个)',
-    icon: <Ico n="selected" />,
+    icon: <Ico n="danxuanzu" />,
     category: '数据录入',
     component: Radio,
     defaultProps: { value: 'a', children: '选项 A', defaultChecked: true },
@@ -1431,7 +1432,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Checkbox',
     label: 'Checkbox 复选 (单个)',
-    icon: <Ico n="check" />,
+    icon: <Ico n="duoxuanzu" />,
     category: '数据录入',
     component: Checkbox,
     defaultProps: { value: 'a', children: '同意条款', defaultChecked: false },
@@ -1446,7 +1447,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Radio.Group',
     label: 'Radio 单选组',
-    icon: <Ico n="selected" />,
+    icon: <Ico n="danxuanzu" />,
     category: '数据录入',
     component: Radio.Group,
     defaultProps: {
@@ -1490,7 +1491,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Checkbox.Group',
     label: 'Checkbox 多选组',
-    icon: <Ico n="catalog-check" />,
+    icon: <Ico n="duoxuanzu" />,
     category: '数据录入',
     component: Checkbox.Group,
     defaultProps: {
@@ -1530,7 +1531,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Switch',
     label: 'Switch 开关',
-    icon: <Ico n="change" />,
+    icon: <Ico n="gongyezujian-kaiguan" />,
     category: '数据录入',
     component: Switch,
     defaultProps: { defaultChecked: true },
@@ -1551,7 +1552,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Slider',
     label: 'Slider 滑动输入',
-    icon: <Ico n="sorting" />,
+    icon: <Ico n="huakuai" />,
     category: '数据录入',
     component: Slider,
     defaultProps: { defaultValue: 40, marks: sampleSliderMarks },
@@ -1614,7 +1615,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Upload',
     label: 'Upload 文件上传',
-    icon: <Ico n="cloud-up" />,
+    icon: <Ico n="wenjianshangchuan" />,
     category: '数据录入',
     component: Upload,
     defaultProps: { listType: 'text', multiple: false },
@@ -1641,7 +1642,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Tree',
     label: 'Tree 树形控件',
-    icon: <Ico n="folder" />,
+    icon: <Ico n="shuxingkongjian" />,
     category: '数据录入',
     component: Tree,
     defaultProps: {
@@ -1673,7 +1674,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'TreeSelect',
     label: 'TreeSelect 树形选择器',
-    icon: <Ico n="folder" />,
+    icon: <Ico n="shuxingxuanzeqi" />,
     category: '数据录入',
     component: TreeSelect,
     defaultProps: {
@@ -1693,6 +1694,59 @@ export const REGISTRY: BlockSchema[] = [
       { key: 'treeDefaultExpandAll', label: '默认全展开', type: 'boolean' },
       { key: 'allowClear', label: '可清除', type: 'boolean' },
       { key: 'disabled', label: '禁用', type: 'boolean' },
+    ],
+  },
+  {
+    type: 'Cascader',
+    label: 'Cascader 级联选择',
+    icon: <Ico n="shuxingxuanzeqi" />,
+    category: '数据录入',
+    component: Cascader,
+    defaultProps: {
+      options: [
+        { value: 'huadong', label: '华东', children: [
+          { value: 'sh', label: '上海', children: [
+            { value: 'pd', label: '浦东新区' },
+            { value: 'mh', label: '闵行区' },
+          ]},
+          { value: 'hz', label: '杭州' },
+        ]},
+        { value: 'huanan', label: '华南', children: [
+          { value: 'gz', label: '广州' },
+          { value: 'sz', label: '深圳' },
+        ]},
+      ],
+      placeholder: '请选择省/市/区',
+    },
+    fields: [
+      { key: 'options', label: '级联数据', type: 'json', help: '每项 { value, label, children?, disabled? }' },
+      { key: 'placeholder', label: '占位', type: 'text' },
+      { key: 'separator', label: '路径分隔符', type: 'text' },
+      {
+        key: 'expandTrigger',
+        label: '钻入触发',
+        type: 'select',
+        options: [
+          { label: 'click (点击)', value: 'click' },
+          { label: 'hover (悬停)', value: 'hover' },
+        ],
+      },
+      { key: 'changeOnSelect', label: '允许选非叶子节点', type: 'boolean' },
+      { key: 'multiple', label: '多选 (仅叶子勾选)', type: 'boolean' },
+      { key: 'maxTagCount', label: '多选最多展示 tag 数', type: 'number', min: 0, max: 20 },
+      { key: 'allowClear', label: '可清除', type: 'boolean' },
+      { key: 'disabled', label: '禁用', type: 'boolean' },
+      { key: 'columnWidth', label: '单列宽度 (px)', type: 'number', min: 100, max: 300 },
+      {
+        key: 'size',
+        label: '尺寸',
+        type: 'select',
+        options: [
+          { label: 'small', value: 'small' },
+          { label: 'medium', value: 'medium' },
+          { label: 'large', value: 'large' },
+        ],
+      },
     ],
   },
 
@@ -1716,7 +1770,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Tag',
     inline: true,
     label: 'Tag 标签',
-    icon: <Ico n="flag" />,
+    icon: <Ico n="biaoqian" />,
     category: '数据展示',
     component: Tag,
     isContainer: true,
@@ -1744,7 +1798,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Badge',
     inline: true,
     label: 'Badge 徽标',
-    icon: <Ico n="remind" />,
+    icon: <Ico n="m-huibiao" />,
     category: '数据展示',
     component: Badge,
     isContainer: true,
@@ -1790,7 +1844,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Avatar',
     inline: true,
     label: 'Avatar 头像',
-    icon: <Ico n="customer" />,
+    icon: <Ico n="touxiang" />,
     category: '数据展示',
     component: Avatar,
     defaultProps: { size: 'medium', shape: 'circle', children: 'Y' },
@@ -1814,7 +1868,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Empty',
     label: 'Empty 空状态',
-    icon: <Ico n="folder" />,
+    icon: <Ico n="kongzhuangtai" />,
     category: '数据展示',
     component: Empty,
     defaultProps: { description: '暂无数据' },
@@ -1824,7 +1878,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Table',
     label: 'Table 表格',
-    icon: <Ico n="table" />,
+    icon: <Ico n="biaodanzujian-biaoge" />,
     category: '数据展示',
     component: Table,
     defaultProps: {
@@ -1946,7 +2000,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Tabs',
     label: 'Tabs 标签页',
-    icon: <Ico n="layers" />,
+    icon: <Ico n="biaoqianye" />,
     category: '数据展示',
     component: Tabs,
     defaultProps: { items: sampleTabsItems, defaultActiveKey: '1' },
@@ -1987,7 +2041,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Pagination',
     label: 'Pagination 分页',
-    icon: <Ico n="left-double-arrow" />,
+    icon: <Ico n="a-fenyeqikongjian1x-copy" />,
     category: '数据展示',
     component: Pagination,
     defaultProps: { total: samplePaginationTotal, defaultCurrent: 1 },
@@ -2029,7 +2083,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Wallet',
     label: 'Wallet 卡包',
-    icon: <Ico n="money-wallet" />,
+    icon: <Ico n="qiabao" />,
     category: '数据展示',
     component: Wallet,
     defaultProps: {
@@ -2053,7 +2107,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Timeline',
     label: 'Timeline 时间轴',
-    icon: <Ico n="time-history" />,
+    icon: <Ico n="fuhao-shijianzhou" />,
     category: '数据展示',
     component: Timeline,
     defaultProps: { items: sampleTimelineItems, mode: 'left' },
@@ -2081,7 +2135,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'DayTimeline',
     label: 'DayTimeline 时间刻度',
-    icon: <Ico n="time-task" />,
+    icon: <Ico n="timeline" />,
     category: '数据展示',
     component: DayTimeline,
     defaultProps: {
@@ -2131,7 +2185,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Statistic',
     label: 'Statistic 数值',
-    icon: <Ico n="charts-bar" />,
+    icon: <Ico n="tongji" />,
     category: '数据展示',
     component: Statistic,
     defaultProps: { title: '本月 GMV', value: 128500, prefix: '¥', precision: 0 },
@@ -2149,7 +2203,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Description',
     label: 'Description 描述列表',
-    icon: <Ico n="list" />,
+    icon: <Ico n="miaoshuliebiao" />,
     category: '数据展示',
     component: Description,
     defaultProps: {
@@ -2233,7 +2287,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Skeleton',
     label: 'Skeleton 骨架屏',
-    icon: <Ico n="loading" />,
+    icon: <Ico n="dagangshu_zhanshi_gujiaping" />,
     category: '反馈',
     component: Skeleton,
     defaultProps: { loading: true, active: true, rows: 3, title: true, avatar: false, varyRows: true },
@@ -2250,7 +2304,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Progress',
     label: 'Progress 进度条',
-    icon: <Ico n="loading" />,
+    icon: <Ico n="jindutiao" />,
     category: '反馈',
     component: Progress,
     defaultProps: { percent: 60, type: 'line', status: 'normal', showInfo: true },
@@ -2296,7 +2350,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Result',
     label: 'Result 结果页',
-    icon: <Ico n="info" />,
+    icon: <Ico n="jieguoye" />,
     category: '反馈',
     component: Result,
     defaultProps: {
@@ -2329,7 +2383,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'KpiCard',
     label: 'KpiCard 指标卡',
-    icon: <Ico n="charts-bar" />,
+    icon: <Ico n="zhibiaoka" />,
     category: '可视化',
     component: KpiCard,
     defaultProps: { title: '今日 GMV', value: 12850, prefix: '¥', status: 'primary' },
@@ -2402,7 +2456,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Funnel',
     label: 'Funnel 漏斗',
-    icon: <Ico n="filter" />,
+    icon: <Ico n="loudoutu" />,
     category: '可视化',
     component: Funnel,
     defaultProps: { data: sampleFunnelData, width: 420 },
@@ -2498,7 +2552,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Split',
     label: 'Split 可拖拽分割面板',
-    icon: <Ico n="editor-three-column" />,
+    icon: <Ico n="fengemianban" />,
     category: '布局',
     component: Split,
     isContainer: true,
@@ -2575,7 +2629,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Flex',
     label: 'Flex 弹性容器 (自由布局)',
-    icon: <Ico n="editor-four-column" />,
+    icon: <Ico n="hangrongqi" />,
     category: '布局',
     component: Flex,
     isContainer: true,
@@ -2690,7 +2744,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Space',
     label: 'Space 间距',
-    icon: <Ico n="editor-three-column" />,
+    icon: <Ico n="duanhoujianju" />,
     category: '布局',
     component: Space,
     defaultProps: { children: '— 间距组件需在代码中包裹子组件 —' },
@@ -2721,7 +2775,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Row',
     label: 'Row 行容器 (N 列)',
-    icon: <Ico n="editor-three-column" />,
+    icon: <Ico n="hangrongqi" />,
     category: '布局',
     component: Row,
     isContainer: true,
@@ -2897,7 +2951,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Layout',
     label: 'Layout 页面布局 (侧栏+顶栏+内容)',
-    icon: <Ico n="layered-configuration" />,
+    icon: <Ico n="layout" />,
     category: '布局',
     component: Layout,
     isContainer: true,
@@ -3054,7 +3108,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Divider',
     label: 'Divider 分割线',
-    icon: <Ico n="editor-under-line" />,
+    icon: <Ico n="fengexian" />,
     category: '布局',
     component: Divider,
     defaultProps: { orientation: 'center' },
@@ -3081,7 +3135,7 @@ export const REGISTRY: BlockSchema[] = [
     type: 'Typewriter',
     inline: true,
     label: 'Typewriter 打字机',
-    icon: <Ico n="editor-text" />,
+    icon: <Ico n="daziji" />,
     category: '动效',
     component: Typewriter,
     defaultProps: { text: 'Hello, AuroraUI — 正在打字…', speed: 60 },
@@ -3095,7 +3149,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Flip',
     label: 'Flip 翻牌器',
-    icon: <Ico n="return" />,
+    icon: <Ico n="fenzufanpaiqi" />,
     category: '动效',
     component: Flip,
     defaultProps: { value: 2026 },
@@ -3109,7 +3163,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Menu',
     label: 'Menu 导航菜单',
-    icon: <Ico n="list" />,
+    icon: <Ico n="daohangcaidan" />,
     category: '导航',
     component: Menu,
     defaultProps: {
@@ -3209,7 +3263,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Breadcrumb',
     label: 'Breadcrumb 面包屑',
-    icon: <Ico n="right-arrow" />,
+    icon: <Ico n="mianbaoxie" />,
     category: '导航',
     component: Breadcrumb,
     defaultProps: { items: sampleBreadcrumbItems, separator: '/' },
@@ -3222,7 +3276,7 @@ export const REGISTRY: BlockSchema[] = [
   {
     type: 'Steps',
     label: 'Steps 步骤条',
-    icon: <Ico n="order-success" />,
+    icon: <Ico n="buzhoutiao" />,
     category: '导航',
     component: Steps,
     defaultProps: { items: sampleStepsItems, current: 1 },
@@ -3414,6 +3468,9 @@ export const extractMetaStyle = (
         break;
       case '_align':
         // 水平对齐由外层 wrapper (block 外壳 / 序列化时的 div) 消化, 不进组件 style 也不传给组件
+        break;
+      case '_locked':
+        // 锁定标记仅画布编辑期使用, 不进组件 style, 不传给组件, 也不进序列化输出
         break;
       default:
         cleaned[k] = v;

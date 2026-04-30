@@ -20,8 +20,6 @@ export { default as ConfigProvider, useLocale, useConfig } from './ConfigProvide
 export type { ConfigProviderProps } from './ConfigProvider';
 export { default as CommandPalette } from './CommandPalette';
 export type { CommandPaletteProps, CommandItem } from './CommandPalette';
-export { Reveal, Stagger, Tilt } from './Motion';
-export type { RevealProps, RevealDirection, StaggerProps, TiltProps } from './Motion';
 
 // 极光特效 — 视觉招牌 (跟 AuroraBg / GradientText / GlowCard 同一档)
 export { default as AuroraCursor } from './AuroraCursor';
@@ -80,6 +78,15 @@ export { default as Tree } from './Tree';
 export type { TreeProps, TreeNode } from './Tree';
 export { default as TreeSelect } from './TreeSelect';
 export type { TreeSelectProps } from './TreeSelect';
+export { default as Cascader } from './Cascader';
+export type {
+  CascaderProps,
+  CascaderOption,
+  CascaderSize,
+  CascaderValue,
+} from './Cascader';
+export { default as JsonView } from './JsonView';
+export type { JsonViewProps, JsonViewSize, JsonValue } from './JsonView';
 export { default as Split } from './Split';
 export type { SplitProps, SplitDirection } from './Split';
 export { default as Typewriter } from './Typewriter';
@@ -89,6 +96,7 @@ export type { FlipProps, FlipSize } from './Flip';
 export { default as PdfDownload } from './PdfDownload';
 export type {
   PdfDownloadProps,
+  PdfDownloadHandle,
   PdfOrientation,
   PdfFormat,
 } from './PdfDownload';

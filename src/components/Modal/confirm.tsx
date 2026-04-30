@@ -129,6 +129,7 @@ const ConfirmView: React.FC<ConfirmViewProps> = ({ type, opts, onClose }) => {
 
   const showCancel = type === 'confirm';
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div
       className={[

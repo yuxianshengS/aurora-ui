@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import pkg from '../../package.json';
 import {
   Button,
   AuroraBg,
@@ -45,10 +46,11 @@ const Home: React.FC = () => {
         {/* 中央放大的网格 — 透视感 + mask 渐隐, 只有静态 CSS, 0 运行时 */}
         <div className="home-hero__grid" aria-hidden />
         <div className="home-hero__inner">
-          <div className="home-hero__tag">
+          <Link to="/docs/getting-started" className="home-hero__tag">
             <span className="home-hero__tag-dot" />
-            v0.7.0 · 极光特效已上线
-          </div>
+            Aurora UI v{pkg.version}
+            <span className="home-hero__tag-arrow">→</span>
+          </Link>
           <h1 className="home-hero__title">
             <GradientText
               as="span"
@@ -59,14 +61,14 @@ const Home: React.FC = () => {
               weight={900}
               style={{ display: 'block', lineHeight: 1.05, letterSpacing: '-0.02em' }}
             >
-              为中后台而生
+              极光质感 React 组件库
             </GradientText>
-            <span className="home-hero__title-sub">的极光感 React 组件库</span>
+            <span className="home-hero__title-sub">为中后台与数据看板而生</span>
           </h1>
           <p className="home-hero__desc">
-            60+ 组件 + 可视化拖拽搭建器, 招牌的 AuroraBg / GlowCard / GradientText
+            60+ 组件,数据可视化全套,可视化拖拽搭建器一套到底.
             <br />
-            让每一个看板都自带光感, 而不是再多一个 antd 克隆.
+            开箱即用,主题可调,让每一个仪表盘都自带光感.
           </p>
           <div className="home-hero__cta">
             <Link to="/docs/getting-started" className="home-hero__cta-primary">
@@ -84,9 +86,13 @@ const Home: React.FC = () => {
       </AuroraBg>
 
       {/* ===== Connector 关系图专栏 ===== */}
-      <section className="home-section home-connector home-reveal">
+      <section className="home-section home-section--alt home-connector home-reveal">
         <div className="home-section__head">
-          <Tag color="purple">主题能力</Tag>
+          <span className="home-section__eyebrow">
+            <span className="home-section__eyebrow-num">01</span>
+            <span className="home-section__eyebrow-divider" />
+            主题能力 · DIAGRAMS
+          </span>
           <h2 className="home-section__title">用 Connector 画任何关系图</h2>
           <p className="home-section__sub">
             DOM 之间画一条线, 自动跟随尺寸 / 滚动 / 拖动. 1-1, 1-many, mesh,
@@ -144,7 +150,11 @@ const Home: React.FC = () => {
       {/* ===== KPI 看板示意 ===== */}
       <section className="home-section home-reveal">
         <div className="home-section__head">
-          <Tag color="success">看板就绪</Tag>
+          <span className="home-section__eyebrow">
+            <span className="home-section__eyebrow-num">02</span>
+            <span className="home-section__eyebrow-divider" />
+            看板就绪 · DASHBOARD
+          </span>
           <h2 className="home-section__title">3 分钟搭出一个看板</h2>
           <p className="home-section__sub">
             KpiCard / Sparkline / Heatmap / Funnel / Gauge ... 60+ 组件全套, 不用再东拼西凑.
@@ -183,9 +193,13 @@ const Home: React.FC = () => {
       </section>
 
       {/* ===== 特性 6 张卡 ===== */}
-      <section className="home-section home-reveal">
+      <section className="home-section home-section--alt home-reveal">
         <div className="home-section__head">
-          <Tag>能力</Tag>
+          <span className="home-section__eyebrow">
+            <span className="home-section__eyebrow-num">03</span>
+            <span className="home-section__eyebrow-divider" />
+            核心能力 · CAPABILITIES
+          </span>
           <h2 className="home-section__title">为什么选 AuroraUI</h2>
         </div>
         <div className="home-features">
@@ -232,6 +246,11 @@ const Home: React.FC = () => {
       <section className="home-code home-reveal">
         <div className="home-code__inner">
           <div className="home-code__left">
+            <span className="home-section__eyebrow">
+              <span className="home-section__eyebrow-num">04</span>
+              <span className="home-section__eyebrow-divider" />
+              安装即用 · INSTALL
+            </span>
             <h2 className="home-code__title">写起来就像看上去一样轻</h2>
             <p className="home-code__sub">
               所有组件即插即用, TypeScript 全套类型, IDE 里 hover 就知道每个 prop 干什么.

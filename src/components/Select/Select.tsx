@@ -388,6 +388,7 @@ function Select<V extends SelectValue = SelectValue>({
         </div>
       </div>
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

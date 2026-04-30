@@ -1,0 +1,24 @@
+/**
+ * 全局 prefers-reduced-motion 兜底.
+ *
+ * 用户在系统设置 (macOS / iOS 「减弱动态效果」、Windows「显示动画」、
+ * Android 「移除动画」) 开启「减少动态效果」后, 所有 Aurora 组件的
+ * animation / transition 自动归零, 避免引发前庭眩晕 / 偏头痛.
+ *
+ * 个别组件如果有更复杂的细分 (例如某个 transition 应保留, 另一个去掉),
+ * 可在自己 CSS 里加更具体的 prefers-reduced-motion 媒体查询覆盖本规则.
+ */
+@media (prefers-reduced-motion: reduce) {
+  /* Aurora 命名空间下所有元素 — 直接关掉动画/过渡 */
+  [class*='au-'],
+  [class*='au-']::before,
+  [class*='au-']::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    /* 关闭 scroll-behavior smooth (Anchor 平滑滚动等) */
+    scroll-behavior: auto !important;
+  }
+}

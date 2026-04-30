@@ -6,7 +6,11 @@ import Spin from '../Spin/Spin';
 import './Table.css';
 
 export type TableAlign = 'left' | 'center' | 'right';
-export type TableSize = 'small' | 'middle' | 'large';
+/**
+ * 表格尺寸. 'middle' 是历史名 (跟 Antd 一致), 'medium' 是组件库内统一命名.
+ * 二者完全等价, 类型上都接受, 实际渲染时归一化为 'medium'.
+ */
+export type TableSize = 'small' | 'medium' | 'middle' | 'large';
 export type SortOrder = 'ascend' | 'descend' | null;
 
 export interface TableColumn<T = any> {
@@ -126,7 +130,7 @@ function Table<T = any>({
   rowKey,
   bordered,
   striped,
-  size = 'middle',
+  size = 'medium',
   loading,
   pagination,
   rowSelection,
@@ -430,9 +434,11 @@ function Table<T = any>({
   };
 
   /* ============ 渲染 ============ */
+  // 'middle' 是 Antd 风格的旧名, 内部归一为 'medium' 跟其他组件保持一致 (CSS 默认状态)
+  const normalizedSize = size === 'middle' ? 'medium' : size;
   const cls = [
     'au-table',
-    `au-table--${size}`,
+    `au-table--${normalizedSize}`,
     bordered ? 'is-bordered' : '',
     striped ? 'is-striped' : '',
     sticky ? 'is-sticky' : '',

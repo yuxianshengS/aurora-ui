@@ -91,3 +91,19 @@
 .demo-block__code .hl-f    { color: #6366f1; font-weight: 600; }        /* 函数名 极光靛 */
 .demo-block__code .hl-com  { color: #6b7280; font-style: italic; }      /* 注释 */
 .demo-block__code .hl-p    { color: rgba(255, 255, 255, 0.42); }        /* 标点 dim */
+
+/* === 亮色态: 整套代码块离白底 + 暖色族语法高亮 (跟 Home/GS 一致) === */
+:root:not([data-theme='dark']) .demo-block__code {
+  background: var(--au-bg);
+  color: rgba(15, 23, 42, 0.88);
+  border-top-color: var(--au-border);
+}
+:root:not([data-theme='dark']) .demo-block__code .hl-k    { color: #9333ea; }
+:root:not([data-theme='dark']) .demo-block__code .hl-t    { color: #0891b2; font-weight: 600; }
+:root:not([data-theme='dark']) .demo-block__code .hl-h    { color: #0d9488; }
+:root:not([data-theme='dark']) .demo-block__code .hl-a    { color: #db2777; font-style: italic; }
+:root:not([data-theme='dark']) .demo-block__code .hl-s    { color: #b45309; }
+:root:not([data-theme='dark']) .demo-block__code .hl-n    { color: #059669; }
+:root:not([data-theme='dark']) .demo-block__code .hl-f    { color: #4f46e5; font-weight: 600; }
+:root:not([data-theme='dark']) .demo-block__code .hl-com  { color: #94a3b8; font-style: italic; }
+:root:not([data-theme='dark']) .demo-block__code .hl-p    { color: rgba(15, 23, 42, 0.42); }

@@ -207,6 +207,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
         </button>
       )}
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

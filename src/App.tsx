@@ -36,7 +36,6 @@ const NotificationDoc = lazy(() => import('./pages/NotificationDoc'));
 const PopconfirmDoc = lazy(() => import('./pages/PopconfirmDoc'));
 const TourDoc = lazy(() => import('./pages/TourDoc'));
 const CommandPaletteDoc = lazy(() => import('./pages/CommandPaletteDoc'));
-const MotionDoc = lazy(() => import('./pages/MotionDoc'));
 const ThemeStudio = lazy(() => import('./pages/ThemeStudio'));
 const ConfettiDoc = lazy(() => import('./pages/ConfettiDoc'));
 const AuroraCursorDoc = lazy(() => import('./pages/AuroraCursorDoc'));
@@ -82,6 +81,8 @@ const ResultDoc = lazy(() => import('./pages/ResultDoc'));
 const UploadDoc = lazy(() => import('./pages/UploadDoc'));
 const TreeDoc = lazy(() => import('./pages/TreeDoc'));
 const TreeSelectDoc = lazy(() => import('./pages/TreeSelectDoc'));
+const CascaderDoc = lazy(() => import('./pages/CascaderDoc'));
+const JsonViewDoc = lazy(() => import('./pages/JsonViewDoc'));
 const AuroraBgDoc = lazy(() => import('./pages/AuroraBgDoc'));
 const GradientTextDoc = lazy(() => import('./pages/GradientTextDoc'));
 const NumberRollDoc = lazy(() => import('./pages/NumberRollDoc'));
@@ -98,6 +99,15 @@ const MindmapDoc = lazy(() => import('./pages/MindmapDoc'));
 const AppShell: React.FC = () => {
   const loc = useLocation();
   const hideNavbar = loc.pathname.startsWith('/examples/');
+  // HashRouter 下二级 hash (例 /docs/motion#reveal) 浏览器不会自动滚动, 这里手动处理
+  React.useEffect(() => {
+    if (!loc.hash) return;
+    const id = loc.hash.replace(/^#/, '');
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [loc.pathname, loc.hash]);
   return (
     <>
       {!hideNavbar && <Navbar />}
@@ -161,7 +171,6 @@ const AppRoutes: React.FC = () => (
         <Route path="popconfirm" element={<PopconfirmDoc />} />
         <Route path="tour" element={<TourDoc />} />
         <Route path="command-palette" element={<CommandPaletteDoc />} />
-        <Route path="motion" element={<MotionDoc />} />
         <Route path="theme-studio" element={<ThemeStudio />} />
         <Route path="confetti" element={<ConfettiDoc />} />
         <Route path="aurora-cursor" element={<AuroraCursorDoc />} />
@@ -205,6 +214,8 @@ const AppRoutes: React.FC = () => (
         <Route path="upload" element={<UploadDoc />} />
         <Route path="tree" element={<TreeDoc />} />
         <Route path="tree-select" element={<TreeSelectDoc />} />
+        <Route path="cascader" element={<CascaderDoc />} />
+        <Route path="json-view" element={<JsonViewDoc />} />
         <Route path="aurora-bg" element={<AuroraBgDoc />} />
         <Route path="gradient-text" element={<GradientTextDoc />} />
         <Route path="number-roll" element={<NumberRollDoc />} />

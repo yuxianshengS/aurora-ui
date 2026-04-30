@@ -31,6 +31,9 @@
 .au-pb__brand {
   font-size: 14px;
   letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .au-pb__count {
   font-size: 12px;
@@ -149,6 +152,9 @@
   font-weight: 600;
   color: var(--au-text-1);
   letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .au-pb__guide-sub {
   color: var(--au-text-3);
@@ -210,6 +216,191 @@
   font-family: var(--au-mono);
   font-size: 10.5px;
   color: var(--au-text-2);
+}
+
+/* 属性面板字段搜索框 (字段 >= 6 时才显示) */
+.au-pb__field-search {
+  height: 28px;
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius-sm);
+  padding: 0 8px;
+  font: inherit;
+  font-size: 12.5px;
+  background: var(--au-bg-soft);
+  color: var(--au-text-1);
+  outline: none;
+  margin-bottom: 6px;
+  transition:
+    border-color 0.15s var(--au-ease),
+    box-shadow 0.15s var(--au-ease);
+}
+.au-pb__field-search:focus {
+  border-color: var(--au-primary);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+
+/* ==== palette 内 Tab 切换 (组件库 ↔ 大纲) ==== */
+.au-pb__palette-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--au-border);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+.au-pb__palette-tab {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--au-text-3);
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.12s var(--au-ease);
+}
+.au-pb__palette-tab:hover {
+  color: var(--au-text-1);
+  background: var(--au-bg-mute);
+}
+.au-pb__palette-tab.is-active {
+  color: var(--au-primary);
+  background: var(--au-primary-soft);
+  font-weight: 500;
+}
+/* 大纲 tab 内的 wrapper — 占满剩余高度, 内部滚动 */
+.au-pb__palette-outline-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.au-pb__outline-empty {
+  color: var(--au-text-3);
+  font-size: 12.5px;
+  padding: 24px 16px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ==== 大纲树 (在 outline tab 内独占空间) ==== */
+.au-pb__outline {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.au-pb__outline-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  font-size: 11px;
+  color: var(--au-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.au-pb__outline-search {
+  height: 28px;
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius-sm);
+  padding: 0 8px;
+  font: inherit;
+  font-size: 12.5px;
+  background: var(--au-bg-soft);
+  color: var(--au-text-1);
+  outline: none;
+  margin-bottom: 6px;
+  transition:
+    border-color 0.15s var(--au-ease),
+    box-shadow 0.15s var(--au-ease);
+}
+.au-pb__outline-search:focus {
+  border-color: var(--au-primary);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-pb__outline-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 2px;
+  min-height: 0;
+}
+.au-pb__outline-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  color: var(--au-text-2);
+  text-align: left;
+  transition: background 0.1s var(--au-ease);
+  width: 100%;
+}
+.au-pb__outline-item:hover {
+  background: var(--au-bg-mute);
+  color: var(--au-text-1);
+}
+.au-pb__outline-item.is-selected {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+  font-weight: 500;
+}
+/* 搜索命中节点 — 比 selected 弱, 跟 ancestor (上下文链) 区分开 */
+.au-pb__outline-item.is-search-hit:not(.is-selected) {
+  color: var(--au-primary);
+  background: color-mix(in srgb, var(--au-primary) 5%, transparent);
+}
+.au-pb__outline-item.is-search-hit .au-pb__outline-name {
+  font-weight: 500;
+}
+.au-pb__outline-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--au-text-3);
+}
+.au-pb__outline-item.is-selected .au-pb__outline-icon {
+  color: var(--au-primary);
+}
+.au-pb__outline-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.au-pb__outline-count {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--au-text-3);
+  background: var(--au-bg-mute);
+  border-radius: 8px;
+  padding: 0 6px;
+  line-height: 14px;
+  min-width: 14px;
+  text-align: center;
+}
+
+/* 大纲悬停时画布对应块亮起来 — 比 selected 弱一点的高亮 */
+.au-pb__block.is-outline-hover {
+  outline-color: color-mix(in srgb, var(--au-primary) 70%, transparent) !important;
+  outline-width: 2px !important;
 }
 
 /* ==== 属性面板顶部面包屑 (祖先路径快速跳转) ==== */
@@ -682,6 +873,29 @@
   white-space: nowrap;
 }
 
+/* Section 模板项 — icon + label 单行截断, 不折行 */
+.au-pb__palette-item--section .au-pb__palette-item-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.au-pb__palette-item--section .au-pb__palette-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+/* tab 文字也不折行 */
+.au-pb__palette-tab {
+  white-space: nowrap;
+}
+
 .au-pb__palette-label {
   /* 旧单行布局保留作兜底 */
   flex: 1;
@@ -831,11 +1045,6 @@
   flex: 1;
   overflow: auto;
 }
-/* 顶部留白 — 给第一行块的"上方工具条"足够的空间, 避免被画布顶边裁掉 */
-.au-pb:not(.is-preview) .au-pb__canvas {
-  padding-top: 24px;
-}
-
 /* ==== slot (统一的 drop 区, root 画布 + 每个容器 slot 都用) ====
  * 关键约束: 非空 slot 不加 padding / gap, 让编辑态布局跟预览态 + Copy JSX 输出一致;
  * 空 slot 才显示 padding + min-height 撑出可拖入的区域 + 占位文案
@@ -853,6 +1062,14 @@
 .au-pb__slot.is-empty {
   padding: 16px;
   min-height: 60px;
+}
+/* 拖动时被悬停的 slot — 整体浅色 fill, 让用户看清楚块会落进哪个父容器 */
+.au-pb__slot.is-drop-target {
+  background: color-mix(in srgb, var(--au-primary) 8%, transparent);
+  outline: 1px dashed color-mix(in srgb, var(--au-primary) 60%, transparent);
+  outline-offset: -2px;
+  border-radius: var(--au-radius-sm);
+  transition: background 0.1s var(--au-ease);
 }
 .au-pb__slot--row {
   flex-direction: row;
@@ -1060,6 +1277,202 @@
 }
 .au-pb__block.is-selected {
   outline-color: var(--au-primary);
+  outline-width: 2px;
+  /* 浅蓝填充让深嵌套场景下的选中块明显跳出来 */
+  background: color-mix(in srgb, var(--au-primary) 4%, transparent);
+}
+/* 锁定状态: 不可拖, 工具条仍显示但删/移/复制 disabled. 视觉用浅金色 outline 标识 */
+.au-pb__block.is-locked {
+  cursor: default;
+}
+/* 拖动源块半透明 — 让用户清楚看到自己正在拖谁 */
+.au-pb__block.is-dragging {
+  opacity: 0.4;
+  cursor: grabbing !important;
+}
+.au-pb__block.is-dragging > * {
+  pointer-events: none;
+}
+.au-pb__block.is-locked:hover {
+  outline-color: color-mix(in srgb, #d97706 50%, transparent);
+}
+.au-pb__block.is-locked.is-selected {
+  outline-color: #d97706;
+  background: color-mix(in srgb, #d97706 5%, transparent);
+}
+.au-pb__block-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ==== 操作反馈 toast ==== */
+.au-pb__toasts {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+.au-pb__toast {
+  background: var(--au-text-1);
+  color: var(--au-bg);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: au-pb-toast-in 0.18s var(--au-ease);
+}
+@keyframes au-pb-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==== Hover 路径 tooltip (块停留 600ms 后显示, 帮深嵌套确认所在层级) ==== */
+.au-pb__hover-tip {
+  position: fixed;
+  z-index: 10000;
+  background: var(--au-text-1);
+  color: var(--au-bg);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  max-width: 320px;
+  line-height: 1.4;
+}
+.au-pb__hover-tip-path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.au-pb__hover-tip-anc {
+  opacity: 0.65;
+}
+.au-pb__hover-tip-sep {
+  opacity: 0.45;
+  font-size: 11px;
+}
+.au-pb__hover-tip-cur {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--au-primary) 70%, var(--au-bg));
+}
+.au-pb__hover-tip-meta {
+  margin-top: 2px;
+  font-size: 10.5px;
+  opacity: 0.65;
+}
+
+/* ==== 右键上下文菜单 ==== */
+.au-pb__ctx-menu {
+  position: fixed;
+  z-index: 10000;
+  min-width: 200px;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 12px 32px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: var(--au-text-1);
+  user-select: none;
+}
+.au-pb__ctx-item {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--au-text-1);
+  transition: background 0.1s var(--au-ease);
+}
+.au-pb__ctx-item:hover:not(:disabled) {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+}
+.au-pb__ctx-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.au-pb__ctx-item.is-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--au-danger) 14%, transparent);
+  color: var(--au-danger);
+}
+.au-pb__ctx-shortcut {
+  margin-left: auto;
+  font-family: var(--au-mono);
+  font-size: 11px;
+  color: var(--au-text-3);
+}
+.au-pb__ctx-sep {
+  height: 1px;
+  background: var(--au-border);
+  margin: 4px 0;
+}
+
+/* ==== 帮助 Modal: 快捷键和操作分组列表 ==== */
+.au-pb__help {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-size: 13px;
+  color: var(--au-text-1);
+}
+.au-pb__help-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.au-pb__help-head {
+  font-size: 11px;
+  color: var(--au-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--au-border);
+}
+.au-pb__help-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 4px;
+  font-size: 12.5px;
+  color: var(--au-text-2);
+}
+.au-pb__help-row > :first-child {
+  color: var(--au-text-1);
+}
+.au-pb__help-row kbd {
+  display: inline-block;
+  padding: 1px 7px;
+  background: var(--au-bg-mute);
+  border: 1px solid var(--au-border);
+  border-radius: 4px;
+  font-family: var(--au-mono);
+  font-size: 11px;
+  color: var(--au-text-2);
+  margin: 0 2px;
 }
 .au-pb__block.is-container {
   width: 100%;
@@ -1171,6 +1584,19 @@
   letter-spacing: 0.02em;
 }
 
+.au-pb__block-tag {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  padding: 0 6px 0 4px;
+  color: inherit;
+  opacity: 0.8;
+  border-right: 1px solid color-mix(in srgb, var(--au-bg) 30%, transparent);
+  margin-right: 2px;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
 .au-pb__block-actions {
   display: inline-flex;
   gap: 0;
@@ -1346,6 +1772,55 @@
   align-items: center;
   gap: 6px;
 }
+/* 字段已修改红点 — 跟默认值不同时出现 */
+.au-pb__field-modified {
+  color: var(--au-primary);
+  font-size: 8px;
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* 属性面板顶部「重置」按钮 */
+.au-pb__form-reset {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg);
+  color: var(--au-text-3);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.12s var(--au-ease);
+}
+.au-pb__form-reset:hover {
+  color: var(--au-danger);
+  border-color: var(--au-danger);
+}
+/* 数值字段 label — 鼠标 hover 时变 ew-resize 提示可拖动改值 */
+.au-pb__field-label.is-draggable {
+  cursor: ew-resize;
+  user-select: none;
+  width: max-content;
+  position: relative;
+}
+.au-pb__field-label.is-draggable:hover {
+  color: var(--au-primary);
+}
+.au-pb__field-label.is-draggable::after {
+  content: '⇔';
+  font-size: 10px;
+  opacity: 0;
+  margin-left: 2px;
+  transition: opacity 0.12s;
+}
+.au-pb__field-label.is-draggable:hover::after {
+  opacity: 0.5;
+}
 .au-pb__field-tag {
   padding: 0 5px;
   font-size: 10px;
@@ -1401,8 +1876,9 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--au-border);
-  border-radius: var(--au-radius-sm);
-  background: var(--au-bg-soft);
+  border-radius: 0;          /* 全局直角 — 不再有任何 hl/toolbar/focus ring 的圆角溢出 */
+  /* 编辑区主体: 用 bg (亮一档) 让代码区像"纸"一样, 不再是灰盒套灰盒 */
+  background: var(--au-bg);
   overflow: hidden;
   transition:
     border-color 0.12s var(--au-ease),
@@ -1424,7 +1900,8 @@
   align-items: center;
   gap: 8px;
   padding: 4px 6px 4px 8px;
-  background: var(--au-bg-mute);
+  /* toolbar 比 editor 略深 — 跟真实 IDE 一致 (bg-soft 浅, bg-mute 已经像 border 那么深) */
+  background: var(--au-bg-soft);
   border-bottom: 1px solid var(--au-border);
   font-family: var(--au-mono);
   font-size: 11px;
@@ -1534,8 +2011,9 @@
   color: transparent;
   caret-color: var(--au-text-1);
   border: 0;
+  border-radius: 0;          /* 兜底去掉浏览器 UA 默认圆角 */
   outline: none;
-  resize: vertical;
+  resize: none;              /* 全局隐藏 resize 把手 — 容器自己控高度 */
   overflow: auto;
   /* 选中高亮保留文字感 */
 }
@@ -1703,30 +2181,59 @@ select.au-pb__input {
   cursor: pointer;
 }
 
-/* ==== code preview ==== */
+/* ==== code preview ====
+   外层当 card — 有 bg + border + soft shadow, 跟 builder 的 slate 底拉开层级,
+   内层 frame 改成 transparent 无 chrome, 避免双层边框堆叠 */
 .au-pb__code {
-  background: var(--au-pre-bg);
-  color: var(--au-pre-text);
+  background: var(--au-bg);
+  color: var(--au-text-1);
+  border: 1px solid var(--au-border);
   border-radius: var(--au-radius);
-  padding: 8px 12px 12px;
+  padding: 12px 14px 14px;
   font-size: 13px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+[data-theme="dark"] .au-pb__code {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+/* 在 .au-pb__code 内, frame 让出 chrome 给外层, 自己只负责 layout */
+.au-pb__code .au-pb__json-frame {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.au-pb__code .au-pb__json-frame.is-focused {
+  border: 0;
+  box-shadow: none;
+}
+/* === 属性面板内的 JSON 编辑器 (数据源 / JSON 展示) ===
+   props 面板 bg 是 var(--au-bg), 默认 frame 也是 var(--au-bg), 两者融成一片不突出。
+   这里用"recessed 凹陷输入"的层级: frame 用 bg-soft 比 props 暗一档, toolbar 再暗一档, gutter 跟 frame 同色。 */
+.au-pb__props .au-pb__json-frame {
+  background: var(--au-bg-soft);
+}
+.au-pb__props .au-pb__json-toolbar {
+  background: var(--au-bg-mute);
+}
+.au-pb__props .au-pb__json-gutter {
+  background: var(--au-bg-soft);
 }
 .au-pb__code-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 4px 0 6px;
-  color: #9ca3af;
+  padding: 0 2px 10px;
+  color: var(--au-text-3);
+  font-family: var(--au-mono);
   font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  /* 改克制: 不再 uppercase + 字距, 让头像"路径提示", 不抢眼 */
 }
 .au-pb__code-head .au-btn {
-  color: #9ca3af;
+  color: var(--au-text-2);
 }
 .au-pb__code-head .au-btn:hover {
-  color: #fff;
+  color: var(--au-primary);
 }
 .au-pb__code pre {
   margin: 0;
@@ -1735,7 +2242,7 @@ select.au-pb__input {
 .au-pb__code code {
   font-family: var(--au-mono);
   white-space: pre;
-  color: var(--au-pre-text);
+  color: var(--au-text-1);
   background: transparent;
 }
 

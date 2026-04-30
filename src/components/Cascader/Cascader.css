@@ -1,0 +1,307 @@
+/* ===================== Cascader 触发器 ===================== */
+.au-cascader {
+  --au-cascader-active: var(--au-primary);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 280px;
+  max-width: 100%;
+  padding: 0 10px;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border-strong);
+  border-radius: var(--au-radius-sm);
+  color: var(--au-text-1);
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.15s var(--au-ease),
+    box-shadow 0.15s var(--au-ease);
+}
+.au-cascader:hover:not(.is-disabled) {
+  border-color: var(--au-cascader-active);
+}
+.au-cascader.is-open {
+  border-color: var(--au-cascader-active);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-cascader:focus-visible {
+  border-color: var(--au-cascader-active);
+  box-shadow: 0 0 0 3px var(--au-primary-soft);
+}
+.au-cascader.is-error {
+  border-color: var(--au-danger);
+}
+.au-cascader.is-error.is-open {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+.au-cascader.is-warning {
+  border-color: var(--au-warning);
+}
+.au-cascader.is-warning.is-open {
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+.au-cascader.is-disabled {
+  background: var(--au-bg-mute);
+  color: var(--au-text-3);
+  cursor: not-allowed;
+}
+
+.au-cascader--small {
+  height: 28px;
+  font-size: 12px;
+}
+.au-cascader--medium {
+  height: 34px;
+  font-size: 14px;
+}
+.au-cascader--large {
+  height: 42px;
+  font-size: 16px;
+}
+
+.au-cascader__display {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  gap: 4px;
+}
+
+/* 多选 trigger 是 flex-wrap, 不限单行 */
+.au-cascader.is-multiple {
+  min-height: 34px;
+  height: auto;
+  padding: 3px 10px;
+  flex-wrap: wrap;
+}
+.au-cascader.is-multiple.au-cascader--small {
+  min-height: 28px;
+  padding: 2px 8px;
+}
+.au-cascader.is-multiple.au-cascader--large {
+  min-height: 42px;
+  padding: 4px 12px;
+}
+.au-cascader.is-multiple .au-cascader__display {
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow: visible;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+/* 多选 tag */
+.au-cascader__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px 1px 8px;
+  background: var(--au-bg-mute);
+  border: 1px solid var(--au-border);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--au-text-1);
+  max-width: 240px;
+  line-height: 1.4;
+  user-select: none;
+}
+.au-cascader__tag-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.au-cascader__tag-sep {
+  color: var(--au-text-3);
+  margin: 0 2px;
+}
+.au-cascader__tag-close {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: var(--au-text-3);
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.au-cascader__tag-close:hover {
+  background: var(--au-border);
+  color: var(--au-text-1);
+}
+.au-cascader__tag--more {
+  background: transparent;
+  color: var(--au-text-3);
+  padding: 1px 6px;
+}
+.au-cascader__placeholder {
+  color: var(--au-text-3);
+}
+.au-cascader__label {
+  white-space: nowrap;
+}
+.au-cascader__sep {
+  color: var(--au-text-3);
+  user-select: none;
+}
+.au-cascader__arrow {
+  display: inline-flex;
+  margin-left: 6px;
+  color: var(--au-text-3);
+  transition: transform 0.18s var(--au-ease);
+  flex-shrink: 0;
+}
+.au-cascader.is-open .au-cascader__arrow {
+  transform: rotate(180deg);
+}
+
+.au-cascader__clear {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0 4px;
+  cursor: pointer;
+  color: var(--au-text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.12s var(--au-ease), background 0.12s var(--au-ease);
+}
+.au-cascader.is-clearable:hover .au-cascader__clear {
+  opacity: 1;
+}
+.au-cascader__clear:hover {
+  background: var(--au-bg-mute);
+  color: var(--au-text-1);
+}
+
+/* ===================== 弹层 ===================== */
+.au-cascader__popup {
+  position: fixed;
+  z-index: 1100;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
+  flex-direction: row;
+  overflow: hidden;
+  animation: au-cascader-in 0.14s var(--au-ease);
+}
+@keyframes au-cascader-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.au-cascader__col {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  border-right: 1px solid var(--au-border);
+  overflow-y: auto;
+  font-size: 13px;
+  background: var(--au-bg);
+  flex-shrink: 0;
+}
+.au-cascader__col:last-child {
+  border-right: 0;
+}
+
+.au-cascader__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--au-text-1);
+  user-select: none;
+  gap: 8px;
+  transition: background 0.1s var(--au-ease);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.au-cascader__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 多选叶子 checkbox */
+.au-cascader__check {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--au-border-strong);
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--au-bg);
+  color: var(--au-bg);
+  transition: all 0.12s var(--au-ease);
+}
+.au-cascader__check.is-checked {
+  background: var(--au-primary);
+  border-color: var(--au-primary);
+}
+.au-cascader__item.is-checked {
+  background: color-mix(in srgb, var(--au-primary) 5%, transparent);
+}
+.au-cascader__item:hover:not(.is-disabled) {
+  background: var(--au-bg-mute);
+}
+.au-cascader__item.is-active {
+  background: var(--au-primary-soft);
+  color: var(--au-primary);
+}
+.au-cascader__item.is-selected {
+  font-weight: 500;
+  color: var(--au-primary);
+}
+.au-cascader__item.is-disabled {
+  color: var(--au-text-3);
+  cursor: not-allowed;
+}
+.au-cascader__item-arrow {
+  display: inline-flex;
+  color: var(--au-text-3);
+  flex-shrink: 0;
+}
+.au-cascader__item.is-active .au-cascader__item-arrow {
+  color: var(--au-primary);
+}
+
+.au-cascader__empty {
+  list-style: none;
+  padding: 16px 12px;
+  text-align: center;
+  color: var(--au-text-3);
+  font-size: 12px;
+}
+
+/* 暗色模式 */
+[data-theme='dark'] .au-cascader__popup {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 12px 32px rgba(0, 0, 0, 0.6);
+}

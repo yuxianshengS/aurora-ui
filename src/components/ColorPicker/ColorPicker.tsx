@@ -203,6 +203,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         )}
       </button>
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

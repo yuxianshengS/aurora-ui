@@ -802,7 +802,7 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
         )}
       </div>
 
-      {open && createPortal(
+      {open && typeof document !== 'undefined' && createPortal(
         <div
           ref={popupRef}
           className="au-dp__popup"

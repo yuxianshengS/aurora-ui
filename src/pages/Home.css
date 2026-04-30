@@ -56,16 +56,41 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 6px 8px 6px 14px;
   font-size: 13px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  /* 浅玻璃 + 深字 — 跟 hero 其他文字色一致 */
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 999px;
   font-weight: 500;
   margin-bottom: 28px;
-  color: white;
+  color: #0f172a;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.home-hero__tag:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.15);
+  color: #0f172a;
+}
+.home-hero__tag-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  font-size: 12px;
+  line-height: 1;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.home-hero__tag:hover .home-hero__tag-arrow {
+  transform: translateX(2px);
+  background: rgba(15, 23, 42, 0.16);
 }
 .home-hero__tag-dot {
   width: 6px;
@@ -87,16 +112,41 @@
   display: block;
   font-size: 32px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
   margin-top: 12px;
   letter-spacing: 0.5px;
   font-family: 'SF Mono', ui-monospace, Menlo, Monaco, monospace;
 }
 .home-hero__desc {
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
   margin: 0 0 36px;
   line-height: 1.7;
+}
+
+/* 暗色态 — Hero 文本翻白, pill 翻深玻璃 */
+[data-theme='dark'] .home-hero__title-sub {
+  color: #fff;
+}
+[data-theme='dark'] .home-hero__desc {
+  color: rgba(255, 255, 255, 0.96);
+}
+[data-theme='dark'] .home-hero__tag {
+  background: rgba(15, 23, 42, 0.45);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.25);
+}
+[data-theme='dark'] .home-hero__tag:hover {
+  background: rgba(15, 23, 42, 0.62);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+[data-theme='dark'] .home-hero__tag-arrow {
+  background: rgba(255, 255, 255, 0.16);
+}
+[data-theme='dark'] .home-hero__tag:hover .home-hero__tag-arrow {
+  background: rgba(255, 255, 255, 0.28);
 }
 .home-hero__cta {
   display: inline-flex;
@@ -205,7 +255,9 @@
 .home-section {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 80px 24px;
+  padding: 120px 24px;       /* 大留白, 两套主题一致 */
+  position: relative;
+  isolation: isolate;        /* 让本节内 ::before / ::after 的 z-index 限制在节内 */
 }
 .home-section__head {
   text-align: center;
@@ -531,6 +583,219 @@
 .tk-f   { color: #6366f1; font-weight: 600; }       /* function → 极光靛 */
 .tk-p   { color: rgba(255, 255, 255, 0.42); }       /* 标点 dim */
 .tk-text{ color: rgba(255, 255, 255, 0.92); }       /* JSX 文本节点 */
+
+/* ===== 亮色态特化:IDE 大背景翻浅色, 但代码窗口本身保留暗色 (跟真编辑器一致) ===== */
+:root:not([data-theme='dark']) .home-code {
+  background:
+    radial-gradient(60% 50% at 20% 0%, color-mix(in srgb, var(--au-primary) 8%, transparent), transparent 70%),
+    radial-gradient(60% 60% at 90% 100%, color-mix(in srgb, #a855f7 6%, transparent), transparent 70%),
+    var(--au-bg-base);
+  border-top: 1px solid var(--au-border);
+}
+:root:not([data-theme='dark']) .home-code__title {
+  color: var(--au-text-1);
+}
+:root:not([data-theme='dark']) .home-code__sub {
+  color: var(--au-text-2);
+}
+:root:not([data-theme='dark']) .home-code__copy-line {
+  background: var(--au-bg);
+  border-color: var(--au-border);
+}
+:root:not([data-theme='dark']) .home-code__copy-line:hover {
+  background: var(--au-bg-soft);
+  border-color: color-mix(in srgb, var(--au-primary) 50%, transparent);
+}
+:root:not([data-theme='dark']) .home-code__copy-cmd {
+  color: var(--au-text-1);
+}
+:root:not([data-theme='dark']) .home-code__copy-status {
+  color: var(--au-text-3);
+}
+
+/* —— 亮色态代码窗口: 离白底 + slate 边 + 收敛极光辉光 —— */
+:root:not([data-theme='dark']) .home-code__window {
+  background: var(--au-bg);
+  border-color: var(--au-border);
+  box-shadow:
+    0 12px 28px -8px rgba(15, 23, 42, 0.12),
+    -16px 14px 50px -16px rgba(99, 102, 241, 0.18),
+    14px -8px 50px -16px rgba(168, 85, 247, 0.16),
+    -8px -20px 40px -16px rgba(34, 211, 238, 0.18),
+    20px 22px 60px -16px rgba(244, 114, 182, 0.14);
+}
+:root:not([data-theme='dark']) .home-code__window::before {
+  opacity: 0.35; /* 渐变描边在亮底上更克制 */
+}
+:root:not([data-theme='dark']) .home-code__window-bar {
+  background: var(--au-bg-soft);
+  border-bottom-color: var(--au-border);
+}
+:root:not([data-theme='dark']) .home-code__filename {
+  color: var(--au-text-3);
+}
+:root:not([data-theme='dark']) .home-code__editor {
+  color: rgba(15, 23, 42, 0.85);
+}
+
+/* —— 亮色态语法高亮: 极光色族下沉一档让对比足够, 字符串换暖琥珀色 —— */
+:root:not([data-theme='dark']) .tk-k    { color: #9333ea; }                   /* keyword purple-600 */
+:root:not([data-theme='dark']) .tk-t    { color: #0891b2; font-weight: 600; } /* 组件名 cyan-600 */
+:root:not([data-theme='dark']) .tk-a    { color: #db2777; }                   /* attr pink-600 */
+:root:not([data-theme='dark']) .tk-s    { color: #b45309; }                   /* string amber-700 — 暖, 跳出冷色系 */
+:root:not([data-theme='dark']) .tk-n    { color: #059669; }                   /* number emerald-600 */
+:root:not([data-theme='dark']) .tk-f    { color: #4f46e5; font-weight: 600; } /* function indigo-600 */
+:root:not([data-theme='dark']) .tk-p    { color: rgba(15, 23, 42, 0.42); }    /* punctuation 灰 */
+:root:not([data-theme='dark']) .tk-text { color: rgba(15, 23, 42, 0.88); }    /* JSX 文本 */
+
+/* ===========================================================
+   亮色态 Home 高级感 + 层次分明改造
+   ① 整页统一离白调色板 (没有任何纯白)
+   ② Section 用全幅交替底色 (page / section / page / section) 拉强对比
+   ③ Eyebrow 编号 + 大字号 + 紧字距标题 — 每节有视觉锚点
+   ④ 卡片去 1px border, 改用 inset 0 0 0 1px hairline + 浮起阴影
+   ⑤ 全幅延伸的 alt 段落, 用 ::after 100vw 撑边
+   =========================================================== */
+
+/* —— 首页离白调色板 (scope 在 .home 内, 不影响其他页) —— */
+:root:not([data-theme='dark']) .home {
+  --au-bg-base: #e8edf3;       /* 页面底 ~91% */
+  --au-bg: #f5f7fb;            /* 卡片 ~96.5% — 比 page 亮, 浮起感 */
+  --au-bg-soft: #dde3ed;       /* alt section 底色 — 比 page 略深, 制造对比 */
+  --au-bg-mute: #cdd5e0;
+  --au-border: #cdd5e0;
+  --au-border-strong: #adb6c5;
+  background: var(--au-bg-base);
+  overflow-x: hidden;          /* 防 ::after 100vw 引起水平滚动 */
+}
+
+/* —— 亮色态的极光径向氛围 (深色态不画) —— */
+:root:not([data-theme='dark']) .home-section::before {
+  content: '';
+  position: absolute;
+  inset: -40px -80px;
+  background:
+    radial-gradient(40% 50% at 90% 8%, color-mix(in srgb, #a855f7 8%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 10% 92%, color-mix(in srgb, #22d3ee 7%, transparent), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* —— Alt section 全幅底色: ::after 用 100vw + 负 margin 撑出 viewport 边 —— */
+:root:not([data-theme='dark']) .home-section--alt::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background: var(--au-bg-soft);
+  z-index: -2;                 /* 比 ::before 的 -1 还低, 让径向氛围在上面 */
+  pointer-events: none;
+}
+:root:not([data-theme='dark']) .home-section--alt::before {
+  /* alt 段反向极光氛围, 跟默认段交替 */
+  background:
+    radial-gradient(40% 50% at 10% 8%, color-mix(in srgb, #6366f1 7%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 90% 92%, color-mix(in srgb, #ec4899 6%, transparent), transparent 70%);
+}
+
+/* —— Eyebrow 标签: 编号 + 分隔线 + 等宽英文 —— */
+.home-section__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--au-text-2);
+  margin-bottom: 22px;
+}
+.home-section__eyebrow-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+  color: white;
+  border-radius: 8px;
+  letter-spacing: 0;
+  font-weight: 700;
+  box-shadow: 0 4px 10px -2px rgba(168, 85, 247, 0.35);
+}
+.home-section__eyebrow-divider {
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+/* —— 标题: 更大、更紧、极光渐变 —— */
+.home-section__title {
+  font-size: 48px;             /* was 36 */
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  margin: 0 0 16px;
+}
+:root:not([data-theme='dark']) .home-section__title {
+  background: linear-gradient(120deg, #5b8def 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+:root:not([data-theme='dark']) .home-section__sub {
+  color: #475168;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* —— 卡片: 去 1px border, 改 inset hairline, hover 浮起 —— */
+:root:not([data-theme='dark']) .home-connector__usecase {
+  border: 0;
+  background: var(--au-bg);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+:root:not([data-theme='dark']) .home-connector__usecase:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--au-primary) 45%, transparent),
+    0 18px 40px -12px rgba(91, 141, 239, 0.28);
+}
+
+/* Connector 舞台 — 略浮起感 */
+:root:not([data-theme='dark']) .home-connector__stage {
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 8px 24px -8px rgba(15, 23, 42, 0.08);
+  border: 0;
+}
+
+/* —— Section head 大留白居中, eyebrow 也居中 —— */
+.home-section__head .home-section__eyebrow {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* —— Section 衔接: 微弱 hairline (alt 与 default 之间) —— */
+:root:not([data-theme='dark']) .home-section--alt {
+  /* alt section 的 ::after 大色块本身就是分隔信号, 不再加 border */
+}
+
+/* —— Code IDE 段也用 eyebrow + 字号微调 —— */
+:root:not([data-theme='dark']) .home-code__left .home-section__eyebrow {
+  margin-bottom: 18px;
+}
 
 /* ===== 响应式 ===== */
 @media (max-width: 880px) {

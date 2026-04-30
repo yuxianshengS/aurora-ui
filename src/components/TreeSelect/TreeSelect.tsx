@@ -150,6 +150,7 @@ const TreeSelect: React.FC<TreeSelectProps> = ({
         </span>
       </div>
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

@@ -9,7 +9,7 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   opacity: 0;
-  transition: opacity 0.2s var(--au-ease);
+  transition: opacity var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out));
   pointer-events: auto;
 }
 .au-modal.is-visible .au-modal__mask {
@@ -41,10 +41,11 @@
   display: flex;
   flex-direction: column;
   opacity: 0;
-  transform: translateY(-12px) scale(0.98);
+  transform: translateY(calc(-1 * var(--au-pop-translate, 4px) * 2)) scale(var(--au-pop-scale-from, 0.96));
+  transform-origin: center top;
   transition:
-    opacity 0.22s var(--au-ease),
-    transform 0.22s var(--au-ease);
+    opacity var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)),
+    transform var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out));
 }
 .au-modal.is-visible .au-modal__panel {
   opacity: 1;

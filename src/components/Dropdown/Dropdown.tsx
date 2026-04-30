@@ -193,6 +193,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     <>
       {triggerEl}
       {open &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             ref={popupRef}

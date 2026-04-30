@@ -124,6 +124,7 @@ const Container: React.FC = () => {
     }, 220);
   };
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div className="au-message">
       {list.map((item) => (

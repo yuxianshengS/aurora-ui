@@ -25,9 +25,11 @@
   width: max-content;
   pointer-events: auto;
   opacity: 0;
-  transform: scale(0.96);
+  transform: scale(var(--au-pop-scale-from, 0.96));
   transform-origin: center;
-  transition: opacity 0.16s var(--au-ease), transform 0.16s var(--au-ease);
+  transition:
+    opacity var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)),
+    transform var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out));
 }
 [data-theme="dark"] .au-tooltip-bubble {
   --au-tooltip-bg: rgba(229, 231, 235, 0.96);

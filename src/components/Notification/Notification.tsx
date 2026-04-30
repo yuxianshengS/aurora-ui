@@ -158,6 +158,7 @@ const Container: React.FC = () => {
     }, 260);
   };
 
+  if (typeof document === 'undefined') return null;
   return (
     <>
       {placementList.map((p) => {

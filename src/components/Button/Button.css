@@ -9,14 +9,24 @@
   border-radius: var(--au-radius-sm);
   cursor: pointer;
   user-select: none;
-  transition: all 0.18s var(--au-ease);
+  transition:
+    background-color 0.18s var(--au-ease),
+    border-color 0.18s var(--au-ease),
+    color 0.18s var(--au-ease),
+    box-shadow 0.18s var(--au-ease),
+    transform var(--au-press-duration, 75ms) var(--au-ease);
   white-space: nowrap;
   line-height: 1.2;
 }
 
+/* 按下回弹 — 全库统一手感 */
+.au-btn:active:not(:disabled):not(.is-loading) {
+  transform: scale(var(--au-press-scale, 0.97));
+}
+
 .au-btn:focus-visible {
-  outline: 2px solid var(--au-primary);
-  outline-offset: 2px;
+  outline: var(--au-focus-ring-width, 2px) solid var(--au-focus-ring-color, var(--au-primary));
+  outline-offset: var(--au-focus-ring-offset, 2px);
 }
 
 .au-btn--small {
@@ -306,8 +316,8 @@
 }
 
 .au-btn__like-input:focus-visible + .au-btn__like-label {
-  outline: 2px solid var(--au-primary);
-  outline-offset: 2px;
+  outline: var(--au-focus-ring-width, 2px) solid var(--au-focus-ring-color, var(--au-primary));
+  outline-offset: var(--au-focus-ring-offset, 2px);
   border-radius: inherit;
 }
 

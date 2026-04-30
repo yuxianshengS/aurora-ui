@@ -63,6 +63,8 @@
   color: var(--au-text-2);
   text-decoration: none;
   font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
   transition: all 0.15s var(--au-ease);
 }
 .builder-page__link:hover {

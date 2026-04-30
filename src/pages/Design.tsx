@@ -40,7 +40,7 @@ const Design: React.FC = () => {
         </div>
         <div className="dp-principles">
           <Principle
-            icon="repeated"
+            icon="template"
             color="#6366f1"
             title="一致"
             body="间距 4 的倍数, 圆角统一为 10px, hover/focus 全套微动效共用同一条曲线. 用户学一遍, 通吃 60+ 组件."

@@ -9,7 +9,8 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   opacity: 0;
-  transition: opacity 0.25s var(--au-ease);
+  /* Drawer 略长于 popup 节奏 — 抽屉滑入需要更克制的曲线 */
+  transition: opacity 240ms var(--au-pop-ease, var(--au-ease-out));
   pointer-events: auto;
 }
 .au-drawer.is-visible .au-drawer__mask {
@@ -25,7 +26,7 @@
   flex-direction: column;
   max-width: 100vw;
   max-height: 100vh;
-  transition: transform 0.26s var(--au-ease);
+  transition: transform 240ms var(--au-pop-ease, var(--au-ease-out));
   pointer-events: auto;
 }
 

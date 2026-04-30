@@ -265,6 +265,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   let runningIdx = 0;
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div className={`au-cmdk ${className}`.trim()}>
       <div className="au-cmdk__mask" onClick={() => setOpen(false)} />

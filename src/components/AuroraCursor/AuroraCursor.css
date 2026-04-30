@@ -1,0 +1,10 @@
+/* AuroraCursor — 鼠标轨迹极光尾巴
+   关键: mix-blend-mode 必须按主题切, 否则在亮底上 screen 混合会把所有色彩抹白成不可见。
+   亮色: 不混色, 让 cyan/purple/pink 原色 + shadowBlur 形成可见彩色光晕
+   暗色: screen 模式, 让色彩在深底上变得更亮, 经典极光感 */
+.au-aurora-cursor {
+  /* 默认 (亮色): 不挂 mix-blend-mode, 颜色直接在白底上呈现 */
+}
+[data-theme='dark'] .au-aurora-cursor {
+  mix-blend-mode: screen;
+}

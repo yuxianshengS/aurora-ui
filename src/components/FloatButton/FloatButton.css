@@ -46,8 +46,10 @@
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
 }
+/* press 反馈 — 在原来 translateY(0) 基础上叠加 scale,与 Button 同手感 */
 .au-fab:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(var(--au-press-scale, 0.97));
+  transition-duration: var(--au-press-duration, 75ms);
 }
 
 .au-fab--circle { border-radius: 50%; }

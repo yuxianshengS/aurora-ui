@@ -159,6 +159,7 @@ const Modal: React.FC<ModalProps> & {
     .filter(Boolean)
     .join(' ');
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div className={cls} style={{ zIndex }}>
       <div

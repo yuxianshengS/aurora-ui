@@ -1,0 +1,111 @@
+/* ============================================================
+   Aurora UI · Shared motion vocabulary
+   ------------------------------------------------------------
+   全库 popup / overlay 共用一套 keyframes + 时长 + 缓动,确保
+   Tooltip / Dropdown / Popconfirm / Select / DatePicker / Modal
+   / Drawer 弹起来「节奏一致」。组件只需 attach class 或引用
+   `--au-pop-*` token。
+   ============================================================ */
+
+/* —— popup 进出 ———————————————————————————————————————————— */
+@keyframes au-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--au-pop-translate, 4px))) scale(var(--au-pop-scale-from, 0.96));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes au-pop-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--au-pop-translate, 4px)) scale(var(--au-pop-scale-from, 0.96));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes au-pop-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--au-pop-translate, 4px))) scale(var(--au-pop-scale-from, 0.96));
+  }
+}
+
+@keyframes au-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes au-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* —— 工具类 — 组件可直接挂 class 用 ——————————————————————— */
+.au-pop-enter {
+  animation: au-pop-in var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)) both;
+}
+.au-pop-enter-up {
+  animation: au-pop-in-up var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)) both;
+}
+.au-fade-enter {
+  animation: au-fade-in var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)) both;
+}
+
+/* —— 按下回弹 — 「可点」元素挂 .au-pressable 自动获得回弹反馈 ——— */
+.au-pressable {
+  transition: transform var(--au-press-duration, 75ms) var(--au-ease);
+}
+.au-pressable:active:not(:disabled):not(.is-disabled) {
+  transform: scale(var(--au-press-scale, 0.97));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au-pop-enter,
+  .au-pop-enter-up,
+  .au-fade-enter {
+    animation: none;
+  }
+  .au-pressable:active:not(:disabled):not(.is-disabled) {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   主题切换平滑过渡 — 切到亮色/暗色时整个页面缓动 280ms,
+   不再"啪"一下闪。useTheme 在用户主动切换时给 <html> 临时加
+   data-theme-transition 属性, 280ms 后摘掉; 初始 mount 不挂,
+   prefers-reduced-motion 用户也不挂。
+   !important 用来在过渡期间覆盖组件原本的 transition 设定,
+   保证全 DOM 同步缓动一次,过渡结束后恢复各自原状。
+   ============================================================ */
+[data-theme-transition] *,
+[data-theme-transition] *::before,
+[data-theme-transition] *::after {
+  transition:
+    background-color 280ms var(--au-ease),
+    color 280ms var(--au-ease),
+    border-color 280ms var(--au-ease),
+    fill 280ms var(--au-ease),
+    stroke 280ms var(--au-ease),
+    box-shadow 280ms var(--au-ease),
+    outline-color 280ms var(--au-ease) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-transition] *,
+  [data-theme-transition] *::before,
+  [data-theme-transition] *::after {
+    transition: none !important;
+  }
+}

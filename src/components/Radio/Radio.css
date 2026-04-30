@@ -149,6 +149,6 @@
   pointer-events: none;
 }
 .au-radio-btn__input:focus-visible + .au-radio-btn__label {
-  outline: 2px solid var(--au-primary);
-  outline-offset: 2px;
+  outline: var(--au-focus-ring-width, 2px) solid var(--au-focus-ring-color, var(--au-primary));
+  outline-offset: var(--au-focus-ring-offset, 2px);
 }

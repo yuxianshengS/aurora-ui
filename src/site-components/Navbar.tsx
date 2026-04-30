@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 import ThemeSwitch from '../components/ThemeSwitch';
+import pkg from '../../package.json';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -13,7 +14,7 @@ const Navbar: React.FC = () => {
         <Link to="/" className="site-logo">
           <span className="site-logo__mark" aria-hidden />
           <span className="site-logo__name">AuroraUI</span>
-          <span className="site-logo__ver">v0.1.0</span>
+          <span className="site-logo__ver">v{pkg.version}</span>
         </Link>
         <nav className="site-nav">
           <NavLink to="/" end>

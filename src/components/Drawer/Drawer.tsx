@@ -139,6 +139,7 @@ const Drawer: React.FC<DrawerProps> = ({
     .filter(Boolean)
     .join(' ');
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div className={cls} style={{ zIndex }}>
       {mask && (

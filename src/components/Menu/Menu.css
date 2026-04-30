@@ -13,7 +13,17 @@
   line-height: 1.4;
 }
 
+/* "dark sidebar" 风格 — 用 token 跟主题切换:
+   亮色态: 比页面略深的浅 slate 底, 文字仍可读
+   暗色态: 保留经典的"暗侧栏"深底白字 (跟 antd theme=dark 同款) */
 .au-menu--dark {
+  --au-menu-bg: var(--au-bg-mute);
+  --au-menu-color: var(--au-text-1);
+  --au-menu-hover-bg: var(--au-border);
+  --au-menu-selected-bg: var(--au-primary-soft);
+  --au-menu-selected-color: var(--au-primary);
+}
+[data-theme="dark"] .au-menu--dark {
   --au-menu-bg: #1f2937;
   --au-menu-color: #e5e7eb;
   --au-menu-hover-bg: #374151;

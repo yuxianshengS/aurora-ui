@@ -1,11 +1,13 @@
 .au-dropdown {
   z-index: var(--au-z-popup, 1050);
-  animation: au-dd-in 0.14s var(--au-ease);
+  /* 走全库统一的 popup 动画 (見 styles/motion.css) */
+  animation: au-pop-in var(--au-pop-duration, 180ms) var(--au-pop-ease, var(--au-ease-out)) both;
+  transform-origin: top center;
 }
-
-@keyframes au-dd-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+.au-dropdown--top,
+.au-dropdown--topLeft,
+.au-dropdown--topRight {
+  transform-origin: bottom center;
 }
 
 .au-dropdown__list {

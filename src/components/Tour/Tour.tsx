@@ -552,6 +552,7 @@ const Tour: React.FC<TourProps> = ({
     </div>
   );
 
+  if (typeof document === 'undefined') return null;
   return createPortal(
     <div className="au-tour" style={rootStyle}>
       {flatMask}

@@ -5,6 +5,19 @@
   min-height: calc(100vh - var(--au-navbar-h));
 }
 
+/* === 亮色态文档区离白调色板 (同 home 一致, scope 在 .doc-layout 内, 不污染全局) ===
+   sidebar / demo-block / 各种卡片都通过 --au-bg 自动变离白
+   page bg 用 --au-bg-base 比卡片略深, 让卡片浮起来 */
+:root:not([data-theme='dark']) .doc-layout {
+  --au-bg-base: #eef2f7;     /* 文档页底, 比 home 的 #e8edf3 略浅 (考虑 sidebar 视觉占比) */
+  --au-bg: #f7f9fc;          /* 卡片 / Sidebar / DemoBlock 容器 */
+  --au-bg-soft: #e6ecf3;     /* DemoBlock preview 区底 */
+  --au-bg-mute: #d6dde6;
+  --au-border: #d6dde6;
+  --au-border-strong: #b8c2d1;
+  background: var(--au-bg-base);
+}
+
 .doc-layout__main {
   flex: 1;
   min-width: 0;

@@ -1,0 +1,227 @@
+/* JsonView — 可折叠 JSON 树展示
+   类型着色用一组与全局 token 协调的语义色; 暗色态下整体偏柔和的 cyan/pink/green 调。 */
+
+.au-jsonview {
+  position: relative;
+  font-family: var(--au-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--au-text-1);
+  background: var(--au-bg-soft);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius-sm);
+  padding: 8px 4px 8px 0;
+  overflow: auto;
+
+  /* 类型色 — 默认 (浅色态) */
+  --au-jv-key: #6366f1;          /* 蓝紫 */
+  --au-jv-key-index: #94a3b8;    /* 数组下标偏灰 */
+  --au-jv-string: #16a34a;
+  --au-jv-number: #c026d3;
+  --au-jv-boolean: #d97706;
+  --au-jv-null: #94a3b8;
+  --au-jv-undefined: #94a3b8;
+  --au-jv-bracket: var(--au-text-2);
+  --au-jv-comma: var(--au-text-3);
+  --au-jv-line: color-mix(in srgb, var(--au-border) 80%, transparent);
+}
+
+[data-theme='dark'] .au-jsonview {
+  --au-jv-key: #93b4ff;
+  --au-jv-key-index: #6b7280;
+  --au-jv-string: #4ade80;
+  --au-jv-number: #f0abfc;
+  --au-jv-boolean: #fbbf24;
+  --au-jv-null: #6b7280;
+  --au-jv-undefined: #6b7280;
+}
+
+.au-jsonview--small {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+/* 解析失败态 */
+.au-jsonview--error {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  color: var(--au-danger);
+  background: color-mix(in srgb, var(--au-danger) 8%, var(--au-bg));
+  border-color: color-mix(in srgb, var(--au-danger) 30%, var(--au-border));
+}
+.au-jsonview__error-title { font-weight: 600; font-family: var(--au-font); }
+.au-jsonview__error-msg { font-size: 12px; opacity: 0.85; word-break: break-all; }
+
+/* 行 */
+.au-jsonview__group {
+  display: contents;
+}
+.au-jsonview__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding-right: 28px;        /* 给 hover 出现的复制按钮留位 */
+  white-space: nowrap;
+  border-radius: 3px;
+  transition: background 0.12s var(--au-ease);
+}
+.au-jsonview__row:hover {
+  background: var(--au-bg-mute);
+}
+
+/* caret */
+.au-jsonview__caret {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 2px;
+  color: var(--au-text-3);
+  flex-shrink: 0;
+}
+.au-jsonview__caret:hover { color: var(--au-text-1); }
+.au-jsonview__caret--leaf { cursor: default; visibility: hidden; }
+
+/* 容器行的「键: { ...」整段, 点击折叠 */
+.au-jsonview__head {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* keys / values / 标点 */
+.au-jsonview__key {
+  color: var(--au-jv-key);
+  font-weight: 500;
+}
+.au-jsonview__key--index {
+  color: var(--au-jv-key-index);
+  font-weight: 400;
+}
+.au-jsonview__colon {
+  color: var(--au-jv-bracket);
+  margin-right: 2px;
+}
+.au-jsonview__bracket {
+  color: var(--au-jv-bracket);
+  font-weight: 600;
+}
+.au-jsonview__comma {
+  color: var(--au-jv-comma);
+  margin-left: 0;
+}
+.au-jsonview__count {
+  color: var(--au-text-3);
+  font-style: italic;
+  font-size: 0.92em;
+  margin: 0 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--au-bg-mute);
+}
+.au-jsonview__row:hover .au-jsonview__count {
+  background: var(--au-bg);
+}
+
+/* 值色 */
+.au-jsonview__value--string { color: var(--au-jv-string); }
+.au-jsonview__value--number { color: var(--au-jv-number); }
+.au-jsonview__value--boolean { color: var(--au-jv-boolean); font-weight: 500; }
+.au-jsonview__value--null { color: var(--au-jv-null); font-style: italic; }
+.au-jsonview__value--undefined { color: var(--au-jv-undefined); font-style: italic; }
+
+.au-jsonview__value--string {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 子节点容器 + 缩进引导线 */
+.au-jsonview__children {
+  position: relative;
+}
+.au-jsonview__children.has-line::before {
+  content: '';
+  position: absolute;
+  left: var(--au-jsonview-line-left, 21px);
+  top: 0;
+  bottom: 14px;             /* 视觉上让线在闭合括号上方收尾 */
+  width: 1px;
+  background: var(--au-jv-line);
+  pointer-events: none;
+}
+
+/* 复制按钮 — 行级,默认隐藏,hover 时浮现 */
+.au-jsonview__copy {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: 4px;
+  color: var(--au-text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s var(--au-ease), color 0.12s var(--au-ease), border-color 0.12s var(--au-ease);
+  padding: 0;
+}
+.au-jsonview__row:hover .au-jsonview__copy {
+  opacity: 1;
+}
+.au-jsonview__copy:hover {
+  color: var(--au-primary);
+  border-color: var(--au-primary);
+}
+.au-jsonview__copy.is-done {
+  opacity: 1;
+  color: var(--au-success);
+  border-color: var(--au-success);
+}
+
+/* 顶部「复制全部」按钮 */
+.au-jsonview__copy-all {
+  position: sticky;
+  top: 4px;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: var(--au-font);
+  background: var(--au-bg);
+  border: 1px solid var(--au-border);
+  border-radius: var(--au-radius-sm);
+  color: var(--au-text-2);
+  cursor: pointer;
+  float: right;
+  z-index: 1;
+  transition: all 0.12s var(--au-ease);
+}
+.au-jsonview__copy-all:hover {
+  color: var(--au-primary);
+  border-color: var(--au-primary);
+}
+.au-jsonview__copy-all.is-done {
+  color: var(--au-success);
+  border-color: var(--au-success);
+}
+
+/* 关闭括号单独一行 — 缩进与父级齐平 */
+.au-jsonview__row--close {
+  color: var(--au-jv-bracket);
+}
